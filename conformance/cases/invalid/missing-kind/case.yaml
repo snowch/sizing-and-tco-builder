@@ -1,0 +1,4 @@
+about: >-
+  A node that does not say what kind it is.
+expect:
+  - load.missing-field

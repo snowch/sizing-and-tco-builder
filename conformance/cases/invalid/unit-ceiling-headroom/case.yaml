@@ -1,0 +1,4 @@
+about: >-
+  A ceiling whose headroom is in cores rather than a pure number.
+expect:
+  - units.declared-vs-produced

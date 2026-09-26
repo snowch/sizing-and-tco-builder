@@ -1,0 +1,4 @@
+about: >-
+  A fact whose source points at nothing.
+expect:
+  - input.fact-cites-nothing

@@ -1,0 +1,4 @@
+about: >-
+  A ceiling with no margin.
+expect:
+  - ceiling.no-headroom

@@ -1,0 +1,4 @@
+about: >-
+  A scenario overriding a derived node.
+expect:
+  - scenario.overrides-derived

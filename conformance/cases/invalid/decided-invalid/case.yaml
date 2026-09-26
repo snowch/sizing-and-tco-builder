@@ -1,0 +1,4 @@
+about: >-
+  An input decided by somebody the language does not know.
+expect:
+  - input.decided

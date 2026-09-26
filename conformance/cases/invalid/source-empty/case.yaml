@@ -1,0 +1,4 @@
+about: >-
+  An input whose source is blank.
+expect:
+  - input.empty-source

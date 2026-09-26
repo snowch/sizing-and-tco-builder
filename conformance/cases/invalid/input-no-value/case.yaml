@@ -1,0 +1,4 @@
+about: >-
+  An input with neither a value nor a distribution.
+expect:
+  - scenario.does-not-evaluate

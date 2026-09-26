@@ -1,0 +1,4 @@
+about: >-
+  A derived node with no formula.
+expect:
+  - load.missing-field

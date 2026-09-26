@@ -1,0 +1,4 @@
+about: >-
+  A formula naming a node the model does not define.
+expect:
+  - load.unknown-reference

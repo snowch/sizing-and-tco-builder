@@ -1,0 +1,4 @@
+about: >-
+  A derived node whose formula produces cores and declares requests.
+expect:
+  - units.declared-vs-produced

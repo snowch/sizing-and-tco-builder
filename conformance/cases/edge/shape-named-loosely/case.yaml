@@ -1,0 +1,5 @@
+about: >-
+  A triangular input whose source says normal. The check is that some shape's name appears, not
+  this one's.
+expect:
+  - valid

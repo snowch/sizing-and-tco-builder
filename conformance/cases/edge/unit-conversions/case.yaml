@@ -1,0 +1,4 @@
+about: >-
+  Prices per year read per month, power in watts read in kilowatts: factors the build supplies.
+expect:
+  - valid

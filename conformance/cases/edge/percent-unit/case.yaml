@@ -1,0 +1,4 @@
+about: >-
+  An input in percent used in a pure-number formula: the factor is a hundredth.
+expect:
+  - valid

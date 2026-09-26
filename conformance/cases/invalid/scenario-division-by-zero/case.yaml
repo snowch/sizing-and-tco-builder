@@ -1,0 +1,4 @@
+about: >-
+  A scenario that sets the fleet to nothing, so the utilisation divides by zero.
+expect:
+  - scenario.does-not-evaluate

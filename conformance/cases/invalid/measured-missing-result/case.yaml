@@ -1,0 +1,4 @@
+about: >-
+  A measured node that names no result key at all.
+expect:
+  - load.missing-field

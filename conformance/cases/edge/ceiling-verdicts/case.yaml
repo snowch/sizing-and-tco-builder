@@ -1,0 +1,4 @@
+about: >-
+  Three ceilings: one clear, one inside its margin, one over its limit.
+expect:
+  - valid

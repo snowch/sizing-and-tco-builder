@@ -1,0 +1,4 @@
+about: >-
+  A node nothing reads and no output names.
+expect:
+  - shape.feeds-no-output

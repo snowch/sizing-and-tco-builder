@@ -1,0 +1,4 @@
+about: >-
+  A triangular input whose likely value is below its minimum.
+expect:
+  - scenario.does-not-evaluate

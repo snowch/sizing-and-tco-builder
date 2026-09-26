@@ -1,0 +1,4 @@
+about: >-
+  An input whose slider range is one number rather than two.
+expect:
+  - load.malformed

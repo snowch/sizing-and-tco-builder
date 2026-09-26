@@ -1,0 +1,4 @@
+about: >-
+  A ceiling whose limit is in cores while what it checks is a ratio.
+expect:
+  - units.declared-vs-produced

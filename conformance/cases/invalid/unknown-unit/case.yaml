@@ -1,0 +1,4 @@
+about: >-
+  A node whose unit the registry does not know.
+expect:
+  - load.unknown-unit

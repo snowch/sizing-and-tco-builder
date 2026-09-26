@@ -1,0 +1,4 @@
+about: >-
+  A measured node declaring a unit its result was not measured in.
+expect:
+  - measured.unit-differs

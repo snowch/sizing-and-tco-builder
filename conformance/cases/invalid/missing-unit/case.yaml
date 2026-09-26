@@ -1,0 +1,4 @@
+about: >-
+  A node with no unit.
+expect:
+  - load.missing-field

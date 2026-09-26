@@ -1,0 +1,4 @@
+about: >-
+  A scenario pinning a measured constant, which the book allows.
+expect:
+  - valid

@@ -1,0 +1,4 @@
+about: >-
+  A ceiling whose headroom does not parse.
+expect:
+  - load.formula-syntax

@@ -1,0 +1,4 @@
+about: >-
+  A measured node reading one of the book's stamped constants.
+expect:
+  - valid

@@ -1,0 +1,4 @@
+about: >-
+  A measured node whose result has no summary value.
+expect:
+  - measured.no-summary-value

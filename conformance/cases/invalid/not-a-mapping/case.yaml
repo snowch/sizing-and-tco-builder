@@ -1,0 +1,4 @@
+about: >-
+  A YAML list where a model belongs.
+expect:
+  - load.not-a-mapping

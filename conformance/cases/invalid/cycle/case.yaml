@@ -1,0 +1,4 @@
+about: >-
+  Two nodes that depend on each other.
+expect:
+  - load.cycle

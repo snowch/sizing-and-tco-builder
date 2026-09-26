@@ -1,0 +1,4 @@
+about: >-
+  A formula with True in it, which is a constant but not a number.
+expect:
+  - load.formula-constant

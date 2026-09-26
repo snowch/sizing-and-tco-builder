@@ -1,0 +1,5 @@
+about: >-
+  A node declared in terabytes whose formula produces a pure number. The book's registry treats
+  bytes as dimensionless, so this passes with a factor.
+expect:
+  - valid

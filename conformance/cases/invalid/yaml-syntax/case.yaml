@@ -1,0 +1,4 @@
+about: >-
+  A file that is not YAML at all.
+expect:
+  - load.yaml

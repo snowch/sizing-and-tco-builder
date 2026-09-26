@@ -1,0 +1,4 @@
+about: >-
+  An input with no provenance at all.
+expect:
+  - input.provenance-kind

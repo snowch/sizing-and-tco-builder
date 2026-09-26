@@ -1,0 +1,4 @@
+about: >-
+  A rate raised to a growth exponent, which gives a unit no node declares.
+expect:
+  - units.declared-vs-produced

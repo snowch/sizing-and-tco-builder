@@ -1,0 +1,73 @@
+model: tiny
+title: Verdicts
+currency: USD
+
+nodes:
+
+  request_rate:
+    kind: input
+    decided: outside
+    unit: request/second
+    value: 200
+    provenance: {kind: assumption, source: "the busy hour, as stated for this case"}
+
+  service_demand:
+    kind: input
+    decided: outside
+    unit: core*second/request
+    value: 0.02
+    provenance: {kind: assumption, source: "processor time per request, as stated for this case"}
+
+  cores:
+    kind: input
+    decided: you
+    unit: core
+    value: 16
+    provenance: {kind: assumption, source: "the fleet chosen for this case"}
+
+  busy_cores:
+    kind: derived
+    unit: core
+    formula: request_rate * service_demand
+
+  utilisation:
+    kind: derived
+    unit: dimensionless
+    formula: busy_cores / cores
+
+  margin:
+    kind: input
+    decided: you
+    unit: dimensionless
+    value: 0.3
+    provenance: {kind: assumption, source: "stated for this case"}
+
+  clear:
+    kind: ceiling
+    unit: dimensionless
+    of: busy_cores / cores
+    limit: 1
+    headroom: margin
+    because: "stated for this case"
+
+  inside_margin:
+    kind: ceiling
+    unit: core
+    of: busy_cores
+    limit: cores * 0.28
+    headroom: margin
+    because: "stated for this case"
+
+  over:
+    kind: ceiling
+    unit: core
+    of: busy_cores
+    limit: cores * 0.2
+    headroom: 0.1
+    because: "stated for this case"
+
+outputs:
+  - utilisation
+  - clear
+  - inside_margin
+  - over

@@ -1,0 +1,4 @@
+about: >-
+  A logarithm of a quantity with a unit.
+expect:
+  - units.does-not-typecheck

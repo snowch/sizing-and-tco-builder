@@ -1,0 +1,4 @@
+about: >-
+  A value written as yes, which the book's YAML reads as true and then as 1.0.
+expect:
+  - valid

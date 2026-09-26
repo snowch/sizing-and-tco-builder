@@ -1,0 +1,4 @@
+about: >-
+  A model with no nodes key.
+expect:
+  - load.missing-field

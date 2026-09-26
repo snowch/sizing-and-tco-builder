@@ -1,0 +1,4 @@
+about: >-
+  A sum of terabytes and gigabytes: dimensions agree, numbers do not.
+expect:
+  - units.mixed-operands

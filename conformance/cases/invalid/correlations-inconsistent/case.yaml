@@ -1,0 +1,4 @@
+about: >-
+  Three correlations no set of inputs can have at once.
+expect:
+  - scenario.does-not-evaluate

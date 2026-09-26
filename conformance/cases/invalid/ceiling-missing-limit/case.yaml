@@ -1,0 +1,4 @@
+about: >-
+  A ceiling with no limit.
+expect:
+  - load.missing-field

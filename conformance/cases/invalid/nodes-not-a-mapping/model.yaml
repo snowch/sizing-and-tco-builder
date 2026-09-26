@@ -1,0 +1,7 @@
+model: tiny
+title: Listed nodes
+currency: USD
+nodes:
+  - request_rate
+  - cores
+outputs: []

@@ -1,0 +1,4 @@
+about: >-
+  A formula with a string where a number belongs.
+expect:
+  - load.formula-constant

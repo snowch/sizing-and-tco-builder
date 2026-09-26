@@ -1,0 +1,4 @@
+about: >-
+  A scenario overriding a node that does not exist.
+expect:
+  - scenario.unknown-node

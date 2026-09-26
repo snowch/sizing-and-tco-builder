@@ -1,0 +1,4 @@
+about: >-
+  A measured node naming a result nobody has taken. Valid; everything downstream is blocked.
+expect:
+  - valid

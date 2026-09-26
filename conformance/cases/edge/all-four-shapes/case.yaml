@@ -1,0 +1,4 @@
+about: >-
+  One input of each shape, each named in its source, with one correlation.
+expect:
+  - valid

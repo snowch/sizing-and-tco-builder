@@ -1,0 +1,4 @@
+about: >-
+  The nodes key holds a list rather than a mapping of names to nodes.
+expect:
+  - load.malformed

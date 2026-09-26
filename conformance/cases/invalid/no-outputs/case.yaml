@@ -1,0 +1,5 @@
+about: >-
+  A model that names no outputs.
+expect:
+  - shape.no-outputs
+  - shape.feeds-no-output

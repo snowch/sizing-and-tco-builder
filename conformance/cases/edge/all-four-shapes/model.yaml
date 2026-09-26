@@ -1,0 +1,76 @@
+model: tiny
+title: Four shapes
+currency: USD
+
+nodes:
+
+  request_rate:
+    kind: input
+    decided: outside
+    unit: request/second
+    value: 200
+    provenance: {kind: assumption, source: "the busy hour, as stated for this case"}
+
+  service_demand:
+    kind: input
+    decided: outside
+    unit: core*second/request
+    value: 0.02
+    provenance: {kind: assumption, source: "processor time per request, as stated for this case"}
+
+  cores:
+    kind: input
+    decided: you
+    unit: core
+    value: 16
+    provenance: {kind: assumption, source: "the fleet chosen for this case"}
+
+  busy_cores:
+    kind: derived
+    unit: core
+    formula: request_rate * service_demand
+
+  utilisation:
+    kind: derived
+    unit: dimensionless
+    formula: busy_cores / cores
+
+  u_in:
+    kind: input
+    decided: outside
+    unit: dimensionless
+    distribution: {uniform: {minimum: 1.0, maximum: 3.0}}
+    provenance: {kind: assumption, source: "uniform: the bounds are all that is known"}
+
+  t_in:
+    kind: input
+    decided: outside
+    unit: dimensionless
+    distribution: {triangular: {minimum: 1.0, likely: 2.0, maximum: 5.0}}
+    provenance: {kind: assumption, source: "triangular: least, likely, most"}
+
+  l_in:
+    kind: input
+    decided: outside
+    unit: dimensionless
+    distribution: {lognormal: {p10: 1.1, p90: 1.9}}
+    provenance: {kind: assumption, source: "lognormal: it compounds"}
+
+  n_in:
+    kind: input
+    decided: outside
+    unit: dimensionless
+    distribution: {normal: {mean: 10.0, sd: 2.0}}
+    provenance: {kind: assumption, source: "normal: symmetric error"}
+
+  product:
+    kind: derived
+    unit: dimensionless
+    formula: u_in * t_in * l_in * n_in
+
+outputs:
+  - utilisation
+  - product
+
+correlations:
+  - {a: u_in, b: l_in, rho: 0.6, because: "stated for this case"}

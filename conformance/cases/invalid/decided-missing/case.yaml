@@ -1,0 +1,4 @@
+about: >-
+  An input that does not say who decides it.
+expect:
+  - input.decided

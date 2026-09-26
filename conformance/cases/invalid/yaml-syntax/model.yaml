@@ -1,0 +1,3 @@
+model: tiny
+nodes:
+  request_rate: {kind: input, unit: [request

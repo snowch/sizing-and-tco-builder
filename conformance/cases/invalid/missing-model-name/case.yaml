@@ -1,0 +1,4 @@
+about: >-
+  A model with no model key naming it.
+expect:
+  - load.missing-field

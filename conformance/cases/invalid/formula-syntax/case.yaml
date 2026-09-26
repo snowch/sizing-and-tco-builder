@@ -1,0 +1,4 @@
+about: >-
+  A formula that does not parse.
+expect:
+  - load.formula-syntax

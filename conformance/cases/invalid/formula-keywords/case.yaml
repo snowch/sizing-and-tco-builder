@@ -1,0 +1,4 @@
+about: >-
+  A formula passing a keyword argument.
+expect:
+  - load.formula-keywords

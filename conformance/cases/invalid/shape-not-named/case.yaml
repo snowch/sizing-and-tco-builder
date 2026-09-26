@@ -1,0 +1,4 @@
+about: >-
+  A sampled input whose source never names its shape.
+expect:
+  - input.shape-not-named

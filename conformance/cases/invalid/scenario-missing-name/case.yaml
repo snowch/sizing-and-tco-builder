@@ -1,0 +1,4 @@
+about: >-
+  A scenario file with no scenario key. The verifier falls over rather than reporting it.
+expect:
+  - verifier.crashed

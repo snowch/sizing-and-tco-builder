@@ -1,0 +1,4 @@
+about: >-
+  A node written as a bare number.
+expect:
+  - load.node-not-a-mapping

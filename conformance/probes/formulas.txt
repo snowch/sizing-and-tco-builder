@@ -1,0 +1,78 @@
+# Formulas, one per line, and whether the book's parser accepts each and as what tree. The
+# JavaScript parser must agree exactly: same tree, or the same refusal.
+a
+a + b
+a - b - c
+a * b / c
+a / b / c
+a ** b ** c
+-a ** 2
+(-a) ** 2
+-a * b
++a
+--a
+- - a
+a * -b
+2 * a
+2.5 * a
+1e3 * a
+1E-3 * a
+1_000 * a
+.5 * a
+5. * a
+0x10 * a
+0o17 * a
+0b101 * a
+010
+1j * a
+min(a, b)
+max(a, b, c)
+min(a)
+max()
+ceil(a / b)
+floor(a)
+sqrt(a)
+log(a)
+exp(a)
+ceil(busy_cores / (cores_per_host * (1 - queueing_margin)))
+linear_throughput / (1 + contention * (host_count - 1) + crosstalk * host_count * (host_count - 1))
+one_host * sqrt((1 - contention) / crosstalk)
+(peak_request_rate_t0 / peak_to_mean + mean_request_rate) / 2
+  a + b  
+a +
+a b
+(a
+a)
+abs(a)
+round(a)
+math.ceil(a)
+a.b
+a[0]
+a if b else c
+a > b
+a == b
+a and b
+not a
+a % b
+a // b
+a @ b
+a & b
+a << b
+~a
+lambda: a
+max(a, key=b)
+max(*a)
+min(a for a in b)
+[a, b]
+(a, b)
+'text'
+"text"
+True
+False
+None
+true
+x_1
+_hidden
+café
+a
+ + b

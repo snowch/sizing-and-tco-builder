@@ -1,0 +1,4 @@
+about: >-
+  A formula adding a rate to a demand.
+expect:
+  - units.does-not-typecheck

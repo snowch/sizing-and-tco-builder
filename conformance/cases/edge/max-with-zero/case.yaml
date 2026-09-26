@@ -1,0 +1,6 @@
+about: >-
+  The design's mixed-generations shape, max(0, need - have), over terabytes. Pint lets a
+  quantity be compared with zero, and the book's operand rule then sees a pure number meet
+  terabytes.
+expect:
+  - units.mixed-operands

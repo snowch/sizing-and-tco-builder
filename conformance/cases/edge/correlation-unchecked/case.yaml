@@ -1,0 +1,5 @@
+about: >-
+  A correlation naming a node that does not exist and giving no reason. The book does not check
+  either.
+expect:
+  - valid

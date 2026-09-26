@@ -1,0 +1,4 @@
+about: >-
+  A measured node whose result is blank.
+expect:
+  - measured.no-result

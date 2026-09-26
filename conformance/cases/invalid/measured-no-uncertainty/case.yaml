@@ -1,0 +1,4 @@
+about: >-
+  A measured node whose result reports a standard error of zero.
+expect:
+  - measured.no-uncertainty

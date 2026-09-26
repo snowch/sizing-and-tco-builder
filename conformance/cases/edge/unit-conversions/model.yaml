@@ -1,0 +1,84 @@
+model: tiny
+title: Conversions
+currency: USD
+
+nodes:
+
+  request_rate:
+    kind: input
+    decided: outside
+    unit: request/second
+    value: 200
+    provenance: {kind: assumption, source: "the busy hour, as stated for this case"}
+
+  service_demand:
+    kind: input
+    decided: outside
+    unit: core*second/request
+    value: 0.02
+    provenance: {kind: assumption, source: "processor time per request, as stated for this case"}
+
+  cores:
+    kind: input
+    decided: you
+    unit: core
+    value: 16
+    provenance: {kind: assumption, source: "the fleet chosen for this case"}
+
+  busy_cores:
+    kind: derived
+    unit: core
+    formula: request_rate * service_demand
+
+  utilisation:
+    kind: derived
+    unit: dimensionless
+    formula: busy_cores / cores
+
+  price_per_tb_year:
+    kind: input
+    decided: outside
+    unit: USD/TB/year
+    value: 120
+    provenance: {kind: assumption, source: "a quoted price, stated for this case"}
+
+  price_per_tb_month:
+    kind: derived
+    unit: USD/TB/month
+    formula: price_per_tb_year
+
+  host_power:
+    kind: input
+    decided: outside
+    unit: W/host
+    value: 400
+    provenance: {kind: assumption, source: "a spec sheet, stated for this case"}
+
+  hosts:
+    kind: input
+    decided: you
+    unit: host
+    value: 20
+    provenance: {kind: assumption, source: "the fleet chosen for this case"}
+
+  fleet_power:
+    kind: derived
+    unit: kW
+    formula: hosts * host_power
+
+  hours_per_year:
+    kind: input
+    decided: definition
+    unit: hour/year
+    value: 8766
+    provenance: {kind: fact, source: "definition: 365.25 days of 24 hours"}
+
+  energy:
+    kind: derived
+    unit: MWh/year
+    formula: fleet_power * hours_per_year
+
+outputs:
+  - utilisation
+  - price_per_tb_month
+  - energy

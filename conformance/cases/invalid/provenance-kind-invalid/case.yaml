@@ -1,0 +1,4 @@
+about: >-
+  An input whose provenance kind is not one of the three.
+expect:
+  - input.provenance-kind

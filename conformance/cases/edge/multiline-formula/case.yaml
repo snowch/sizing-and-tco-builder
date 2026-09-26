@@ -1,0 +1,4 @@
+about: >-
+  A formula folded across lines in the YAML.
+expect:
+  - valid

@@ -1,0 +1,4 @@
+about: >-
+  An output that is not a node.
+expect:
+  - load.unknown-output

@@ -1,0 +1,4 @@
+about: >-
+  A formula using a comparison, which the language does not have.
+expect:
+  - load.formula-construct

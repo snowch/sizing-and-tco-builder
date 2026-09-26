@@ -1,0 +1,4 @@
+about: >-
+  A formula calling a function the language does not have.
+expect:
+  - load.formula-function

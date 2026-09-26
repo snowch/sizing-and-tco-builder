@@ -1,0 +1,4 @@
+about: >-
+  A node of a kind the language does not have.
+expect:
+  - load.unknown-kind
