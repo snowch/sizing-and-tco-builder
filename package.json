@@ -1,0 +1,15 @@
+{
+  "name": "sizing-and-tco-builder",
+  "private": true,
+  "description": "A guided builder for the model files of the book Sizing and TCO, held to the book's own toolkit by a conformance suite.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.js\"",
+    "conformance": "node --test test/conformance.test.js",
+    "fixtures": "python3 conformance/generate.py",
+    "fixtures:check": "python3 conformance/generate.py --check"
+  }
+}
