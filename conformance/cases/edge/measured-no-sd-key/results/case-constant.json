@@ -1,0 +1,15 @@
+{
+ "kind": "measurement",
+ "target": "corpus",
+ "name": "case-constant",
+ "produced_by": {
+  "stack": "a stack named for this case"
+ },
+ "units": {
+  "value": "dimensionless",
+  "sd": "dimensionless"
+ },
+ "summary": {
+  "value": 3.5
+ }
+}

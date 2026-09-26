@@ -1,0 +1,283 @@
+{
+ "about": "A percentage meeting a plain number: converted to a pure number, and the operand rule sees two units.",
+ "files": {
+  "model.yaml": "model: tiny\ntitle: percent plus one\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  stored:\n    kind: input\n    decided: outside\n    unit: TB\n    value: 15\n    provenance: {kind: assumption, source: \"what is held, as stated for this case\"}\n\n  index:\n    kind: input\n    decided: outside\n    unit: GB\n    value: 500\n    provenance: {kind: assumption, source: \"the index, as stated for this case\"}\n\n  disk_per_host:\n    kind: input\n    decided: outside\n    unit: TB/host\n    value: 2\n    provenance: {kind: assumption, source: \"the disk each host has, as stated for this case\"}\n\n  share:\n    kind: input\n    decided: you\n    unit: percent\n    value: 25\n    provenance: {kind: assumption, source: \"stated for this case\"}\n\n  one_more:\n    kind: derived\n    unit: dimensionless\n    formula: share + 1\n\n  one_less:\n    kind: derived\n    unit: dimensionless\n    formula: 2 - share\n\noutputs:\n  - utilisation\n  - one_more\n  - one_less\n  - index\n  - disk_per_host\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "edge/percent-plus-one",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "definitional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "cores",
+   "disk_per_host",
+   "index",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "share",
+   "one_less",
+   "one_more",
+   "stored",
+   "utilisation"
+  ],
+  "outputs": [
+   "utilisation",
+   "one_more",
+   "one_less",
+   "index",
+   "disk_per_host"
+  ],
+  "title": "percent plus one",
+  "unit_problems": 2,
+  "unmeasured": []
+ },
+ "nodes": {
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "disk_per_host": {
+   "decided": "outside",
+   "dimensionality": {
+    "[host]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 2.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the disk each host has, as stated for this case"
+   },
+   "range": null,
+   "unit": "TB/host",
+   "value": 2.0
+  },
+  "index": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 500.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the index, as stated for this case"
+   },
+   "range": null,
+   "unit": "GB",
+   "value": 500.0
+  },
+  "one_less": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "op": "const",
+      "value": 2.0
+     },
+     {
+      "name": "share",
+      "op": "ref"
+     }
+    ],
+    "op": "-"
+   },
+   "kind": "derived",
+   "magnitude": -23.0,
+   "unit": "dimensionless"
+  },
+  "one_more": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "share",
+      "op": "ref"
+     },
+     {
+      "op": "const",
+      "value": 1.0
+     }
+    ],
+    "op": "+"
+   },
+   "kind": "derived",
+   "magnitude": 26.0,
+   "unit": "dimensionless"
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "share": {
+   "decided": "you",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 25.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "stated for this case"
+   },
+   "range": null,
+   "unit": "percent",
+   "value": 25.0
+  },
+  "stored": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 15.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "what is held, as stated for this case"
+   },
+   "range": null,
+   "unit": "TB",
+   "value": 15.0
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.25,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/percent-plus-one/model.yaml",
+ "results": {},
+ "scenarios": {
+  "reference": {
+   "overrides": {},
+   "point_error": {
+    "exception": "EvaluationError",
+    "message": "tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'one_less' subtracts quantities in 'dimensionless' and 'percent': `2 - share`. The build converts a formula's result once, into the node's unit, so quantities that meet in a sum, a difference or a comparison must be declared in one unit. Declare them in one, or convert one of them in a node of its own.\n  - tiny: node 'one_more' adds quantities in 'percent' and 'dimensionless': `share + 1`. The build converts a formula's result once, into the node's unit, so quantities that meet in a sum, a difference or a comparison must be declared in one unit. Declare them in one, or convert one of them in a node of its own."
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": false,
+  "problems": [
+   {
+    "code": "units.mixed-operands",
+    "message": "_builder_conformance/percent-plus-one/model.yaml: tiny: node 'one_less' subtracts quantities in 'dimensionless' and 'percent': `2 - share`. The build converts a formula's result once, into the node's unit, so quantities that meet in a sum, a difference or a comparison must be declared in one unit. Declare them in one, or convert one of them in a node of its own.",
+    "node": "one_less",
+    "part": null,
+    "rule": "1"
+   },
+   {
+    "code": "units.mixed-operands",
+    "message": "_builder_conformance/percent-plus-one/model.yaml: tiny: node 'one_more' adds quantities in 'percent' and 'dimensionless': `share + 1`. The build converts a formula's result once, into the node's unit, so quantities that meet in a sum, a difference or a comparison must be declared in one unit. Declare them in one, or convert one of them in a node of its own.",
+    "node": "one_more",
+    "part": null,
+    "rule": "1"
+   },
+   {
+    "code": "shape.feeds-no-output",
+    "message": "_builder_conformance/percent-plus-one/model.yaml: node 'stored' feeds no output. Either it is a leftover, or an output is missing from the model's `outputs:` list.",
+    "node": "stored",
+    "part": null,
+    "rule": "7"
+   },
+   {
+    "cause": "typecheck",
+    "code": "scenario.does-not-evaluate",
+    "message": "_builder_conformance/percent-plus-one/model.yaml: scenario 'reference' does not evaluate — tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'one_less' subtracts quantities in 'dimensionless' and 'percent': `2 - share`. The build converts a formula's result once, into the node's unit, so quantities that meet in a sum, a difference or a comparison must be declared in one unit. Declare them in one, or convert one of them in a node of its own.\n  - tiny: node 'one_more' adds quantities in 'percent' and 'dimensionless': `share + 1`. The build converts a formula's result once, into the node's unit, so quantities that meet in a sum, a difference or a comparison must be declared in one unit. Declare them in one, or convert one of them in a node of its own.",
+    "part": null,
+    "rule": "scenarios",
+    "scenario": "reference"
+   }
+  ]
+ }
+}

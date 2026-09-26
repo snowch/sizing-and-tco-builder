@@ -1,0 +1,4 @@
+about: >-
+  A quantity plus a plain zero keeps its units in Pint; plus any other number it must be
+  dimensionless.
+expect:

@@ -1,0 +1,311 @@
+{
+ "about": "What str() and float() make of YAML's types: a number as a string, a source written as a number, an empty source (the text None), decided: yes (the text True), a blank unit, an empty reason and a zero margin.",
+ "files": {
+  "model.yaml": "model: tiny\ntitle: types in the yaml\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  stored:\n    kind: input\n    decided: outside\n    unit: TB\n    value: 15\n    provenance: {kind: assumption, source: \"what is held, as stated for this case\"}\n\n  index:\n    kind: input\n    decided: outside\n    unit: GB\n    value: 500\n    provenance: {kind: assumption, source: \"the index, as stated for this case\"}\n\n  disk_per_host:\n    kind: input\n    decided: outside\n    unit: TB/host\n    value: 2\n    provenance: {kind: assumption, source: \"the disk each host has, as stated for this case\"}\n\n  from_a_string:\n    kind: input\n    decided: you\n    unit: TB\n    value: \"12.5\"\n    provenance: {kind: assumption, source: 12}\n\n  nameless_source:\n    kind: input\n    decided: yes\n    unit: \"\"\n    value: 3\n    provenance: {kind: assumption, source:}\n\n  empty_reason:\n    kind: ceiling\n    unit: dimensionless\n    of: busy_cores / cores\n    limit: 1\n    headroom: 0\n    because:\n\n  combined:\n    kind: derived\n    unit: TB\n    formula: from_a_string * nameless_source\n\noutputs:\n  - utilisation\n  - combined\n  - empty_reason\n  - index\n  - disk_per_host\n  - stored\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "edge/types-in-the-yaml",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "conditional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "cores",
+   "disk_per_host",
+   "from_a_string",
+   "index",
+   "nameless_source",
+   "combined",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "empty_reason",
+   "stored",
+   "utilisation"
+  ],
+  "outputs": [
+   "utilisation",
+   "combined",
+   "empty_reason",
+   "index",
+   "disk_per_host",
+   "stored"
+  ],
+  "title": "types in the yaml",
+  "unit_problems": 0,
+  "unmeasured": []
+ },
+ "nodes": {
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "combined": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "from_a_string",
+      "op": "ref"
+     },
+     {
+      "name": "nameless_source",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 37.5,
+   "unit": "TB"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "disk_per_host": {
+   "decided": "outside",
+   "dimensionality": {
+    "[host]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 2.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the disk each host has, as stated for this case"
+   },
+   "range": null,
+   "unit": "TB/host",
+   "value": 2.0
+  },
+  "empty_reason": {
+   "because": "None",
+   "declares_headroom": true,
+   "dimensionality": {},
+   "factor": 1.0,
+   "factor_headroom": 1.0,
+   "factor_limit": 1.0,
+   "headroom": {
+    "op": "const",
+    "value": 0.0
+   },
+   "kind": "ceiling",
+   "limit": {
+    "op": "const",
+    "value": 1.0
+   },
+   "magnitude": 0.25,
+   "of": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "unit": "dimensionless"
+  },
+  "from_a_string": {
+   "decided": "you",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 12.5,
+   "provenance": {
+    "kind": "assumption",
+    "source": "12"
+   },
+   "range": null,
+   "unit": "TB",
+   "value": 12.5
+  },
+  "index": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 500.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the index, as stated for this case"
+   },
+   "range": null,
+   "unit": "GB",
+   "value": 500.0
+  },
+  "nameless_source": {
+   "decided": "True",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 3.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "None"
+   },
+   "range": null,
+   "unit": "",
+   "value": 3.0
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "stored": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 15.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "what is held, as stated for this case"
+   },
+   "range": null,
+   "unit": "TB",
+   "value": 15.0
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.25,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/types-in-the-yaml/model.yaml",
+ "results": {},
+ "scenarios": {
+  "reference": {
+   "ceilings": {
+    "empty_reason": {
+     "allowed": 1.0,
+     "because": "None",
+     "headroom": 0.0,
+     "headroom_text": "0",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 0.25,
+     "verdict": "ok"
+    }
+   },
+   "overrides": {},
+   "point": {
+    "busy_cores": 4.0,
+    "combined": 37.5,
+    "cores": 16.0,
+    "disk_per_host": 2.0,
+    "empty_reason": 0.25,
+    "from_a_string": 12.5,
+    "index": 500.0,
+    "nameless_source": 3.0,
+    "request_rate": 200.0,
+    "service_demand": 0.02,
+    "stored": 15.0,
+    "utilisation": 0.25
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": false,
+  "problems": [
+   {
+    "code": "input.decided",
+    "message": "_builder_conformance/types-in-the-yaml/model.yaml: input 'nameless_source' declares decided 'True'; expected one of you, outside, definition. `you` is a choice somebody could make differently, `outside` is an observation whether or not it has a shape yet, and `definition` is an identity like a year in seconds.",
+    "node": "nameless_source",
+    "part": null,
+    "rule": "2"
+   }
+  ]
+ }
+}

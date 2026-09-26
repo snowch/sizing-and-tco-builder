@@ -164,3 +164,9 @@ export function compareFormula(want, got) {
   if (!want.ok) return want.code === got.code ? [] : [`formula ${JSON.stringify(want.formula)}: book ${want.code}, engine ${got.code}`];
   return same(want.tree, got.tree) ? [] : [`formula ${JSON.stringify(want.formula)}: book ${JSON.stringify(want.tree)}, engine ${JSON.stringify(got.tree)}`];
 }
+
+export function compareYaml(want, got) {
+  if (want.ok !== got.ok) return [`yaml ${JSON.stringify(want.yaml)}: book ${want.ok ? "reads it" : "refuses it"}, engine ${got.ok ? "reads it" : `refuses it (${got.message})`}`];
+  if (!want.ok) return [];
+  return same(want.value, got.value) ? [] : [`yaml ${JSON.stringify(want.yaml)}: book ${JSON.stringify(want.value)}, engine ${JSON.stringify(got.value)}`];
+}

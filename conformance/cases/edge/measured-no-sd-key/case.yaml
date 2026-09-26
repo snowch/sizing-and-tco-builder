@@ -1,0 +1,4 @@
+about: >-
+  A measured result with a value and no standard error at all.
+expect:
+  - measured.no-uncertainty

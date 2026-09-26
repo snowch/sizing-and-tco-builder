@@ -1,0 +1,5 @@
+about: >-
+  A ceiling whose limit divides by an input a scenario sets to zero: the point evaluates and the
+  ceiling report does not.
+expect:
+  - scenario.does-not-evaluate

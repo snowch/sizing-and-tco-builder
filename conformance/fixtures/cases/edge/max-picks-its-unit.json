@@ -1,0 +1,291 @@
+{
+ "about": "max and min return the winning operand in its own unit, which sets the factor; comparing terabytes with cores does not typecheck.",
+ "files": {
+  "model.yaml": "model: tiny\ntitle: max picks its unit\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  stored:\n    kind: input\n    decided: outside\n    unit: TB\n    value: 15\n    provenance: {kind: assumption, source: \"what is held, as stated for this case\"}\n\n  index:\n    kind: input\n    decided: outside\n    unit: GB\n    value: 500\n    provenance: {kind: assumption, source: \"the index, as stated for this case\"}\n\n  disk_per_host:\n    kind: input\n    decided: outside\n    unit: TB/host\n    value: 2\n    provenance: {kind: assumption, source: \"the disk each host has, as stated for this case\"}\n\n  index_tb:\n    kind: derived\n    unit: TB\n    formula: max(stored, index)\n\n  small_first:\n    kind: derived\n    unit: TB\n    formula: min(index, stored)\n\n  against_cores:\n    kind: derived\n    unit: TB\n    formula: max(stored, cores)\n\noutputs:\n  - utilisation\n  - index_tb\n  - small_first\n  - against_cores\n  - disk_per_host\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "edge/max-picks-its-unit",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "definitional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "cores",
+   "disk_per_host",
+   "index",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "stored",
+   "against_cores",
+   "index_tb",
+   "small_first",
+   "utilisation"
+  ],
+  "outputs": [
+   "utilisation",
+   "index_tb",
+   "small_first",
+   "against_cores",
+   "disk_per_host"
+  ],
+  "title": "max picks its unit",
+  "unit_problems": 3,
+  "unmeasured": []
+ },
+ "nodes": {
+  "against_cores": {
+   "dimensionality": {},
+   "formula": {
+    "args": [
+     {
+      "name": "stored",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "fn": "max",
+    "op": "call"
+   },
+   "kind": "derived",
+   "magnitude": 16.0,
+   "unit": "TB"
+  },
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "disk_per_host": {
+   "decided": "outside",
+   "dimensionality": {
+    "[host]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 2.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the disk each host has, as stated for this case"
+   },
+   "range": null,
+   "unit": "TB/host",
+   "value": 2.0
+  },
+  "index": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 500.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the index, as stated for this case"
+   },
+   "range": null,
+   "unit": "GB",
+   "value": 500.0
+  },
+  "index_tb": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "stored",
+      "op": "ref"
+     },
+     {
+      "name": "index",
+      "op": "ref"
+     }
+    ],
+    "fn": "max",
+    "op": "call"
+   },
+   "kind": "derived",
+   "magnitude": 500.0,
+   "unit": "TB"
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "small_first": {
+   "dimensionality": {},
+   "factor": 0.001,
+   "formula": {
+    "args": [
+     {
+      "name": "index",
+      "op": "ref"
+     },
+     {
+      "name": "stored",
+      "op": "ref"
+     }
+    ],
+    "fn": "min",
+    "op": "call"
+   },
+   "kind": "derived",
+   "magnitude": 15.0,
+   "unit": "TB"
+  },
+  "stored": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 15.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "what is held, as stated for this case"
+   },
+   "range": null,
+   "unit": "TB",
+   "value": 15.0
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.25,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/max-picks-its-unit/model.yaml",
+ "results": {},
+ "scenarios": {
+  "reference": {
+   "overrides": {},
+   "point_error": {
+    "exception": "EvaluationError",
+    "message": "tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'against_cores' does not typecheck. `max(stored, cores)` — Cannot convert from 'core' ([core]) to 'terabyte' (dimensionless)\n  - tiny: node 'index_tb' takes the max of quantities in 'terabyte' and 'gigabyte': `max(stored, index)`. The build converts a formula's result once, into the node's unit, so quantities that meet in a sum, a difference or a comparison must be declared in one unit. Declare them in one, or convert one of them in a node of its own.\n  - tiny: node 'small_first' takes the min of quantities in 'gigabyte' and 'terabyte': `min(index, stored)`. The build converts a formula's result once, into the node's unit, so quantities that meet in a sum, a difference or a comparison must be declared in one unit. Declare them in one, or convert one of them in a node of its own."
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": false,
+  "problems": [
+   {
+    "code": "units.does-not-typecheck",
+    "message": "_builder_conformance/max-picks-its-unit/model.yaml: tiny: node 'against_cores' does not typecheck. `max(stored, cores)` — Cannot convert from 'core' ([core]) to 'terabyte' (dimensionless)",
+    "node": "against_cores",
+    "part": null,
+    "rule": "1"
+   },
+   {
+    "code": "units.mixed-operands",
+    "message": "_builder_conformance/max-picks-its-unit/model.yaml: tiny: node 'index_tb' takes the max of quantities in 'terabyte' and 'gigabyte': `max(stored, index)`. The build converts a formula's result once, into the node's unit, so quantities that meet in a sum, a difference or a comparison must be declared in one unit. Declare them in one, or convert one of them in a node of its own.",
+    "node": "index_tb",
+    "part": null,
+    "rule": "1"
+   },
+   {
+    "code": "units.mixed-operands",
+    "message": "_builder_conformance/max-picks-its-unit/model.yaml: tiny: node 'small_first' takes the min of quantities in 'gigabyte' and 'terabyte': `min(index, stored)`. The build converts a formula's result once, into the node's unit, so quantities that meet in a sum, a difference or a comparison must be declared in one unit. Declare them in one, or convert one of them in a node of its own.",
+    "node": "small_first",
+    "part": null,
+    "rule": "1"
+   },
+   {
+    "cause": "typecheck",
+    "code": "scenario.does-not-evaluate",
+    "message": "_builder_conformance/max-picks-its-unit/model.yaml: scenario 'reference' does not evaluate — tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'against_cores' does not typecheck. `max(stored, cores)` — Cannot convert from 'core' ([core]) to 'terabyte' (dimensionless)\n  - tiny: node 'index_tb' takes the max of quantities in 'terabyte' and 'gigabyte': `max(stored, index)`. The build converts a formula's result once, into the node's unit, so quantities that meet in a sum, a difference or a comparison must be declared in one unit. Declare them in one, or convert one of them in a node of its own.\n  - tiny: node 'small_first' takes the min of quantities in 'gigabyte' and 'terabyte': `min(index, stored)`. The build converts a formula's result once, into the node's unit, so quantities that meet in a sum, a difference or a comparison must be declared in one unit. Declare them in one, or convert one of them in a node of its own.",
+    "part": null,
+    "rule": "scenarios",
+    "scenario": "reference"
+   }
+  ]
+ }
+}

@@ -1,0 +1,256 @@
+{
+ "about": "Division by zero after a square root: numpy's rules in the unit pass (no raise), Python's at the point (it raises).",
+ "files": {
+  "model.yaml": "model: tiny\ntitle: sqrt then divide by zero\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  stored:\n    kind: input\n    decided: outside\n    unit: TB\n    value: 15\n    provenance: {kind: assumption, source: \"what is held, as stated for this case\"}\n\n  index:\n    kind: input\n    decided: outside\n    unit: GB\n    value: 500\n    provenance: {kind: assumption, source: \"the index, as stated for this case\"}\n\n  disk_per_host:\n    kind: input\n    decided: outside\n    unit: TB/host\n    value: 2\n    provenance: {kind: assumption, source: \"the disk each host has, as stated for this case\"}\n\n  nothing:\n    kind: input\n    decided: you\n    unit: dimensionless\n    value: 0\n    provenance: {kind: assumption, source: \"stated for this case\"}\n\n  ratio:\n    kind: derived\n    unit: dimensionless\n    formula: sqrt(cores / cores) / nothing\n\noutputs:\n  - utilisation\n  - ratio\n  - index\n  - stored\n  - disk_per_host\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "edge/sqrt-then-divide-by-zero",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "definitional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "cores",
+   "disk_per_host",
+   "index",
+   "nothing",
+   "ratio",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "stored",
+   "utilisation"
+  ],
+  "outputs": [
+   "utilisation",
+   "ratio",
+   "index",
+   "stored",
+   "disk_per_host"
+  ],
+  "title": "sqrt then divide by zero",
+  "unit_problems": 0,
+  "unmeasured": []
+ },
+ "nodes": {
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "disk_per_host": {
+   "decided": "outside",
+   "dimensionality": {
+    "[host]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 2.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the disk each host has, as stated for this case"
+   },
+   "range": null,
+   "unit": "TB/host",
+   "value": 2.0
+  },
+  "index": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 500.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the index, as stated for this case"
+   },
+   "range": null,
+   "unit": "GB",
+   "value": 500.0
+  },
+  "nothing": {
+   "decided": "you",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "stated for this case"
+   },
+   "range": null,
+   "unit": "dimensionless",
+   "value": 0.0
+  },
+  "ratio": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "name": "cores",
+          "op": "ref"
+         },
+         {
+          "name": "cores",
+          "op": "ref"
+         }
+        ],
+        "op": "/"
+       }
+      ],
+      "fn": "sqrt",
+      "op": "call"
+     },
+     {
+      "name": "nothing",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.37,
+   "unit": "dimensionless"
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "stored": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 15.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "what is held, as stated for this case"
+   },
+   "range": null,
+   "unit": "TB",
+   "value": 15.0
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.25,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/sqrt-then-divide-by-zero/model.yaml",
+ "results": {},
+ "scenarios": {
+  "reference": {
+   "overrides": {},
+   "point_error": {
+    "exception": "ZeroDivisionError",
+    "message": "float division by zero"
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": false,
+  "problems": [
+   {
+    "cause": "arithmetic",
+    "code": "scenario.does-not-evaluate",
+    "message": "_builder_conformance/sqrt-then-divide-by-zero/model.yaml: scenario 'reference' does not evaluate — float division by zero",
+    "part": null,
+    "rule": "scenarios",
+    "scenario": "reference"
+   }
+  ]
+ }
+}

@@ -1,0 +1,293 @@
+{
+ "about": "A quantity plus a plain zero keeps its units in Pint; plus any other number it must be dimensionless.",
+ "files": {
+  "model.yaml": "model: tiny\ntitle: plus zero keeps units\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  stored:\n    kind: input\n    decided: outside\n    unit: TB\n    value: 15\n    provenance: {kind: assumption, source: \"what is held, as stated for this case\"}\n\n  index:\n    kind: input\n    decided: outside\n    unit: GB\n    value: 500\n    provenance: {kind: assumption, source: \"the index, as stated for this case\"}\n\n  disk_per_host:\n    kind: input\n    decided: outside\n    unit: TB/host\n    value: 2\n    provenance: {kind: assumption, source: \"the disk each host has, as stated for this case\"}\n\n  kept:\n    kind: derived\n    unit: TB\n    formula: stored + 0 + disk_per_host * 0 * cores / cores * 0 / (disk_per_host / disk_per_host)\n\noutputs:\n  - utilisation\n  - kept\n  - index\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "edge/plus-zero-keeps-units",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "definitional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "cores",
+   "disk_per_host",
+   "index",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "stored",
+   "kept",
+   "utilisation"
+  ],
+  "outputs": [
+   "utilisation",
+   "kept",
+   "index"
+  ],
+  "title": "plus zero keeps units",
+  "unit_problems": 1,
+  "unmeasured": []
+ },
+ "nodes": {
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "disk_per_host": {
+   "decided": "outside",
+   "dimensionality": {
+    "[host]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 2.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the disk each host has, as stated for this case"
+   },
+   "range": null,
+   "unit": "TB/host",
+   "value": 2.0
+  },
+  "index": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 500.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the index, as stated for this case"
+   },
+   "range": null,
+   "unit": "GB",
+   "value": 500.0
+  },
+  "kept": {
+   "dimensionality": {},
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "stored",
+        "op": "ref"
+       },
+       {
+        "op": "const",
+        "value": 0.0
+       }
+      ],
+      "op": "+"
+     },
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "args": [
+             {
+              "args": [
+               {
+                "name": "disk_per_host",
+                "op": "ref"
+               },
+               {
+                "op": "const",
+                "value": 0.0
+               }
+              ],
+              "op": "*"
+             },
+             {
+              "name": "cores",
+              "op": "ref"
+             }
+            ],
+            "op": "*"
+           },
+           {
+            "name": "cores",
+            "op": "ref"
+           }
+          ],
+          "op": "/"
+         },
+         {
+          "op": "const",
+          "value": 0.0
+         }
+        ],
+        "op": "*"
+       },
+       {
+        "args": [
+         {
+          "name": "disk_per_host",
+          "op": "ref"
+         },
+         {
+          "name": "disk_per_host",
+          "op": "ref"
+         }
+        ],
+        "op": "/"
+       }
+      ],
+      "op": "/"
+     }
+    ],
+    "op": "+"
+   },
+   "kind": "derived",
+   "magnitude": 15.0,
+   "unit": "TB"
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "stored": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 15.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "what is held, as stated for this case"
+   },
+   "range": null,
+   "unit": "TB",
+   "value": 15.0
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.25,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/plus-zero-keeps-units/model.yaml",
+ "results": {},
+ "scenarios": {
+  "reference": {
+   "overrides": {},
+   "point_error": {
+    "exception": "EvaluationError",
+    "message": "tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'kept' does not typecheck. `stored + 0 + disk_per_host * 0 * cores / cores * 0 / (disk_per_host / disk_per_host)` — Cannot convert from 'terabyte' (dimensionless) to 'terabyte / host' (1 / [host])"
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": false,
+  "problems": [
+   {
+    "code": "units.does-not-typecheck",
+    "message": "_builder_conformance/plus-zero-keeps-units/model.yaml: tiny: node 'kept' does not typecheck. `stored + 0 + disk_per_host * 0 * cores / cores * 0 / (disk_per_host / disk_per_host)` — Cannot convert from 'terabyte' (dimensionless) to 'terabyte / host' (1 / [host])",
+    "node": "kept",
+    "part": null,
+    "rule": "1"
+   },
+   {
+    "cause": "typecheck",
+    "code": "scenario.does-not-evaluate",
+    "message": "_builder_conformance/plus-zero-keeps-units/model.yaml: scenario 'reference' does not evaluate — tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'kept' does not typecheck. `stored + 0 + disk_per_host * 0 * cores / cores * 0 / (disk_per_host / disk_per_host)` — Cannot convert from 'terabyte' (dimensionless) to 'terabyte / host' (1 / [host])",
+    "part": null,
+    "rule": "scenarios",
+    "scenario": "reference"
+   }
+  ]
+ }
+}

@@ -1,0 +1,4 @@
+about: >-
+  Division by zero after a square root: numpy's rules in the unit pass (no raise), Python's at
+  the point (it raises).
+expect:

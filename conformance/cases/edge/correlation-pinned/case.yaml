@@ -1,0 +1,4 @@
+about: >-
+  A correlation whose inputs a scenario pins: dropped, not refused.
+expect:
+  - valid

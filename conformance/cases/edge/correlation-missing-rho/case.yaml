@@ -1,0 +1,4 @@
+about: >-
+  A correlation between two drawn inputs with no rho.
+expect:
+  - scenario.does-not-evaluate

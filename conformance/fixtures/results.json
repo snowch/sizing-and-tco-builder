@@ -5,16 +5,21 @@
    "what_this_is_about": "this corpus and this codec, and nothing else"
   },
   "git_revision": "c264eea",
+  "kind": "measurement",
   "produced_by": {
    "codec": "zlib 1.3, DEFLATE level 6",
    "corpus": "bench.measure.log_lines — JSON service logs, five templates, six services, 128-bit trace ids, seeds 0-7",
    "stack": "python zlib (DEFLATE level 6)"
   },
-  "sd": 0.004369766640344477,
-  "stack": "python zlib (DEFLATE level 6)",
+  "summary": {
+   "sd": 0.004369766640344477,
+   "value": 32.35555625
+  },
   "target": "corpus",
-  "unit": "byte/line",
-  "value": 32.35555625
+  "units": {
+   "sd": "byte/line",
+   "value": "byte/line"
+  }
  },
  "metrics-sample-bytes": {
   "conditions": {
@@ -22,16 +27,21 @@
    "what_moves_it_most": "how fast the values move. A flat gauge costs about a byte; a noisy one costs most of a float"
   },
   "git_revision": "c264eea",
+  "kind": "measurement",
   "produced_by": {
    "codec": "bench.measure.encode_series — delta-of-delta timestamps, XOR values, byte-aligned",
    "corpus": "bench.measure.metric_samples — 400 series x 500 points, 15/30/60s scrape intervals with occasional jitter, lognormal random-walk values, seeds 0-7",
    "stack": "this repository's encoder, not any product's"
   },
-  "sd": 0.0009068057272558302,
-  "stack": "this repository's encoder, not any product's",
+  "summary": {
+   "sd": 0.0009068057272558302,
+   "value": 9.369958333333333
+  },
   "target": "corpus",
-  "unit": "byte/sample",
-  "value": 9.369958333333333
+  "units": {
+   "sd": "byte/sample",
+   "value": "byte/sample"
+  }
  },
  "records-compression": {
   "conditions": {
@@ -41,32 +51,42 @@
    "what_this_is_about": "this corpus and this codec, and nothing else"
   },
   "git_revision": "c264eea",
+  "kind": "measurement",
   "produced_by": {
    "codec": "zlib 1.3, DEFLATE level 6",
    "corpus": "bench.measure.application_records — JSON user profiles, orders and events in a 20/50/30 mixture, 128-bit identifiers, seeds 0-7",
    "mixture": "20% user profiles, 50% orders with 1-6 lines, 30% events",
    "stack": "python zlib (DEFLATE level 6)"
   },
-  "sd": 0.000854733297721808,
-  "stack": "python zlib (DEFLATE level 6)",
+  "summary": {
+   "sd": 0.000854733297721808,
+   "value": 3.5828437962482282
+  },
   "target": "corpus",
-  "unit": "dimensionless",
-  "value": 3.5828437962482282
+  "units": {
+   "sd": "dimensionless",
+   "value": "dimensionless"
+  }
  },
  "traces-span-bytes": {
   "conditions": {
    "what_moves_it_most": "the attribute count distribution, which is an assumption here and is the first thing to replace with an observation of your own traces"
   },
   "git_revision": "c264eea",
+  "kind": "measurement",
   "produced_by": {
    "codec": "zlib 1.3, DEFLATE level 6",
    "corpus": "bench.measure.trace_spans — spans with 2-14 attributes drawn from a ten-key vocabulary, 128-bit trace ids, seeds 0-7",
    "stack": "python zlib (DEFLATE level 6)"
   },
-  "sd": 0.017268804737545856,
-  "stack": "python zlib (DEFLATE level 6)",
+  "summary": {
+   "sd": 0.017268804737545856,
+   "value": 73.63665833333333
+  },
   "target": "corpus",
-  "unit": "byte/span",
-  "value": 73.63665833333333
+  "units": {
+   "sd": "byte/span",
+   "value": "byte/span"
+  }
  }
 }

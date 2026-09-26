@@ -1,0 +1,5 @@
+about: >-
+  A value beside a shape (the value wins), a triangle with no width, and a uniform with the
+  wrong parameter names.
+expect:
+  - scenario.does-not-evaluate

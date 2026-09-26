@@ -1,0 +1,5 @@
+about: >-
+  What str() and float() make of YAML's types: a number as a string, a source written as a
+  number, an empty source (the text None), decided: yes (the text True), a blank unit, an empty
+  reason and a zero margin.
+expect:

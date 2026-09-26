@@ -1,0 +1,3 @@
+about: >-
+  outputs written as one string rather than a list: Python iterates its characters.
+expect:

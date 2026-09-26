@@ -1,0 +1,1126 @@
+{
+ "probes": [
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "bool",
+       "value": true
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: yes"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "bool",
+       "value": true
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: on"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "str",
+       "value": "n"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: n"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "bool",
+       "value": false
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: No"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "str",
+       "value": "1e3"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 1e3"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "1000.0"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 1.0e+3"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "str",
+       "value": "1.5e3"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 1.5e3"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "int",
+       "value": "8"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 010"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "str",
+       "value": "0o10"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 0o10"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "int",
+       "value": "5"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 0b101"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "int",
+       "value": "31"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 0x1F"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "int",
+       "value": "90"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 1:30"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "90.5"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 1:30.5"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "int",
+       "value": "1000"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 1_000"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "1000.5"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 1_000.5"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "0.5"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: .5"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "1.0"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 1."
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "3.0"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 3.0"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "int",
+       "value": "-2"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: -2"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "int",
+       "value": "7"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: +7"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "0.1"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 0.1"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "str",
+       "value": "1e-7"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 1e-7"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "1e-07"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 0.0000001"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "1.2345678901234567e+19"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 12345678901234567890.0"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "int",
+       "value": "100000000000000000000"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 100000000000000000000"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "date",
+       "value": "2026-09-26"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 2026-09-26"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "date",
+       "value": "2026-09-26 10:00:00"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 2026-09-26 10:00:00"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "none"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: ~"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "none"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: null"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "none"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v:"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "str",
+       "value": ""
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: ''"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "nan"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: .nan"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "inf"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: .inf"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "-inf"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: -.inf"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "str",
+       "value": "1"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: '1'"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "str",
+       "value": "yes"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: \"yes\""
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "str",
+       "value": "12"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: !!str 12"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "float",
+       "value": "12.0"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: !!float 12"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "int",
+       "value": "12"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: !!int '12'"
+  },
+  {
+   "message": "could not determine a constructor for the tag 'tag:yaml.org,2002:python/name:os.system'",
+   "ok": false,
+   "yaml": "v: !!python/name:os.system"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "a"
+      },
+      {
+       "py": "int",
+       "value": "2"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "a: 1\na: 2"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "a"
+      },
+      {
+       "items": [
+        [
+         {
+          "py": "str",
+          "value": "k"
+         },
+         {
+          "py": "int",
+          "value": "1"
+         }
+        ]
+       ],
+       "py": "dict"
+      }
+     ],
+     [
+      {
+       "py": "str",
+       "value": "b"
+      },
+      {
+       "items": [
+        [
+         {
+          "py": "str",
+          "value": "k"
+         },
+         {
+          "py": "int",
+          "value": "1"
+         }
+        ]
+       ],
+       "py": "dict"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "a: &x {k: 1}\nb: *x"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "base"
+      },
+      {
+       "items": [
+        [
+         {
+          "py": "str",
+          "value": "x"
+         },
+         {
+          "py": "int",
+          "value": "1"
+         }
+        ],
+        [
+         {
+          "py": "str",
+          "value": "y"
+         },
+         {
+          "py": "int",
+          "value": "2"
+         }
+        ]
+       ],
+       "py": "dict"
+      }
+     ],
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "items": [
+        [
+         {
+          "py": "str",
+          "value": "x"
+         },
+         {
+          "py": "int",
+          "value": "1"
+         }
+        ],
+        [
+         {
+          "py": "str",
+          "value": "y"
+         },
+         {
+          "py": "int",
+          "value": "3"
+         }
+        ]
+       ],
+       "py": "dict"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "base: &b {x: 1, y: 2}\nv:\n  <<: *b\n  y: 3"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "items": [
+        [
+         {
+          "py": "str",
+          "value": "x"
+         },
+         {
+          "py": "int",
+          "value": "1"
+         }
+        ],
+        [
+         {
+          "py": "str",
+          "value": "z"
+         },
+         {
+          "py": "int",
+          "value": "3"
+         }
+        ]
+       ],
+       "py": "dict"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v:\n  <<: [{x: 1}, {x: 2, z: 3}]"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "str",
+       "value": "folded text"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: >-\n  folded\n  text"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "str",
+       "value": "kept\nlines\n"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: |\n  kept\n  lines\n"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "items": [
+        {
+         "py": "int",
+         "value": "1"
+        },
+        {
+         "py": "str",
+         "value": "two"
+        },
+        {
+         "py": "float",
+         "value": "3.0"
+        }
+       ],
+       "py": "list"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: [1, two, 3.0]"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "items": [
+        [
+         {
+          "py": "str",
+          "value": "a"
+         },
+         {
+          "py": "int",
+          "value": "1"
+         }
+        ]
+       ],
+       "py": "dict"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: {a: 1}"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     {
+      "py": "str",
+      "value": "a"
+     },
+     {
+      "py": "str",
+      "value": "b"
+     }
+    ],
+    "py": "list"
+   },
+   "yaml": "- a\n- b"
+  },
+  {
+   "ok": true,
+   "value": {
+    "py": "str",
+    "value": "just text"
+   },
+   "yaml": "just text"
+  },
+  {
+   "ok": true,
+   "value": {
+    "py": "none"
+   },
+   "yaml": ""
+  },
+  {
+   "ok": true,
+   "value": {
+    "py": "none"
+   },
+   "yaml": "# only a comment\n"
+  },
+  {
+   "message": "expected a single document in the stream",
+   "ok": false,
+   "yaml": "a: 1\n---\nb: 2"
+  },
+  {
+   "message": "while parsing a flow sequence",
+   "ok": false,
+   "yaml": "v: [unclosed"
+  },
+  {
+   "message": "while parsing a flow mapping",
+   "ok": false,
+   "yaml": "v: {a: 1"
+  },
+  {
+   "message": "while scanning a quoted scalar",
+   "ok": false,
+   "yaml": "v: 'unclosed"
+  },
+  {
+   "message": "while scanning for the next token",
+   "ok": false,
+   "yaml": "\tv: 1"
+  },
+  {
+   "message": "while scanning for the next token",
+   "ok": false,
+   "yaml": "v: @reserved"
+  },
+  {
+   "message": "while constructing a mapping",
+   "ok": false,
+   "yaml": "? [a, b]\n: 1"
+  },
+  {
+   "ok": true,
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "v"
+      },
+      {
+       "py": "int",
+       "value": "3"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "v: 3 # a comment"
+  },
+  {
+   "message": "mapping values are not allowed here",
+   "ok": false,
+   "yaml": "v: a: b"
+  }
+ ]
+}

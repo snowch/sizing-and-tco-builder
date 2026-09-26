@@ -1,0 +1,4 @@
+about: >-
+  A scenario pinning a ceiling (the book lets it, and ignores it), a measured constant, and an
+  input; another that empties the fleet so the ceiling's limit divides by zero.
+expect:

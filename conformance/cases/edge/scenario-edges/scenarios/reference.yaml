@@ -1,0 +1,9 @@
+scenario: reference
+title: Reference
+because: the model as declared
+samples: 1000
+seed: 20260916
+overrides:
+  fill: 3
+  compression: 2
+  stored: 20

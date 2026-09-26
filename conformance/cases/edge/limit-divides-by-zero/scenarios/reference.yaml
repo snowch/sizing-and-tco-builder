@@ -1,0 +1,8 @@
+scenario: reference
+title: Reference
+because: the model as declared
+samples: 1000
+seed: 20260916
+overrides:
+  queueing_margin: 0.1
+  cores: 0

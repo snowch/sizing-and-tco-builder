@@ -140,3 +140,15 @@ book's own constants or a ceiling.
 *Suggested:* a way for a model to carry a result beside it (for example `results/` next to
 `scenarios/`, read before `bench/results/`), held to the same disclosure rules as an `estate`
 result. The builder would then write one.
+
+### 13. An empty `source:` or `because:` passes as the text "None"
+
+A provenance written `source:` with nothing after it, or a ceiling's `because:` left empty, is
+YAML's null. The loader calls `str()` on it and gets `"None"`, which is not blank, so rules 2 and 6
+pass: an input with no source and a ceiling with no reason both build. The same `str()` turns
+`decided: yes` into `"True"`, which rule 2 does catch.
+
+*Why it matters:* "every number says where it came from" is invariant 4, and an empty line is the
+commonest way to leave it unsaid.
+*Case:* `edge/types-in-the-yaml`.
+*Suggested:* treat a null source, reason or unit as missing rather than as the text `None`.

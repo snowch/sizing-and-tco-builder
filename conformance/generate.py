@@ -105,15 +105,18 @@ def outside(check: bool) -> int:
     pin = lock()
     ensure_checkout(pin["repository"], pin["commit"])
     python = ensure_environment()
-    target = Path(tempfile.mkdtemp(prefix="fixtures-")) if check else FIXTURES
+    # Always into a fresh directory: a run that stops half way must not leave the committed
+    # fixtures half written.
+    target = Path(tempfile.mkdtemp(prefix="fixtures-")) / "fixtures"
     try:
         run(str(python), str(Path(__file__).resolve()), "--inside", "--out", str(target))
-        if not check:
-            return 0
-        return compare(target, FIXTURES)
-    finally:
         if check:
-            shutil.rmtree(target, ignore_errors=True)
+            return compare(target, FIXTURES)
+        shutil.rmtree(FIXTURES, ignore_errors=True)
+        shutil.copytree(target, FIXTURES)
+        return 0
+    finally:
+        shutil.rmtree(target.parent, ignore_errors=True)
 
 
 #: How close a regenerated number must be to the committed one. Not zero: numpy's ``log`` and
@@ -227,8 +230,9 @@ CAUSES: tuple[tuple[str, str], ...] = (
     # A measured node whose stamped result has no `summary.value`: the book reads it and gets a
     # KeyError, whose text is just the key.
     ("no-measured-value", r"does not evaluate — 'value'$"),
-    ("distribution", r"triangular needs|lognormal needs|normal needs|a distribution declares exactly one shape"),
-    ("correlation", r"correlation names|correlation between .* is .*outside|not mutually consistent|correlation matrix is"),
+    ("distribution", r"_ppf\(\) (?:got an unexpected keyword argument|missing \d+ required positional argument)|triangular needs|lognormal needs|normal needs|a distribution declares exactly one shape"),
+    # A pair missing `a`, `b` or `rho`: the book indexes it and gets a KeyError, whose text is the key.
+    ("correlation", r"does not evaluate — '(?:a|b|rho)'$|correlation names|correlation between .* is .*outside|not mutually consistent|correlation matrix is"),
     ("arithmetic", r"division by zero|math domain error|Result too large|Numerical result out of range|cannot convert float|complex|out of range|overflow"),
 )
 
@@ -609,6 +613,42 @@ def unit_probes(units, strings: list[str]) -> list[dict]:
     return out
 
 
+def typed(value):
+    """A Python value with its type kept, so the engine is compared on what the book's str() and
+    float() will see: 3 and 3.0 are different values, and so are True and 1."""
+    import datetime
+
+    if value is None:
+        return {"py": "none"}
+    if isinstance(value, bool):
+        return {"py": "bool", "value": value}
+    if isinstance(value, int):
+        return {"py": "int", "value": str(value)}
+    if isinstance(value, float):
+        return {"py": "float", "value": repr(value)}
+    if isinstance(value, str):
+        return {"py": "str", "value": value}
+    if isinstance(value, datetime.date):
+        return {"py": "date", "value": str(value)}
+    if isinstance(value, list):
+        return {"py": "list", "items": [typed(v) for v in value]}
+    if isinstance(value, dict):
+        return {"py": "dict", "items": [[typed(k), typed(v)] for k, v in value.items()]}
+    return {"py": type(value).__name__, "value": repr(value)}
+
+
+def yaml_probes(strings: list[str]) -> list[dict]:
+    import yaml
+
+    out = []
+    for text in strings:
+        try:
+            out.append({"yaml": text, "ok": True, "value": typed(yaml.safe_load(text))})
+        except yaml.YAMLError as exc:
+            out.append({"yaml": text, "ok": False, "message": str(exc).splitlines()[0]})
+    return out
+
+
 def formula_probes(expr, strings: list[str]) -> list[dict]:
     out = []
     for text in strings:
@@ -626,8 +666,10 @@ def formula_probes(expr, strings: list[str]) -> list[dict]:
 def measured_catalogue() -> dict:
     """Every stamped measurement a ``measured`` node can name, with what it was measured on.
 
-    The builder offers these and nothing else. Results of ``kind: model`` are computations, not
-    measurements, and have no ``summary.value`` to read.
+    The builder offers these and nothing else. Each is the stamped payload cut down to what the
+    toolkit reads (``summary``'s value and standard error, ``units``' value) and what a reader
+    should see beside it (the target, what produced it, the conditions it holds under). Results of
+    ``kind: model`` are computations, not measurements, and have no ``summary.value`` to read.
     """
     out = {}
     for path in sorted((CHECKOUT / "bench" / "results").glob("*.json")):
@@ -636,11 +678,10 @@ def measured_catalogue() -> dict:
         if payload.get("kind") != "measurement" or "value" not in summary:
             continue
         out[path.stem] = {
-            "value": summary["value"],
-            "sd": summary.get("sd"),
-            "unit": payload.get("units", {}).get("value"),
+            "kind": payload["kind"],
             "target": payload.get("target"),
-            "stack": payload.get("produced_by", {}).get("stack"),
+            "summary": {key: summary[key] for key in ("value", "sd") if key in summary},
+            "units": {key: payload.get("units", {})[key] for key in ("value", "sd") if key in payload.get("units", {})},
             "produced_by": payload.get("produced_by", {}),
             "conditions": payload.get("conditions", {}),
             "git_revision": payload.get("git_revision"),
@@ -711,6 +752,7 @@ def inside(out: Path) -> int:
         "functions": sorted(expr.FUNCTIONS),
         "probes": formula_probes(expr, probe_lines("formulas.txt")),
     })
+    write(out / "yaml.json", {"probes": yaml_probes(probe_lines("yaml.txt"))})
     write(out / "results.json", measured_catalogue())
     write(out / "outline.json", outline())
     write(out / "manifest.json", {
