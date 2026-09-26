@@ -1041,6 +1041,604 @@
     "name": "b",
     "op": "ref"
    }
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "a +\nb",
+   "message": "formula: 'a +\\nb' does not parse (invalid syntax)",
+   "ok": false
+  },
+  {
+   "formula": "(a +\n b)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     },
+     {
+      "name": "b",
+      "op": "ref"
+     }
+    ],
+    "op": "+"
+   }
+  },
+  {
+   "formula": "a \\\n + b",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     },
+     {
+      "name": "b",
+      "op": "ref"
+     }
+    ],
+    "op": "+"
+   }
+  },
+  {
+   "formula": "a  # a comment",
+   "ok": true,
+   "tree": {
+    "name": "a",
+    "op": "ref"
+   }
+  },
+  {
+   "formula": "a\n",
+   "ok": true,
+   "tree": {
+    "name": "a",
+    "op": "ref"
+   }
+  },
+  {
+   "formula": "\n a",
+   "ok": true,
+   "tree": {
+    "name": "a",
+    "op": "ref"
+   }
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "a\tb",
+   "message": "formula: 'a\\tb' does not parse (invalid syntax)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "(a := b)",
+   "message": "formula: '(a := b)' uses NamedExpr, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "f\"{a}\"",
+   "message": "formula: 'f\"{a}\"' uses JoinedStr, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-constant",
+   "formula": "b\"x\"",
+   "message": "formula: b'x' is not a number",
+   "ok": false
+  },
+  {
+   "code": "load.formula-constant",
+   "formula": "...",
+   "message": "formula: Ellipsis is not a number",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "a if b",
+   "message": "formula: 'a if b' does not parse (expected 'else' after 'if' expression)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "(yield a)",
+   "message": "formula: '(yield a)' uses Yield, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "await a",
+   "message": "formula: 'await a' uses Await, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "lambda x: x",
+   "message": "formula: 'lambda x: x' uses Lambda, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "{a: b}",
+   "message": "formula: '{a: b}' uses Dict, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "{a}",
+   "message": "formula: '{a}' uses Set, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "{}",
+   "message": "formula: '{}' uses Dict, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "[x for x in y]",
+   "message": "formula: '[x for x in y]' uses ListComp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "{x for x in y}",
+   "message": "formula: '{x for x in y}' uses SetComp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-function",
+   "formula": "(a)(b)",
+   "message": "formula: '(a)(b)' calls 'a'. A formula may call only ceil, exp, floor, log, max, min, sqrt — anything else would have to exist in the browser evaluator too.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-function",
+   "formula": "max(a)(b)",
+   "message": "formula: 'max(a)(b)' calls 'that'. A formula may call only ceil, exp, floor, log, max, min, sqrt — anything else would have to exist in the browser evaluator too.",
+   "ok": false
+  },
+  {
+   "formula": "(max)(a)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "fn": "max",
+    "op": "call"
+   }
+  },
+  {
+   "code": "load.formula-keywords",
+   "formula": "max(**k)",
+   "message": "formula: max() takes positional arguments only",
+   "ok": false
+  },
+  {
+   "formula": "max(a,)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "fn": "max",
+    "op": "call"
+   }
+  },
+  {
+   "formula": "max(a, b,)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     },
+     {
+      "name": "b",
+      "op": "ref"
+     }
+    ],
+    "fn": "max",
+    "op": "call"
+   }
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "max(a b)",
+   "message": "formula: 'max(a b)' does not parse (invalid syntax. Perhaps you forgot a comma?)",
+   "ok": false
+  },
+  {
+   "formula": "1e400 * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": {
+       "nonfinite": "inf"
+      }
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "code": "load.malformed",
+   "formula": "100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+   "message": "OverflowError: int too large to convert to float",
+   "ok": false
+  },
+  {
+   "formula": "a ** -b",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "name": "b",
+        "op": "ref"
+       }
+      ],
+      "op": "neg"
+     }
+    ],
+    "op": "**"
+   }
+  },
+  {
+   "formula": "-a ** -b",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "a",
+        "op": "ref"
+       },
+       {
+        "args": [
+         {
+          "name": "b",
+          "op": "ref"
+         }
+        ],
+        "op": "neg"
+       }
+      ],
+      "op": "**"
+     }
+    ],
+    "op": "neg"
+   }
+  },
+  {
+   "formula": "2 ** -1",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 2.0
+     },
+     {
+      "args": [
+       {
+        "op": "const",
+        "value": 1.0
+       }
+      ],
+      "op": "neg"
+     }
+    ],
+    "op": "**"
+   }
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a ^ b",
+   "message": "formula: 'a ^ b' uses BinOp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a | b",
+   "message": "formula: 'a | b' uses BinOp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a is b",
+   "message": "formula: 'a is b' uses Compare, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a is not b",
+   "message": "formula: 'a is not b' uses Compare, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a not in b",
+   "message": "formula: 'a not in b' uses Compare, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a in b",
+   "message": "formula: 'a in b' uses Compare, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "x[1:2]",
+   "message": "formula: 'x[1:2]' uses Subscript, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "formula": "ﬁ",
+   "ok": true,
+   "tree": {
+    "name": "fi",
+    "op": "ref"
+   }
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "1if a else b",
+   "message": "formula: '1if a else b' uses IfExp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "formula": "0_0",
+   "ok": true,
+   "tree": {
+    "op": "const",
+    "value": 0.0
+   }
+  },
+  {
+   "formula": "00",
+   "ok": true,
+   "tree": {
+    "op": "const",
+    "value": 0.0
+   }
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "1_",
+   "message": "formula: '1_' does not parse (invalid decimal literal)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "1__0",
+   "message": "formula: '1__0' does not parse (invalid decimal literal)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "0x",
+   "message": "formula: '0x' does not parse (invalid hexadecimal literal)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "1e",
+   "message": "formula: '1e' does not parse (invalid decimal literal)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "a.",
+   "message": "formula: 'a.' does not parse (invalid syntax)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "a..b",
+   "message": "formula: 'a..b' does not parse (invalid syntax)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "'unterminated",
+   "message": "formula: \"'unterminated\" does not parse (unterminated string literal (detected at line 1))",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "(",
+   "message": "formula: '(' does not parse ('(' was never closed)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": ")",
+   "message": "formula: ')' does not parse (unmatched ')')",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a,",
+   "message": "formula: 'a,' uses Tuple, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "*a",
+   "message": "formula: '*a' does not parse (invalid syntax)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "a = b",
+   "message": "formula: 'a = b' does not parse (invalid syntax)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "a; b",
+   "message": "formula: 'a; b' does not parse (invalid syntax)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "a:b",
+   "message": "formula: 'a:b' does not parse (invalid syntax)",
+   "ok": false
+  },
+  {
+   "formula": ".5e-3 * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 0.0005
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "5e+2 * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 500.0
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "ceil",
+   "ok": true,
+   "tree": {
+    "name": "ceil",
+    "op": "ref"
+   }
+  },
+  {
+   "formula": "ceil()",
+   "ok": true,
+   "tree": {
+    "args": [],
+    "fn": "ceil",
+    "op": "call"
+   }
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a @ b",
+   "message": "formula: 'a @ b' uses BinOp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a // -b",
+   "message": "formula: 'a // -b' uses BinOp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "formula": "(-1) ** 0.5",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "op": "const",
+        "value": 1.0
+       }
+      ],
+      "op": "neg"
+     },
+     {
+      "op": "const",
+      "value": 0.5
+     }
+    ],
+    "op": "**"
+   }
+  },
+  {
+   "formula": "a**b**-c",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "name": "b",
+        "op": "ref"
+       },
+       {
+        "args": [
+         {
+          "name": "c",
+          "op": "ref"
+         }
+        ],
+        "op": "neg"
+       }
+      ],
+      "op": "**"
+     }
+    ],
+    "op": "**"
+   }
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "not",
+   "message": "formula: 'not' does not parse (invalid syntax)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "a b c",
+   "message": "formula: 'a b c' does not parse (invalid syntax)",
+   "ok": false
   }
  ]
 }

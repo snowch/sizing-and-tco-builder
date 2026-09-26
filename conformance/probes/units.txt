@@ -129,3 +129,68 @@ failure
 failure/year
 drive
 label
+# Harder spellings, to hold the port of Pint's parser to its quirks:
+kg m/s^2
+kg·m
+m²
+s⁻¹
+°C
+degC/s
+1/(s*host)
+request/second/second
+2*s
+10**3*m
+s/s
+second/second
+kilo
+k
+Kilobyte
+minutes
+mins
+hrs
+B/s
+Mb
+Mbit
+mbar
+dimensionless*TB
+None
+none
+nan
+inf
+request**0.5
+request**(1/2)
+(request
+request)
+m**-2
+m^-2
+sq m
+square meter
+m squared
+cubic foot
+‰
+2×3
+3kg
+3 kg
+request per hour per host
+(core*second)/(request*host)
+TB-month
+TB month
+TB*month
+0x10*s
+1_000*s
+1e3*s
+.5*s
+USD$
+request?
+s//s
+s%s
+-s
++s
+--s
+s**s
+2**s
+µs
+μs
+us
+ohm
+Ω

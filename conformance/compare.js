@@ -29,7 +29,20 @@ export function close(want, got, relative = RELATIVE, absolute = ABSOLUTE) {
   return Math.abs(got - want) <= relative * Math.abs(want) + absolute;
 }
 
-const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+/* JSON with sorted keys: the fixtures were written sorted, and an engine need not build its
+ * objects in the same key order to mean the same thing. */
+function canonical(value) {
+  if (typeof value === "number" && !Number.isFinite(value)) {
+    return { nonfinite: Number.isNaN(value) ? "nan" : value > 0 ? "inf" : "-inf" };
+  }
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.keys(value).sort().map((k) => [k, canonical(value[k])]));
+  }
+  return value;
+}
+
+const same = (a, b) => JSON.stringify(canonical(a)) === JSON.stringify(canonical(b));
 
 function dimensions(d) {
   return Object.fromEntries(Object.entries(d ?? {}).filter(([, v]) => v !== 0).sort());

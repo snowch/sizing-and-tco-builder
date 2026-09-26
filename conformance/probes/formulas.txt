@@ -76,3 +76,71 @@ _hidden
 café
 a
  + b
+# Harder ones. A line starting json: is a JSON string, so a probe can hold a newline.
+json:"a +\nb"
+json:"(a +\n b)"
+json:"a \\\n + b"
+json:"a  # a comment"
+json:"a\n"
+json:"\n a"
+json:"a\tb"
+(a := b)
+f"{a}"
+b"x"
+...
+a if b
+(yield a)
+await a
+lambda x: x
+{a: b}
+{a}
+{}
+[x for x in y]
+{x for x in y}
+(a)(b)
+max(a)(b)
+(max)(a)
+max(**k)
+max(a,)
+max(a, b,)
+max(a b)
+1e400 * a
+100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+a ** -b
+-a ** -b
+2 ** -1
+a ^ b
+a | b
+a is b
+a is not b
+a not in b
+a in b
+x[1:2]
+ﬁ
+1if a else b
+0_0
+00
+1_
+1__0
+0x
+1e
+a.
+a..b
+'unterminated
+(
+)
+a,
+*a
+a = b
+a; b
+a:b
+.5e-3 * a
+5e+2 * a
+ceil
+ceil()
+a @ b
+a // -b
+(-1) ** 0.5
+a**b**-c
+not
+a b c

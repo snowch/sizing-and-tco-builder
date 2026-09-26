@@ -547,38 +547,38 @@ MISMATCHED: list[str] = []
 def unit_table(units) -> dict:
     """Pint's registry, reduced to what an engine needs to parse a unit string the same way.
 
-    Every unit the registry defines, with its symbol, aliases, the factor to the registry's base
-    units and the dimensions; every prefix with its factor. The JavaScript does not copy Pint's
-    definitions file, it reads this, so a Pint upgrade in the book arrives as new fixtures.
+    From a fresh registry, not the one the cases have used: Pint adds each prefixed unit it meets
+    to its table, so a used registry depends on the order the cases ran in.
+
+    ``keys`` is every string Pint looks a unit up by (names, symbols and aliases) with the unit it
+    names. ``prefixes`` and ``suffixes`` are in Pint's own order, because Pint takes the *first*
+    reading of an ambiguous string (``min`` is a minute, not a milli-inch) and the order decides
+    which is first. ``units`` holds, for every unit, the factor to the registry's base units, its
+    dimensions, and whether it converts by a factor at all. The engine does not carry a copy of
+    Pint's definitions: it reads this.
     """
-    ureg = units.UNITS
-    table: dict = {"units": {}, "prefixes": {}, "suffixes": sorted(ureg._suffixes)}
-    for name, definition in sorted(ureg._units.items()):
-        if name != definition.name:
-            continue  # symbols and aliases are listed under the unit they name
-        converter = type(definition.converter).__name__
-        entry = {
-            "symbol": definition.symbol,
-            "aliases": sorted(a for a in definition.aliases if a != name),
-            "converter": {"ScaleConverter": "scale", "OffsetConverter": "offset",
-                          "LogarithmicConverter": "logarithmic"}.get(converter, converter),
-        }
+    ureg = units.registry()
+    table: dict = {
+        "keys": {key: definition.name for key, definition in sorted(ureg._units.items())},
+        "prefixes": [
+            [key, definition.name, float(definition.converter.scale)]
+            for key, definition in ureg._prefixes.items()
+        ],
+        "suffixes": [[key, value] for key, value in ureg._suffixes.items()],
+        "units": {},
+    }
+    for name in sorted({definition.name for definition in ureg._units.values()}):
+        definition = ureg._units[name]
+        entry = {"multiplicative": bool(definition.is_multiplicative)}
         try:
-            factor, base = ureg.get_base_units(name)
+            factor, _ = ureg.get_base_units(name)
             entry["factor"] = float(factor)
-            entry["dimensionality"] = {str(k): float(v) for k, v in ureg.Unit(name).dimensionality.items()}
-            entry["base"] = {str(k): float(v) for k, v in base._units.items()}
+            entry["dimensionality"] = {
+                str(k): float(v) for k, v in ureg.Unit(name).dimensionality.items()
+            }
         except Exception as exc:
             entry["error"] = f"{type(exc).__name__}: {exc}"
         table["units"][name] = entry
-    for name, definition in sorted(ureg._prefixes.items()):
-        if name != definition.name:
-            continue
-        table["prefixes"][name] = {
-            "symbol": definition.symbol,
-            "aliases": sorted(definition.aliases),
-            "factor": float(definition.converter.scale),
-        }
     return table
 
 
@@ -614,9 +614,12 @@ def formula_probes(expr, strings: list[str]) -> list[dict]:
     for text in strings:
         try:
             out.append({"formula": text, "ok": True, "tree": expr.parse(text)})
-        except Exception as exc:
+        except expr.FormulaError as exc:
             code, _ = one_match(REFUSALS, str(exc), "formula refusal")
             out.append({"formula": text, "ok": False, "code": code, "message": str(exc)})
+        except Exception as exc:  # not worded as a refusal, but a refusal all the same
+            out.append({"formula": text, "ok": False, "code": "load.malformed",
+                        "message": f"{type(exc).__name__}: {exc}"})
     return out
 
 
@@ -661,8 +664,13 @@ def outline() -> list[dict]:
 
 
 def probe_lines(name: str) -> list[str]:
+    """One probe per line. A line starting ``json:`` is a JSON string, for probes with newlines."""
     lines = (PROBES / name).read_text().splitlines()
-    return [line for line in lines if line.strip() and not line.startswith("#")]
+    return [
+        json.loads(line[5:]) if line.startswith("json:") else line
+        for line in lines
+        if line.strip() and not line.startswith("#")
+    ]
 
 
 def write(path: Path, payload) -> None:

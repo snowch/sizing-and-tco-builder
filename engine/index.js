@@ -10,6 +10,9 @@
  * description of them: conformance/README.md.
  */
 
+import { FormulaError, parse as parseFormulaText } from "./formula.js";
+import { Registry } from "./units.js";
+
 export const NOT_BUILT = "the rules engine is not built yet (milestone 1)";
 
 /*
@@ -26,11 +29,30 @@ export function report(_files, _context) {
 }
 
 /* What the book's registry makes of one unit string: { ok, dimensionality, factor, multiplicative }. */
-export function parseUnit(_text, _registry) {
-  throw new Error(NOT_BUILT);
+export function parseUnit(text, table) {
+  const registry = registryFor(table);
+  try {
+    const canonical = registry.parse(text);
+    return { ok: true, unit: text, canonical, ...registry.describe(canonical) };
+  } catch (error) {
+    return { ok: false, unit: text, error: error.message };
+  }
+}
+
+const registries = new WeakMap();
+
+/* One Registry per table, so its parse cache is shared across calls. */
+export function registryFor(table) {
+  if (!registries.has(table)) registries.set(table, new Registry(table));
+  return registries.get(table);
 }
 
 /* One formula as the book's parser reads it: { ok: true, tree } or { ok: false, code }. */
-export function parseFormula(_text) {
-  throw new Error(NOT_BUILT);
+export function parseFormula(text) {
+  try {
+    return { ok: true, formula: text, tree: parseFormulaText(text) };
+  } catch (error) {
+    if (!(error instanceof FormulaError)) throw error;
+    return { ok: false, formula: text, code: error.code, message: error.message };
+  }
 }
