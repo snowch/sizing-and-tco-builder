@@ -1,0 +1,1046 @@
+{
+ "functions": [
+  "ceil",
+  "exp",
+  "floor",
+  "log",
+  "max",
+  "min",
+  "sqrt"
+ ],
+ "probes": [
+  {
+   "formula": "a",
+   "ok": true,
+   "tree": {
+    "name": "a",
+    "op": "ref"
+   }
+  },
+  {
+   "formula": "a + b",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     },
+     {
+      "name": "b",
+      "op": "ref"
+     }
+    ],
+    "op": "+"
+   }
+  },
+  {
+   "formula": "a - b - c",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "a",
+        "op": "ref"
+       },
+       {
+        "name": "b",
+        "op": "ref"
+       }
+      ],
+      "op": "-"
+     },
+     {
+      "name": "c",
+      "op": "ref"
+     }
+    ],
+    "op": "-"
+   }
+  },
+  {
+   "formula": "a * b / c",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "a",
+        "op": "ref"
+       },
+       {
+        "name": "b",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     },
+     {
+      "name": "c",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   }
+  },
+  {
+   "formula": "a / b / c",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "a",
+        "op": "ref"
+       },
+       {
+        "name": "b",
+        "op": "ref"
+       }
+      ],
+      "op": "/"
+     },
+     {
+      "name": "c",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   }
+  },
+  {
+   "formula": "a ** b ** c",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "name": "b",
+        "op": "ref"
+       },
+       {
+        "name": "c",
+        "op": "ref"
+       }
+      ],
+      "op": "**"
+     }
+    ],
+    "op": "**"
+   }
+  },
+  {
+   "formula": "-a ** 2",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "a",
+        "op": "ref"
+       },
+       {
+        "op": "const",
+        "value": 2.0
+       }
+      ],
+      "op": "**"
+     }
+    ],
+    "op": "neg"
+   }
+  },
+  {
+   "formula": "(-a) ** 2",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "a",
+        "op": "ref"
+       }
+      ],
+      "op": "neg"
+     },
+     {
+      "op": "const",
+      "value": 2.0
+     }
+    ],
+    "op": "**"
+   }
+  },
+  {
+   "formula": "-a * b",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "a",
+        "op": "ref"
+       }
+      ],
+      "op": "neg"
+     },
+     {
+      "name": "b",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "+a",
+   "ok": true,
+   "tree": {
+    "name": "a",
+    "op": "ref"
+   }
+  },
+  {
+   "formula": "--a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "a",
+        "op": "ref"
+       }
+      ],
+      "op": "neg"
+     }
+    ],
+    "op": "neg"
+   }
+  },
+  {
+   "formula": "- - a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "a",
+        "op": "ref"
+       }
+      ],
+      "op": "neg"
+     }
+    ],
+    "op": "neg"
+   }
+  },
+  {
+   "formula": "a * -b",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "name": "b",
+        "op": "ref"
+       }
+      ],
+      "op": "neg"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "2 * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 2.0
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "2.5 * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 2.5
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "1e3 * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 1000.0
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "1E-3 * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 0.001
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "1_000 * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 1000.0
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": ".5 * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 0.5
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "5. * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 5.0
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "0x10 * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 16.0
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "0o17 * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 15.0
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "0b101 * a",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "op": "const",
+      "value": 5.0
+     },
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "010",
+   "message": "formula: '010' does not parse (leading zeros in decimal integer literals are not permitted; use an 0o prefix for octal integers)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-constant",
+   "formula": "1j * a",
+   "message": "formula: 1j is not a number",
+   "ok": false
+  },
+  {
+   "formula": "min(a, b)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     },
+     {
+      "name": "b",
+      "op": "ref"
+     }
+    ],
+    "fn": "min",
+    "op": "call"
+   }
+  },
+  {
+   "formula": "max(a, b, c)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     },
+     {
+      "name": "b",
+      "op": "ref"
+     },
+     {
+      "name": "c",
+      "op": "ref"
+     }
+    ],
+    "fn": "max",
+    "op": "call"
+   }
+  },
+  {
+   "formula": "min(a)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "fn": "min",
+    "op": "call"
+   }
+  },
+  {
+   "formula": "max()",
+   "ok": true,
+   "tree": {
+    "args": [],
+    "fn": "max",
+    "op": "call"
+   }
+  },
+  {
+   "formula": "ceil(a / b)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "a",
+        "op": "ref"
+       },
+       {
+        "name": "b",
+        "op": "ref"
+       }
+      ],
+      "op": "/"
+     }
+    ],
+    "fn": "ceil",
+    "op": "call"
+   }
+  },
+  {
+   "formula": "floor(a)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "fn": "floor",
+    "op": "call"
+   }
+  },
+  {
+   "formula": "sqrt(a)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "fn": "sqrt",
+    "op": "call"
+   }
+  },
+  {
+   "formula": "log(a)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "fn": "log",
+    "op": "call"
+   }
+  },
+  {
+   "formula": "exp(a)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     }
+    ],
+    "fn": "exp",
+    "op": "call"
+   }
+  },
+  {
+   "formula": "ceil(busy_cores / (cores_per_host * (1 - queueing_margin)))",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "busy_cores",
+        "op": "ref"
+       },
+       {
+        "args": [
+         {
+          "name": "cores_per_host",
+          "op": "ref"
+         },
+         {
+          "args": [
+           {
+            "op": "const",
+            "value": 1.0
+           },
+           {
+            "name": "queueing_margin",
+            "op": "ref"
+           }
+          ],
+          "op": "-"
+         }
+        ],
+        "op": "*"
+       }
+      ],
+      "op": "/"
+     }
+    ],
+    "fn": "ceil",
+    "op": "call"
+   }
+  },
+  {
+   "formula": "linear_throughput / (1 + contention * (host_count - 1) + crosstalk * host_count * (host_count - 1))",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "linear_throughput",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "op": "const",
+          "value": 1.0
+         },
+         {
+          "args": [
+           {
+            "name": "contention",
+            "op": "ref"
+           },
+           {
+            "args": [
+             {
+              "name": "host_count",
+              "op": "ref"
+             },
+             {
+              "op": "const",
+              "value": 1.0
+             }
+            ],
+            "op": "-"
+           }
+          ],
+          "op": "*"
+         }
+        ],
+        "op": "+"
+       },
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "name": "crosstalk",
+            "op": "ref"
+           },
+           {
+            "name": "host_count",
+            "op": "ref"
+           }
+          ],
+          "op": "*"
+         },
+         {
+          "args": [
+           {
+            "name": "host_count",
+            "op": "ref"
+           },
+           {
+            "op": "const",
+            "value": 1.0
+           }
+          ],
+          "op": "-"
+         }
+        ],
+        "op": "*"
+       }
+      ],
+      "op": "+"
+     }
+    ],
+    "op": "/"
+   }
+  },
+  {
+   "formula": "one_host * sqrt((1 - contention) / crosstalk)",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "one_host",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "op": "const",
+            "value": 1.0
+           },
+           {
+            "name": "contention",
+            "op": "ref"
+           }
+          ],
+          "op": "-"
+         },
+         {
+          "name": "crosstalk",
+          "op": "ref"
+         }
+        ],
+        "op": "/"
+       }
+      ],
+      "fn": "sqrt",
+      "op": "call"
+     }
+    ],
+    "op": "*"
+   }
+  },
+  {
+   "formula": "(peak_request_rate_t0 / peak_to_mean + mean_request_rate) / 2",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "name": "peak_request_rate_t0",
+          "op": "ref"
+         },
+         {
+          "name": "peak_to_mean",
+          "op": "ref"
+         }
+        ],
+        "op": "/"
+       },
+       {
+        "name": "mean_request_rate",
+        "op": "ref"
+       }
+      ],
+      "op": "+"
+     },
+     {
+      "op": "const",
+      "value": 2.0
+     }
+    ],
+    "op": "/"
+   }
+  },
+  {
+   "formula": "  a + b  ",
+   "ok": true,
+   "tree": {
+    "args": [
+     {
+      "name": "a",
+      "op": "ref"
+     },
+     {
+      "name": "b",
+      "op": "ref"
+     }
+    ],
+    "op": "+"
+   }
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "a +",
+   "message": "formula: 'a +' does not parse (invalid syntax)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "a b",
+   "message": "formula: 'a b' does not parse (invalid syntax)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "(a",
+   "message": "formula: '(a' does not parse ('(' was never closed)",
+   "ok": false
+  },
+  {
+   "code": "load.formula-syntax",
+   "formula": "a)",
+   "message": "formula: 'a)' does not parse (unmatched ')')",
+   "ok": false
+  },
+  {
+   "code": "load.formula-function",
+   "formula": "abs(a)",
+   "message": "formula: 'abs(a)' calls 'abs'. A formula may call only ceil, exp, floor, log, max, min, sqrt — anything else would have to exist in the browser evaluator too.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-function",
+   "formula": "round(a)",
+   "message": "formula: 'round(a)' calls 'round'. A formula may call only ceil, exp, floor, log, max, min, sqrt — anything else would have to exist in the browser evaluator too.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-function",
+   "formula": "math.ceil(a)",
+   "message": "formula: 'math.ceil(a)' calls 'that'. A formula may call only ceil, exp, floor, log, max, min, sqrt — anything else would have to exist in the browser evaluator too.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a.b",
+   "message": "formula: 'a.b' uses Attribute, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a[0]",
+   "message": "formula: 'a[0]' uses Subscript, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a if b else c",
+   "message": "formula: 'a if b else c' uses IfExp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a > b",
+   "message": "formula: 'a > b' uses Compare, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a == b",
+   "message": "formula: 'a == b' uses Compare, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a and b",
+   "message": "formula: 'a and b' uses BoolOp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "not a",
+   "message": "formula: 'not a' uses UnaryOp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a % b",
+   "message": "formula: 'a % b' uses BinOp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a // b",
+   "message": "formula: 'a // b' uses BinOp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a @ b",
+   "message": "formula: 'a @ b' uses BinOp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a & b",
+   "message": "formula: 'a & b' uses BinOp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "a << b",
+   "message": "formula: 'a << b' uses BinOp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "~a",
+   "message": "formula: '~a' uses UnaryOp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "lambda: a",
+   "message": "formula: 'lambda: a' uses Lambda, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-keywords",
+   "formula": "max(a, key=b)",
+   "message": "formula: max() takes positional arguments only",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "max(*a)",
+   "message": "formula: 'max(*a)' uses Starred, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "min(a for a in b)",
+   "message": "formula: 'min(a for a in b)' uses GeneratorExp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "[a, b]",
+   "message": "formula: '[a, b]' uses List, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-construct",
+   "formula": "(a, b)",
+   "message": "formula: '(a, b)' uses Tuple, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "ok": false
+  },
+  {
+   "code": "load.formula-constant",
+   "formula": "'text'",
+   "message": "formula: 'text' is not a number",
+   "ok": false
+  },
+  {
+   "code": "load.formula-constant",
+   "formula": "\"text\"",
+   "message": "formula: 'text' is not a number",
+   "ok": false
+  },
+  {
+   "code": "load.formula-constant",
+   "formula": "True",
+   "message": "formula: True is not a number",
+   "ok": false
+  },
+  {
+   "code": "load.formula-constant",
+   "formula": "False",
+   "message": "formula: False is not a number",
+   "ok": false
+  },
+  {
+   "code": "load.formula-constant",
+   "formula": "None",
+   "message": "formula: None is not a number",
+   "ok": false
+  },
+  {
+   "formula": "true",
+   "ok": true,
+   "tree": {
+    "name": "true",
+    "op": "ref"
+   }
+  },
+  {
+   "formula": "x_1",
+   "ok": true,
+   "tree": {
+    "name": "x_1",
+    "op": "ref"
+   }
+  },
+  {
+   "formula": "_hidden",
+   "ok": true,
+   "tree": {
+    "name": "_hidden",
+    "op": "ref"
+   }
+  },
+  {
+   "formula": "café",
+   "ok": true,
+   "tree": {
+    "name": "café",
+    "op": "ref"
+   }
+  },
+  {
+   "formula": "a",
+   "ok": true,
+   "tree": {
+    "name": "a",
+    "op": "ref"
+   }
+  },
+  {
+   "formula": " + b",
+   "ok": true,
+   "tree": {
+    "name": "b",
+    "op": "ref"
+   }
+  }
+ ]
+}

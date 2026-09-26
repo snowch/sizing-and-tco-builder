@@ -1,0 +1,163 @@
+[
+ {
+  "number": 1,
+  "part": "Part I — What you are sizing",
+  "question": "What is a single number worth, and what can it not tell you even when the arithmetic is right?",
+  "slug": "point_estimates",
+  "title": "Point estimates"
+ },
+ {
+  "number": 2,
+  "part": "Part I — What you are sizing",
+  "question": "Which quantities actually size a system, and which ones only look as though they do?",
+  "slug": "what_a_workload_is",
+  "title": "What a workload is"
+ },
+ {
+  "number": 3,
+  "part": "Part I — What you are sizing",
+  "question": "What is the difference between a number you measured, a number you were told and a number you decided?",
+  "slug": "where_the_numbers_come_from",
+  "title": "Where the numbers come from"
+ },
+ {
+  "number": 4,
+  "part": "Part I — What you are sizing",
+  "question": "Which number in a demand curve sizes you, and what is a five-year growth rate actually a claim about?",
+  "slug": "peak_mean_and_growth",
+  "title": "Peak, mean and growth"
+ },
+ {
+  "number": 5,
+  "part": "Part II — Ceilings",
+  "question": "What can you infer about a system from the one relationship that is always true, and what can you not?",
+  "slug": "littles_law",
+  "title": "Little's law"
+ },
+ {
+  "number": 6,
+  "part": "Part II — Ceilings",
+  "question": "Why does response time climb long before a device is busy, and what does headroom actually buy?",
+  "slug": "queueing_and_the_knee",
+  "title": "Queueing, and the knee"
+ },
+ {
+  "number": 7,
+  "part": "Part II — Ceilings",
+  "question": "How far does a system scale, and how would you find out from the two measurements you actually have?",
+  "slug": "when_adding_servers_stops_helping",
+  "title": "When adding servers stops helping"
+ },
+ {
+  "number": 8,
+  "part": "Part II — Ceilings",
+  "question": "Which ceilings can a chain of multiplications not model at all?",
+  "slug": "regime_changes",
+  "title": "Regime changes"
+ },
+ {
+  "number": 9,
+  "part": "Part III — Sizing",
+  "question": "How far is what you buy from what you can use?",
+  "slug": "capacity",
+  "title": "Capacity"
+ },
+ {
+  "number": 10,
+  "part": "Part III — Sizing",
+  "question": "When three independent chains each demand a different size, which one are you actually buying?",
+  "slug": "bandwidth_and_the_binding_constraint",
+  "title": "Three chains, and the binding constraint"
+ },
+ {
+  "number": 11,
+  "part": "Part III — Sizing",
+  "question": "Why is headroom a rule rather than a number?",
+  "slug": "headroom_and_failure_domains",
+  "title": "Headroom and failure domains"
+ },
+ {
+  "number": 12,
+  "part": "Part III — Sizing",
+  "question": "What does the whole chain produce, and how much of it would you defend?",
+  "slug": "the_sizing_model",
+  "title": "The sizing model"
+ },
+ {
+  "number": 13,
+  "part": "Part IV — Uncertainty",
+  "question": "The sizing model has produced a host count. How sure are we?",
+  "slug": "monte_carlo",
+  "title": "Monte Carlo"
+ },
+ {
+  "number": 14,
+  "part": "Part IV — Uncertainty",
+  "question": "That interval assumed every input moves on its own, and that more samples would settle it. Are either of those true?",
+  "slug": "correlation_and_convergence",
+  "title": "Correlation and convergence"
+ },
+ {
+  "number": 15,
+  "part": "Part V — Cost",
+  "question": "What do you pay once, what do you pay every month, and what does this book deliberately not model?",
+  "slug": "capex_opex_and_lifecycle",
+  "title": "Capex, opex and where the total stops"
+ },
+ {
+  "number": 16,
+  "part": "Part V — Cost",
+  "question": "What changes when watts are the binding constraint rather than money?",
+  "slug": "power_first",
+  "title": "Power first"
+ },
+ {
+  "number": 17,
+  "part": "Part V — Cost",
+  "question": "What does a cost per unit have to have before it means anything?",
+  "slug": "unit_economics",
+  "title": "Unit economics"
+ },
+ {
+  "number": 18,
+  "part": "Part V — Cost",
+  "question": "How does a cost model consume a sizing model's output without swallowing its uncertainty?",
+  "slug": "the_five_year_model",
+  "title": "The five-year model"
+ },
+ {
+  "number": 19,
+  "part": "Part VI — What the answer rests on",
+  "question": "Which input should you go and measure first, and how would the model tell you?",
+  "slug": "which_input_is_the_answer",
+  "title": "Which input to go and measure"
+ },
+ {
+  "number": 20,
+  "part": "Part VI — What the answer rests on",
+  "question": "How do you find the error that no amount of sampling can see?",
+  "slug": "the_missing_node",
+  "title": "The missing node"
+ },
+ {
+  "number": 21,
+  "part": "Part VII — Presenting an interval",
+  "question": "How do you present an interval to somebody who has asked you for a number?",
+  "slug": "a_tco_for_finance",
+  "title": "A TCO for a finance audience"
+ },
+ {
+  "number": 22,
+  "part": "Part VII — Presenting an interval",
+  "question": "Two quotes for the same workload, each with an interval on it. Which is cheaper, and how often would that turn out to be wrong?",
+  "slug": "comparing_two_tcos",
+  "title": "Comparing two TCOs"
+ },
+ {
+  "number": 23,
+  "part": "Part VIII — Afterwards",
+  "question": "The design failed. Can the model say why, and what can it never say?",
+  "slug": "what_the_model_got_wrong",
+  "title": "What the model got wrong"
+ }
+]

@@ -1,0 +1,16 @@
+{
+ "about": "The nodes key holds a list rather than a mapping of names to nodes.",
+ "files": {
+  "model.yaml": "model: tiny\ntitle: Listed nodes\ncurrency: USD\nnodes:\n  - request_rate\n  - cores\noutputs: []\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "invalid/nodes-not-a-mapping",
+ "load": {
+  "code": "load.malformed",
+  "exception": "AttributeError",
+  "message": "'list' object has no attribute 'items'",
+  "ok": false
+ },
+ "path": "_builder_conformance/nodes-not-a-mapping/model.yaml",
+ "results": {}
+}

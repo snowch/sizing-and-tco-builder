@@ -1,0 +1,305 @@
+{
+ "about": "One input of each shape, each named in its source, with one correlation.",
+ "files": {
+  "model.yaml": "model: tiny\ntitle: Four shapes\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  u_in:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {uniform: {minimum: 1.0, maximum: 3.0}}\n    provenance: {kind: assumption, source: \"uniform: the bounds are all that is known\"}\n\n  t_in:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {triangular: {minimum: 1.0, likely: 2.0, maximum: 5.0}}\n    provenance: {kind: assumption, source: \"triangular: least, likely, most\"}\n\n  l_in:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {lognormal: {p10: 1.1, p90: 1.9}}\n    provenance: {kind: assumption, source: \"lognormal: it compounds\"}\n\n  n_in:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {normal: {mean: 10.0, sd: 2.0}}\n    provenance: {kind: assumption, source: \"normal: symmetric error\"}\n\n  product:\n    kind: derived\n    unit: dimensionless\n    formula: u_in * t_in * l_in * n_in\n\noutputs:\n  - utilisation\n  - product\n\ncorrelations:\n  - {a: u_in, b: l_in, rho: 0.6, because: \"stated for this case\"}\n",
+  "scenarios/pinned.yaml": "scenario: pinned\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides:\n  l_in: 1.5\n  cores: 32\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "edge/all-four-shapes",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "definitional",
+  "correlations": [
+   {
+    "a": "u_in",
+    "b": "l_in",
+    "because": "stated for this case",
+    "rho": 0.6
+   }
+  ],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "cores",
+   "l_in",
+   "n_in",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "t_in",
+   "u_in",
+   "product",
+   "utilisation"
+  ],
+  "outputs": [
+   "utilisation",
+   "product"
+  ],
+  "title": "Four shapes",
+  "unit_problems": 0,
+  "unmeasured": []
+ },
+ "nodes": {
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "l_in": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": {
+    "lognormal": {
+     "p10": 1.1,
+     "p90": 1.9
+    }
+   },
+   "kind": "input",
+   "magnitude": 1.445683229480096,
+   "provenance": {
+    "kind": "assumption",
+    "source": "lognormal: it compounds"
+   },
+   "range": null,
+   "unit": "dimensionless",
+   "value": null
+  },
+  "n_in": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": {
+    "normal": {
+     "mean": 10.0,
+     "sd": 2.0
+    }
+   },
+   "kind": "input",
+   "magnitude": 10.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "normal: symmetric error"
+   },
+   "range": null,
+   "unit": "dimensionless",
+   "value": null
+  },
+  "product": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "name": "u_in",
+          "op": "ref"
+         },
+         {
+          "name": "t_in",
+          "op": "ref"
+         }
+        ],
+        "op": "*"
+       },
+       {
+        "name": "l_in",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     },
+     {
+      "name": "n_in",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 73.74459810950653,
+   "unit": "dimensionless"
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "t_in": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": {
+    "triangular": {
+     "likely": 2.0,
+     "maximum": 5.0,
+     "minimum": 1.0
+    }
+   },
+   "kind": "input",
+   "magnitude": 2.550510257216822,
+   "provenance": {
+    "kind": "assumption",
+    "source": "triangular: least, likely, most"
+   },
+   "range": null,
+   "unit": "dimensionless",
+   "value": null
+  },
+  "u_in": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": {
+    "uniform": {
+     "maximum": 3.0,
+     "minimum": 1.0
+    }
+   },
+   "kind": "input",
+   "magnitude": 2.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "uniform: the bounds are all that is known"
+   },
+   "range": null,
+   "unit": "dimensionless",
+   "value": null
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.25,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/all-four-shapes/model.yaml",
+ "results": {},
+ "scenarios": {
+  "pinned": {
+   "ceilings": {},
+   "overrides": {
+    "cores": 32.0,
+    "l_in": 1.5
+   },
+   "point": {
+    "busy_cores": 4.0,
+    "cores": 32.0,
+    "l_in": 1.5,
+    "n_in": 10.0,
+    "product": 76.51530771650467,
+    "request_rate": 200.0,
+    "service_demand": 0.02,
+    "t_in": 2.550510257216822,
+    "u_in": 2.0,
+    "utilisation": 0.125
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  },
+  "reference": {
+   "ceilings": {},
+   "overrides": {},
+   "point": {
+    "busy_cores": 4.0,
+    "cores": 16.0,
+    "l_in": 1.445683229480096,
+    "n_in": 10.0,
+    "product": 73.74459810950653,
+    "request_rate": 200.0,
+    "service_demand": 0.02,
+    "t_in": 2.550510257216822,
+    "u_in": 2.0,
+    "utilisation": 0.25
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": true,
+  "problems": []
+ }
+}

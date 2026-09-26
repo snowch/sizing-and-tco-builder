@@ -1,0 +1,16 @@
+{
+ "about": "A YAML list where a model belongs.",
+ "files": {
+  "model.yaml": "- request_rate\n- service_demand\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "invalid/not-a-mapping",
+ "load": {
+  "code": "load.not-a-mapping",
+  "exception": "ModelError",
+  "message": "_builder_conformance/not-a-mapping/model.yaml: is not a mapping",
+  "ok": false
+ },
+ "path": "_builder_conformance/not-a-mapping/model.yaml",
+ "results": {}
+}

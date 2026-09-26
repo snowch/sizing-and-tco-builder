@@ -1,0 +1,178 @@
+{
+ "about": "A logarithm of a quantity with a unit.",
+ "files": {
+  "model.yaml": "model: tiny\ntitle: Log of a rate\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: log(request_rate)\n\noutputs:\n  - utilisation\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "invalid/unit-log-of-a-rate",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "definitional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "cores",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "utilisation"
+  ],
+  "outputs": [
+   "utilisation"
+  ],
+  "title": "Log of a rate",
+  "unit_problems": 1,
+  "unmeasured": []
+ },
+ "nodes": {
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     }
+    ],
+    "fn": "log",
+    "op": "call"
+   },
+   "kind": "derived",
+   "magnitude": 5.298317366548036,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/unit-log-of-a-rate/model.yaml",
+ "results": {},
+ "scenarios": {
+  "reference": {
+   "overrides": {},
+   "point_error": {
+    "exception": "EvaluationError",
+    "message": "tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'utilisation' does not typecheck. `log(request_rate)` — Cannot convert from 'request / second' ([request] / [time]) to 'dimensionless' (dimensionless)"
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": false,
+  "problems": [
+   {
+    "code": "units.does-not-typecheck",
+    "message": "_builder_conformance/unit-log-of-a-rate/model.yaml: tiny: node 'utilisation' does not typecheck. `log(request_rate)` — Cannot convert from 'request / second' ([request] / [time]) to 'dimensionless' (dimensionless)",
+    "node": "utilisation",
+    "part": null,
+    "rule": "1"
+   },
+   {
+    "code": "shape.feeds-no-output",
+    "message": "_builder_conformance/unit-log-of-a-rate/model.yaml: node 'busy_cores' feeds no output. Either it is a leftover, or an output is missing from the model's `outputs:` list.",
+    "node": "busy_cores",
+    "part": null,
+    "rule": "7"
+   },
+   {
+    "code": "shape.feeds-no-output",
+    "message": "_builder_conformance/unit-log-of-a-rate/model.yaml: node 'cores' feeds no output. Either it is a leftover, or an output is missing from the model's `outputs:` list.",
+    "node": "cores",
+    "part": null,
+    "rule": "7"
+   },
+   {
+    "code": "shape.feeds-no-output",
+    "message": "_builder_conformance/unit-log-of-a-rate/model.yaml: node 'service_demand' feeds no output. Either it is a leftover, or an output is missing from the model's `outputs:` list.",
+    "node": "service_demand",
+    "part": null,
+    "rule": "7"
+   },
+   {
+    "cause": "typecheck",
+    "code": "scenario.does-not-evaluate",
+    "message": "_builder_conformance/unit-log-of-a-rate/model.yaml: scenario 'reference' does not evaluate — tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'utilisation' does not typecheck. `log(request_rate)` — Cannot convert from 'request / second' ([request] / [time]) to 'dimensionless' (dimensionless)",
+    "part": null,
+    "rule": "scenarios",
+    "scenario": "reference"
+   }
+  ]
+ }
+}

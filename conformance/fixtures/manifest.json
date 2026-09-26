@@ -1,0 +1,250 @@
+{
+ "book": {
+  "commit": "888ac509f2e923a50f6ac6b51153e2c1b6119172",
+  "python": "3.11",
+  "repository": "https://github.com/snowch/sizing-and-tco"
+ },
+ "cases": [
+  "reference/web_service",
+  "reference/observability",
+  "stages/01-demand_inputs_single",
+  "stages/02-demand_inputs_initial",
+  "stages/03-demand_inputs_all",
+  "stages/04-demand_horizon_exponent",
+  "stages/05-demand",
+  "stages/06-provenance",
+  "stages/07-uncertainty",
+  "stages/08-littles_law",
+  "stages/09-queueing",
+  "stages/10-scaling",
+  "stages/11-regime",
+  "stages/12-capacity",
+  "stages/13-binding",
+  "stages/14-headroom",
+  "stages/15-sizing",
+  "invalid/ceiling-headroom-syntax",
+  "invalid/ceiling-missing-limit",
+  "invalid/ceiling-no-headroom",
+  "invalid/ceiling-no-reason",
+  "invalid/correlations-inconsistent",
+  "invalid/cycle",
+  "invalid/decided-invalid",
+  "invalid/decided-missing",
+  "invalid/distribution-two-shapes",
+  "invalid/fact-cites-nothing",
+  "invalid/feeds-no-output",
+  "invalid/formula-boolean",
+  "invalid/formula-constant",
+  "invalid/formula-construct",
+  "invalid/formula-function",
+  "invalid/formula-keywords",
+  "invalid/formula-syntax",
+  "invalid/input-no-value",
+  "invalid/measured-missing-result",
+  "invalid/measured-no-result-name",
+  "invalid/measured-no-summary-value",
+  "invalid/measured-no-uncertainty",
+  "invalid/measured-unit-differs",
+  "invalid/measured-without-ceiling",
+  "invalid/missing-formula",
+  "invalid/missing-kind",
+  "invalid/missing-model-name",
+  "invalid/missing-nodes",
+  "invalid/missing-unit",
+  "invalid/negative-base-fractional-power",
+  "invalid/no-outputs",
+  "invalid/node-not-a-mapping",
+  "invalid/nodes-not-a-mapping",
+  "invalid/not-a-mapping",
+  "invalid/overflow",
+  "invalid/provenance-kind-invalid",
+  "invalid/provenance-missing",
+  "invalid/range-not-a-list",
+  "invalid/scenario-bad-triangular",
+  "invalid/scenario-division-by-zero",
+  "invalid/scenario-missing-name",
+  "invalid/scenario-overrides-derived",
+  "invalid/scenario-unknown-node",
+  "invalid/shape-not-named",
+  "invalid/source-empty",
+  "invalid/unit-ceiling-headroom",
+  "invalid/unit-ceiling-limit",
+  "invalid/unit-declared-vs-produced",
+  "invalid/unit-does-not-typecheck",
+  "invalid/unit-fractional-power",
+  "invalid/unit-log-of-a-rate",
+  "invalid/unit-mixed-operands",
+  "invalid/unit-rounds-in-wrong-unit",
+  "invalid/unknown-kind",
+  "invalid/unknown-output",
+  "invalid/unknown-reference",
+  "invalid/unknown-unit",
+  "invalid/value-not-a-number",
+  "invalid/yaml-syntax",
+  "edge/all-four-shapes",
+  "edge/bytes-are-dimensionless",
+  "edge/ceiling-verdicts",
+  "edge/correlation-unchecked",
+  "edge/duplicate-node-key",
+  "edge/max-with-zero",
+  "edge/measured-book-result",
+  "edge/multiline-formula",
+  "edge/not-yet-measured",
+  "edge/percent-unit",
+  "edge/scenario-overrides-measured",
+  "edge/shape-named-loosely",
+  "edge/three-way-max",
+  "edge/unit-conversions",
+  "edge/yaml-yes-is-one"
+ ],
+ "dsl": null,
+ "fixture_format": 1,
+ "rules": {
+  "causes": [
+   "typecheck",
+   "no-value",
+   "no-measured-value",
+   "distribution",
+   "correlation",
+   "arithmetic"
+  ],
+  "citation_markers": [
+   "bench/results/",
+   ".json",
+   ".yaml",
+   "definition",
+   "invoice",
+   "@",
+   "http"
+  ],
+  "decided_by": [
+   "you",
+   "outside",
+   "definition"
+  ],
+  "problems": [
+   {
+    "code": "units.does-not-typecheck",
+    "rule": "1"
+   },
+   {
+    "code": "units.declared-vs-produced",
+    "rule": "1"
+   },
+   {
+    "code": "units.mixed-operands",
+    "rule": "1"
+   },
+   {
+    "code": "units.rounds-in-wrong-unit",
+    "rule": "1"
+   },
+   {
+    "code": "input.decided",
+    "rule": "2"
+   },
+   {
+    "code": "input.provenance-kind",
+    "rule": "2"
+   },
+   {
+    "code": "input.empty-source",
+    "rule": "2"
+   },
+   {
+    "code": "input.shape-not-named",
+    "rule": "2"
+   },
+   {
+    "code": "input.fact-cites-nothing",
+    "rule": "3"
+   },
+   {
+    "code": "measured.no-result",
+    "rule": "4"
+   },
+   {
+    "code": "measured.no-summary-value",
+    "rule": "4"
+   },
+   {
+    "code": "measured.unit-differs",
+    "rule": "4"
+   },
+   {
+    "code": "measured.no-uncertainty",
+    "rule": "5"
+   },
+   {
+    "code": "ceiling.no-headroom",
+    "rule": "6"
+   },
+   {
+    "code": "ceiling.no-reason",
+    "rule": "6"
+   },
+   {
+    "code": "shape.feeds-no-output",
+    "rule": "7"
+   },
+   {
+    "code": "shape.no-outputs",
+    "rule": "7"
+   },
+   {
+    "code": "classification.measured-without-ceiling",
+    "rule": "8"
+   },
+   {
+    "code": "classification.definitional-with-ceilings",
+    "rule": "8"
+   },
+   {
+    "code": "scenario.unknown-node",
+    "rule": "scenarios"
+   },
+   {
+    "code": "scenario.overrides-derived",
+    "rule": "scenarios"
+   },
+   {
+    "code": "scenario.does-not-evaluate",
+    "rule": "scenarios"
+   }
+  ],
+  "provenance_kinds": [
+   "fact",
+   "vendor_claim",
+   "assumption"
+  ],
+  "refusals": [
+   "load.yaml",
+   "load.not-a-mapping",
+   "load.missing-field",
+   "load.node-not-a-mapping",
+   "load.unknown-kind",
+   "load.unknown-unit",
+   "load.formula-syntax",
+   "load.formula-function",
+   "load.formula-keywords",
+   "load.formula-constant",
+   "load.formula-construct",
+   "load.unknown-reference",
+   "load.unknown-output",
+   "load.cycle",
+   "load.malformed"
+  ],
+  "shapes": [
+   "uniform",
+   "triangular",
+   "lognormal",
+   "normal"
+  ]
+ },
+ "toolkit": {
+  "numpy": "2.4.6",
+  "pint": "0.25.3",
+  "python": "3.11",
+  "pyyaml": "6.0.1"
+ }
+}

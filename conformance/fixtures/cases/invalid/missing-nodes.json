@@ -1,0 +1,17 @@
+{
+ "about": "A model with no nodes key.",
+ "files": {
+  "model.yaml": "model: tiny\ntitle: No nodes\ncurrency: USD\noutputs: []\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "invalid/missing-nodes",
+ "load": {
+  "code": "load.missing-field",
+  "exception": "ModelError",
+  "field": "nodes",
+  "message": "_builder_conformance/missing-nodes/model.yaml: missing required field 'nodes'",
+  "ok": false
+ },
+ "path": "_builder_conformance/missing-nodes/model.yaml",
+ "results": {}
+}

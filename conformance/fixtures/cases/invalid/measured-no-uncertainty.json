@@ -1,0 +1,251 @@
+{
+ "about": "A measured node whose result reports a standard error of zero.",
+ "files": {
+  "model.yaml": "model: tiny\ntitle: Exact measurement\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  queueing_margin:\n    kind: input\n    decided: you\n    unit: dimensionless\n    value: 0.3\n    provenance: {kind: assumption, source: \"the margin kept below the knee in this case\"}\n\n  utilisation_ceiling:\n    kind: ceiling\n    unit: dimensionless\n    of: busy_cores / cores\n    limit: 1\n    headroom: queueing_margin\n    because: \"past the knee the queue grows faster than the load\"\n\n  compression:\n    kind: measured\n    unit: dimensionless\n    result: case-constant\n\n  compressed_cores:\n    kind: derived\n    unit: core\n    formula: busy_cores / compression\n\noutputs:\n  - utilisation_ceiling\n  - compressed_cores\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "invalid/measured-no-uncertainty",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "conditional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "compression",
+   "cores",
+   "queueing_margin",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "compressed_cores",
+   "utilisation_ceiling"
+  ],
+  "outputs": [
+   "utilisation_ceiling",
+   "compressed_cores"
+  ],
+  "title": "Exact measurement",
+  "unit_problems": 0,
+  "unmeasured": []
+ },
+ "nodes": {
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "compressed_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "compression",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 1.1428571428571428,
+   "unit": "core"
+  },
+  "compression": {
+   "dimensionality": {},
+   "kind": "measured",
+   "magnitude": 3.5,
+   "measured": true,
+   "measured_sd": 0.0,
+   "measured_value": 3.5,
+   "result": "case-constant",
+   "stack": "a stack named for this case",
+   "unit": "dimensionless"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "queueing_margin": {
+   "decided": "you",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.3,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the margin kept below the knee in this case"
+   },
+   "range": null,
+   "unit": "dimensionless",
+   "value": 0.3
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "utilisation_ceiling": {
+   "because": "past the knee the queue grows faster than the load",
+   "declares_headroom": true,
+   "dimensionality": {},
+   "factor": 1.0,
+   "factor_headroom": 1.0,
+   "factor_limit": 1.0,
+   "headroom": {
+    "name": "queueing_margin",
+    "op": "ref"
+   },
+   "kind": "ceiling",
+   "limit": {
+    "op": "const",
+    "value": 1.0
+   },
+   "magnitude": 0.25,
+   "of": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/measured-no-uncertainty/model.yaml",
+ "results": {
+  "case-constant": {
+   "kind": "measurement",
+   "name": "case-constant",
+   "produced_by": {
+    "stack": "a stack named for this case"
+   },
+   "summary": {
+    "sd": 0.0,
+    "value": 3.5
+   },
+   "target": "corpus",
+   "units": {
+    "sd": "dimensionless",
+    "value": "dimensionless"
+   }
+  }
+ },
+ "scenarios": {
+  "reference": {
+   "ceilings": {
+    "utilisation_ceiling": {
+     "allowed": 0.7,
+     "because": "past the knee the queue grows faster than the load",
+     "headroom": 0.3,
+     "headroom_text": "queueing_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 0.25,
+     "verdict": "ok"
+    }
+   },
+   "overrides": {},
+   "point": {
+    "busy_cores": 4.0,
+    "compressed_cores": 1.1428571428571428,
+    "compression": 3.5,
+    "cores": 16.0,
+    "queueing_margin": 0.3,
+    "request_rate": 200.0,
+    "service_demand": 0.02,
+    "utilisation_ceiling": 0.25
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": false,
+  "problems": [
+   {
+    "code": "measured.no-uncertainty",
+    "message": "_builder_conformance/measured-no-uncertainty/model.yaml: measured node 'compression' reports a standard error of 0.0. A constant measured exactly is a claim; if the runner really cannot estimate one, say so in `conditions` and set it deliberately.",
+    "node": "compression",
+    "part": null,
+    "rule": "5"
+   }
+  ]
+ }
+}
