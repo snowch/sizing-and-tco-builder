@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  fixtures:
+    # The committed fixtures are exactly what the book's toolkit says at the pinned commit. If a
+    # case, a probe or the pin changes and nobody regenerated, this fails and names the files.
+    name: Fixtures match the pinned book
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/cache@v4
+        with:
+          path: .book
+          key: book-${{ runner.os }}-py3.11-${{ hashFiles('book.lock.json') }}
+      - run: python3 conformance/generate.py --check
+
+  engine:
+    # The builder's engine agrees with the book on every case, or this fails.
+    name: Engine agrees with the book
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm test
