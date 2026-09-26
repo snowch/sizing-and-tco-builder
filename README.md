@@ -6,8 +6,8 @@ writes the same YAML model files as the book *Sizing and TCO*
 at the moment they matter, starting from the answer you are being asked for, and never fills in a
 number for you.
 
-**Status: the conformance harness exists; the engine and the interface do not yet.** See
-[PLAN.md](PLAN.md).
+**Status: the rules engine is built and agrees with the book on every case; the interface is
+next.** See [PLAN.md](PLAN.md).
 
 - [PLAN.md](PLAN.md): the reading of the design, the milestones, the technology and the open
   questions.
@@ -19,4 +19,5 @@ number for you.
 ```bash
 npm test                                   # the engine against the fixtures (Node 22)
 python3 conformance/generate.py --check    # the fixtures against the book (Python 3.11)
+python3 conformance/roundtrip.py           # the book reads what the engine writes
 ```

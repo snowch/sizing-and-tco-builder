@@ -21,6 +21,7 @@ import { blocked, classification, loadModel, loadScenario, LoadError, unmeasured
 import { PyError, floatRepr, isDict, isInt } from "./python.js";
 import { Registry, UnitError } from "./units.js";
 import { verify } from "./verify.js";
+import { documentFrom, scenarioDocumentFrom, writeModel, writeScenario } from "./write.js";
 import { safeLoad, YamlError } from "./yaml.js";
 
 /*
@@ -162,4 +163,23 @@ function typed(value) {
   if (Array.isArray(value)) return { py: "list", items: value.map(typed) };
   if (isDict(value)) return { py: "dict", items: [...value].map(([k, v]) => [typed(k), typed(v)]) };
   return { py: typeof value, value: String(value) };
+}
+
+export { documentFrom, scenarioDocumentFrom, Unwritable, writeModel, writeScenario } from "./write.js";
+export { loadModel, loadScenario } from "./model.js";
+
+/*
+ * A model's files, loaded and written back out as the builder writes them. What the book's loader
+ * keeps survives; comments and fields the loader does not read do not, because they are not part
+ * of the model.
+ */
+export function roundTrip(files, { results = {}, registry: table }) {
+  const registry = registryFor(table);
+  const model = loadModel(files["model.yaml"], { registry, results });
+  const out = { "model.yaml": writeModel(documentFrom(model)) };
+  for (const [path, text] of Object.entries(files)) {
+    if (!path.startsWith("scenarios/")) continue;
+    out[path] = writeScenario(scenarioDocumentFrom(loadScenario(text, path)));
+  }
+  return out;
 }

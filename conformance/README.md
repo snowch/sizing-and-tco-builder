@@ -14,13 +14,15 @@ the two agree.
 ```bash
 python3 conformance/generate.py          # write fixtures/ from the book at the pinned commit
 python3 conformance/generate.py --check  # fail if fixtures/ is not what the book says now
+python3 conformance/roundtrip.py         # the book reads what the engine writes as it reads the original
 npm test                                 # hold the engine to fixtures/
 ```
 
 `generate.py` needs Python 3.11 and network access the first time. It checks the book out into
 `.book/checkout` by commit hash, makes a virtual environment from the book's own
 `requirements.txt`, and runs itself again inside it. The fixtures have sorted keys and no
-timestamps, so the same commit always writes the same bytes; `--check` depends on that.
+timestamps, so the same commit always writes the same bytes; `--check` compares numbers to a part in a trillion, because the book's own point values can differ
+in the last bit between processors.
 
 ## What is here
 
@@ -31,6 +33,8 @@ timestamps, so the same commit always writes the same bytes; `--check` depends o
 | `cases/edge/<name>/` | Hand-written models the book accepts, each pinning down one exact behaviour |
 | `probes/units.txt` | Unit strings; the engine must read each as the book's Pint registry does |
 | `probes/formulas.txt` | Formulas; the engine must parse each to the same tree, or refuse it the same way |
+| `probes/yaml.txt` | YAML documents; the engine must build the same typed Python values PyYAML does |
+| `roundtrip.py`, `write-cases.mjs` | The engine writes every case back out; the book's toolkit must read the same model |
 | `compare.js` | What counts as agreeing: codes, nodes and values, never message wording |
 | `fixtures/` | Generated. Committed, so the engine's tests run with no Python and no network |
 
@@ -54,6 +58,10 @@ units and dimensions; every prefix), with the verdict on each probe. The engine 
 it does not carry a copy of Pint's definitions.
 
 `formulas.json` is the list of allowed functions and the verdict on each formula probe.
+
+`yaml.json` is each YAML probe's value as PyYAML builds it, with every Python type kept (`3` and
+`3.0` differ, and so do `True` and `1`), because the book calls `str()` and `float()` on them. A
+probe line starting `json:` is a JSON string, so a probe can hold a newline.
 
 `results.json` is every stamped measurement a `measured` node can name, with the implementation
 it was measured on. The builder offers these and no others.

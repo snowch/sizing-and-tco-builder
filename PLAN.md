@@ -103,27 +103,27 @@ Each is finished and verified before the next starts.
 
 ### 1. The engine and its conformance harness
 
-The harness exists (see *Status*). The engine, as modules under `engine/`:
+Built (see *Status*). The engine, as modules under `engine/`:
 
 | Module | What it does | Held to |
 |---|---|---|
-| `yaml.js` | Parse as PyYAML does: YAML 1.1, repeated keys keep the last | YAML edge cases |
-| `units.js` | Pint's name lookup and unit expressions over the generated table | unit probes |
-| `formula.js` | Parse, refuse with the book's codes, list references, render | formula probes |
-| `pyfloat.js` | Arithmetic and the seven functions with Python's raises | scenario causes |
-| `model.js` | Load and refuse; evaluation order (Kahn, sorted, as the book's); ancestors; blocked; classification | load codes, `order`, `blocked_by` |
-| `units-check.js` | The unit pass: plausible magnitudes, Pint's quantity rules, factors, mixed operands, rounding | `factor`, `magnitude`, `units.*` |
-| `evaluate.js` | Point values, scenario overrides, ceiling report | `point`, `ceilings` |
-| `verify.js` | `verify-models.py`'s eight model rules and `check_scenarios`, with codes | `verify.problems` |
-| `write.js` | The model and each scenario back to YAML, in the book's layout | round trip |
+| `yaml.js` | Read a file as PyYAML does: the vendored `yaml` package for structure, PyYAML's own resolvers for types | YAML probes |
+| `units.js` | Pint's preprocessing, tree builder and name lookup over the generated table | unit probes |
+| `formula.js` | Python's expression grammar far enough to tell a syntax error from a refused construct; the book's whitelist, in its order | formula probes |
+| `python.js` | `str()`, `float()`, sorted order, and float arithmetic that raises where Python's does | every case |
+| `model.js` | Load and refuse, in the book's order; evaluation order (Kahn, sorted); ancestors; blocked chains; classification | load codes, `order`, `blocked_by` |
+| `quantity.js` | Pint's quantity arithmetic for the unit pass, numpy's rules after a `sqrt` | `factor`, `units.*` |
+| `evaluate.js` | Plausible magnitudes, the unit pass, the point, the ceiling report, the checks a scenario gets before sampling | `magnitude`, `point`, `ceilings`, causes |
+| `verify.js` | `verify-models.py`'s eight model rules and `check_scenarios`, stopping where the book's verifier falls over | `verify.problems`, `crashed` |
+| `write.js` | A document back to the book's format and layout, readable by PyYAML as written | round trip, in both languages |
 
-Done when: every case, unit probe and formula probe passes; CI is green on both jobs; both
-reference models load, are written back out, and load again to the same nodes, fields, outputs,
-correlations and point values in JavaScript **and** in the book's toolkit (the generator gains an
-option to run the book over files the builder wrote).
+Done when: every case and probe passes; CI is green on both jobs; every model the book loads is
+written back out and read again, by the engine and by the book's toolkit, to the same nodes,
+fields, outputs, correlations, scenarios, point values and build-check verdicts.
 
-The engine exposes the book's format version once the book declares it, and refuses a file whose
-`dsl:` differs from the fixtures' (BOOK-REQUESTS 1).
+The engine will check the book's format version once the book declares one, and refuse a file
+whose `dsl:` differs from the fixtures' (BOOK-REQUESTS 1). The writer already writes the line when
+a document carries it.
 
 ### 2. The answer-first interface
 
@@ -177,27 +177,47 @@ tolerance written next to the test.
 
 ## Status
 
-Done in this first step, and checked:
+### Milestone 1: done, and checked
 
 - `book.lock.json` pins the book at `888ac509f2e923a50f6ac6b51153e2c1b6119172` (its `main` on
   2026-09-26). It is the only place the pin lives.
 - `conformance/generate.py` checks the book out at that commit, builds an environment from the
-  book's `requirements.txt` (numpy 2.4.6, Pint 0.25.3, PyYAML 6.0.1 on Python 3.11), and writes 91
-  cases: both reference models, all 15 stages, 59 hand-written invalid models (one or more for
-  every refusal the loader and `verify-models.py` know) and 15 edge cases; plus 126 unit probes,
-  76 formula probes, the measured-result catalogue (four constants) and the outline. `--check`
-  regenerates into a temporary directory and compares bytes; two runs gave identical output.
+  book's `requirements.txt` (numpy 2.4.6, Pint 0.25.3, PyYAML 6.0.1 on Python 3.11), and writes
+  106 cases: both reference models, all 15 stages, 59 hand-written invalid models (one or more for
+  every refusal the loader and `verify-models.py` know) and 30 edge cases; plus 190 unit probes,
+  143 formula probes, 61 YAML probes, the measured-result catalogue (four constants) and the
+  outline. `--check` regenerates and compares, numbers to a part in a trillion (the book's own
+  point values differ in the last bit between processors; CI found that).
 - Each hand-written case declares what it is for, and the generator refuses to write fixtures if
-  the book does not say it.
-- `conformance/compare.js` and `test/conformance.test.js` hold the engine to the fixtures.
-  `test/compare.test.js` checks the comparison accepts the book's own answers and rejects altered
-  ones; it found a real fault on its first run (an absolute tolerance that accepted any factor
-  near zero), now fixed.
-- `.github/workflows/ci.yml` runs both: the fixtures must be current, and the engine must agree.
+  the book does not say it. It stopped three times while the cases were written, each time
+  correctly: a failure it had no code for, and one case whose expectation was mine and wrong.
+- `npm test`: 194 passing, none failing. Every case and every probe agrees with the book; every
+  model the book loads round-trips through the engine's writer; the comparison itself is tested
+  against altered answers; the vendored YAML package is checked against the pinned install.
+- `python3 conformance/roundtrip.py`: the book's toolkit reads all 76 writable models, as written
+  by the engine, exactly as it reads the originals. Altering one written value, one scenario
+  override or one `decided:` makes it fail, as it should.
+- CI runs all of it on every push.
 
-Not done: the engine. `engine/index.js` fixes the interface and throws, so `npm test` reports 5
-passing (the harness's own) and 93 failing (every probe set and every case). The engine CI job is
-red until milestone 1 is built, which is the honest state of it.
+### Known gaps in the engine
+
+- **A scenario whose draws alone go wrong.** The book's `verify-models.py` samples every scenario
+  (100,000 draws by default) and refuses one whose sampled values are not finite, for example a
+  square root of an input whose range crosses zero. The engine checks everything that can be
+  known without drawing, and leaves this to milestone 4, which brings sampling. No case exercises
+  it yet; milestone 4 adds one.
+- **Offset and logarithmic units** (`degC`, `dB`): the book loads them; the engine refuses them
+  rather than check them differently (BOOK-REQUESTS 5). The builder never offers them.
+- **A mapping key YAML reads as something other than a string** (a node named `on` is the key
+  `True` to PyYAML): the engine uses the key's text. No case covers it.
+- **Integers in the unit pass.** After `ceil` or `floor` the book carries a Python integer, which
+  cannot overflow when raised to a large power; the engine carries a float, which can. No
+  realistic formula reaches it.
+
+### Not started
+
+Milestones 2 to 4. The GitHub Pages deploy comes with the first screen, in milestone 2 (Pages is
+already set to deploy from Actions).
 
 ## Open questions
 

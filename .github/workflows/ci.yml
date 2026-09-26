@@ -8,7 +8,7 @@ jobs:
   fixtures:
     # The committed fixtures are exactly what the book's toolkit says at the pinned commit. If a
     # case, a probe or the pin changes and nobody regenerated, this fails and names the files.
-    name: Fixtures match the pinned book
+    name: Fixtures match the pinned book, which reads what the engine writes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,6 +20,11 @@ jobs:
           path: .book
           key: book-${{ runner.os }}-py3.11-${{ hashFiles('book.lock.json') }}
       - run: python3 conformance/generate.py --check
+      # Every model the engine writes back out is read by the book's toolkit as the original is.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: python3 conformance/roundtrip.py
 
   engine:
     # The builder's engine agrees with the book on every case, or this fails.
