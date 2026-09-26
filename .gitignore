@@ -1,0 +1,4 @@
+# The book's toolkit, checked out at the pinned commit by conformance/generate.py.
+/.book/
+node_modules/
+__pycache__/
