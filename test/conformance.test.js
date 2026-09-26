@@ -11,7 +11,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-import { compareCase, compareFormula, compareUnit } from "../conformance/compare.js";
+import { compareCase, compareFormula, compareUnit, compareYaml } from "../conformance/compare.js";
 import * as engine from "../engine/index.js";
 
 const FIXTURES = new URL("../conformance/fixtures/", import.meta.url);
@@ -24,6 +24,7 @@ const manifest = read("manifest.json");
 const units = read("units.json");
 const formulas = read("formulas.json");
 const results = read("results.json");
+const yamlProbes = read("yaml.json");
 
 test("the fixtures are in a layout this runner reads", () => {
   assert.equal(manifest.fixture_format, FIXTURE_FORMAT);
@@ -52,6 +53,13 @@ test("units: the engine reads every probe as the book's registry does", () => {
 test("formulas: the engine parses every probe as the book's parser does", () => {
   const problems = formulas.probes.flatMap((probe) =>
     differences(() => compareFormula(probe, engine.parseFormula(probe.formula))),
+  );
+  assert.deepEqual(problems, []);
+});
+
+test("yaml: the engine reads every probe as the book's PyYAML does", () => {
+  const problems = yamlProbes.probes.flatMap((probe) =>
+    differences(() => compareYaml(probe, engine.readYaml(probe.yaml))),
   );
   assert.deepEqual(problems, []);
 });

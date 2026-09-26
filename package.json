@@ -11,5 +11,8 @@
     "conformance": "node --test test/conformance.test.js",
     "fixtures": "python3 conformance/generate.py",
     "fixtures:check": "python3 conformance/generate.py --check"
+  },
+  "dependencies": {
+    "yaml": "2.9.1"
   }
 }
