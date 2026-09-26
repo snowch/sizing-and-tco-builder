@@ -136,7 +136,7 @@
  "verify": {
   "crashed": {
    "exception": "ModelError",
-   "message": "/home/user/sizing-and-tco-builder/.book/checkout/_builder_conformance/scenario-missing-name/scenarios/reference.yaml: missing required field 'scenario'"
+   "message": "_builder_conformance/scenario-missing-name/scenarios/reference.yaml: missing required field 'scenario'"
   },
   "ok": false,
   "problems": []

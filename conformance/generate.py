@@ -116,21 +116,58 @@ def outside(check: bool) -> int:
             shutil.rmtree(target, ignore_errors=True)
 
 
+#: How close a regenerated number must be to the committed one. Not zero: numpy's ``log`` and
+#: ``exp`` may differ in the last bit between processors, and the book's point values for a
+#: lognormal input pass through both. Far tighter than anything the engine is held to.
+CHECK_RELATIVE = 1e-12
+
+
+def differences(want, have, path: str = "") -> list[str]:
+    """Where two fixtures differ, as paths into the JSON, numbers compared to CHECK_RELATIVE."""
+    if isinstance(want, dict) and isinstance(have, dict):
+        out = []
+        for key in sorted(set(want) | set(have)):
+            if key not in want or key not in have:
+                out.append(f"{path}.{key}: only in {'the committed' if key in have else 'the fresh'} fixture")
+            else:
+                out += differences(want[key], have[key], f"{path}.{key}")
+        return out
+    if isinstance(want, list) and isinstance(have, list):
+        if len(want) != len(have):
+            return [f"{path}: {len(have)} items committed, {len(want)} fresh"]
+        return [d for i, (a, b) in enumerate(zip(want, have)) for d in differences(a, b, f"{path}[{i}]")]
+    numbers = (int, float)
+    if isinstance(want, numbers) and isinstance(have, numbers) and not isinstance(want, bool):
+        if abs(want - have) <= CHECK_RELATIVE * max(abs(want), abs(have)):
+            return []
+    elif want == have:
+        return []
+    return [f"{path}: committed {have!r}, fresh {want!r}"]
+
+
 def compare(fresh: Path, committed: Path) -> int:
-    def files(root: Path) -> dict[str, bytes]:
-        return {str(p.relative_to(root)): p.read_bytes() for p in root.rglob("*.json")}
+    def files(root: Path) -> dict[str, Path]:
+        return {str(p.relative_to(root)): p for p in root.rglob("*.json")}
 
     want, have = files(fresh), files(committed)
-    differ = sorted(
-        name for name in set(want) | set(have) if want.get(name) != have.get(name)
-    )
-    if not differ:
+    problems: dict[str, list[str]] = {}
+    for name in sorted(set(want) | set(have)):
+        if name not in have or name not in want:
+            problems[name] = ["missing" if name not in have else "extra"]
+            continue
+        found = differences(json.loads(want[name].read_text()), json.loads(have[name].read_text()))
+        if found:
+            problems[name] = found
+    if not problems:
         print(f"conformance fixtures: current ({len(want)} files)")
         return 0
     print("conformance fixtures: NOT current. Run `python3 conformance/generate.py` and commit.")
-    for name in differ:
-        state = "missing" if name not in have else "stale" if name in want else "extra"
-        print(f"  - {name} ({state})")
+    for name, found in problems.items():
+        print(f"  - {name}")
+        for line in found[:8]:
+            print(f"      {line[:300]}")
+        if len(found) > 8:
+            print(f"      ... and {len(found) - 8} more")
     return 1
 
 
@@ -391,7 +428,7 @@ def run_case(case_id, directory, in_book, modules, results: LocalResults) -> dic
         verify.check_model(model, problems)
         verify.check_scenarios(model, problems)
     except Exception as exc:  # verify-models itself fell over: record it, the builder must refuse too
-        crashed = {"exception": type(exc).__name__, "message": str(exc)}
+        crashed = {"exception": type(exc).__name__, "message": relative(str(exc))}
     out["verify"] = {
         "ok": not problems and crashed is None,
         "problems": [classify_problem(p) for p in problems],
