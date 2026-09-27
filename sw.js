@@ -10,6 +10,7 @@ const FILES = [
   "./",
   "index.html",
   "app/judge.js",
+  "app/table.js",
   "app/main.js",
   "app/state.js",
   "app/style.css",

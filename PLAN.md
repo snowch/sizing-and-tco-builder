@@ -258,6 +258,18 @@ are not all finite (the case `invalid/sampling-goes-non-finite`), which closes t
 milestone left. In the page the verdict and the ranges run in a worker, so sampling a large model
 never freezes it.
 
+### After the milestones: the table
+
+A second way to see the same model, beside the graph: every node in a row with its value, unit,
+kind, who decides it, the kind of claim, and its source or formula (`app/table.js`). A given
+number is typed into its cell and everything worked out from it changes at once; Enter moves to
+the next number. A worked-out or measured value has no cell, and a unit, a source or a range is
+changed with Edit, where the book's rules are asked. So the table looks like a spreadsheet and
+cannot do what a spreadsheet allows: add terabytes to dollars, or hold a number with no source.
+Rows filter, sort and copy out as tab-separated text that pastes into a spreadsheet as columns.
+A row opens in the inspector, which now lists what each node is made of and what uses it, with
+values, to walk the model either way. A flow drives it and hands the result to the book.
+
 ### Known gaps
 
 - **A failure only rare draws produce.** The builder's random stream is not the book's, so a

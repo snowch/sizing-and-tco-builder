@@ -624,6 +624,61 @@ test("a cost in euros: the currency is the reader's, and the book accepts it", a
   await r.context.close();
 });
 
+test("the table: type a given number and what is worked out from it changes; nothing else can be typed over", async () => {
+  const r = await Reader.start();
+  const p = r.page;
+  await r.answer({ goal: "hosts", name: "fleet", label: "machines in the fleet", unit: "host", decision: "The platform's machine count." });
+  await r.forToday();
+  await p.click("#coach button.primary");
+  await p.click('[data-hosts="roles"]');
+  await p.fill("#w-roles", "collectors, store");
+  await r.next();
+  await r.defineAll({
+    collectors_hosts: { kind: "input", decided: "you", prov: "assumption", source: "the ingest tier as sized", value: 6 },
+    store_hosts: { kind: "input", decided: "you", prov: "vendor_claim", source: "the supplier's sizing", value: 12 },
+  });
+  await p.click('[data-view="table"]');
+  assert.ok(await p.isHidden("#graph-wrap"));
+  const value = (name) => p.locator(`tr[data-row="${name}"] td.num`).innerText();
+  assert.equal((await value("fleet")).trim(), "18");
+  // A worked-out value has no cell to type into; a given one does.
+  assert.equal(await p.locator('tr[data-row="fleet"] [data-cell]').count(), 0);
+  await p.fill('[data-cell="collectors_hosts"]', "8");
+  await p.press('[data-cell="collectors_hosts"]', "Enter");
+  await r.settled();
+  assert.equal((await value("fleet")).trim(), "20");
+  // Enter moved on to the next number.
+  assert.equal(await p.evaluate(() => document.activeElement?.dataset.cell), "store_hosts");
+  // Not a number: refused, and the model keeps what it had.
+  await p.fill('[data-cell="store_hosts"]', "a dozen");
+  await p.press('[data-cell="store_hosts"]', "Enter");
+  assert.match(await p.locator("#t-msg").innerText(), /not a number/);
+  assert.equal(await p.inputValue('[data-cell="store_hosts"]'), "12");
+  // Filter, then sort by value, largest first.
+  await p.fill("#t-filter", "supplier");
+  assert.deepEqual(await p.locator("tr[data-row]").evaluateAll((rows) => rows.map((x) => x.dataset.row)), ["store_hosts"]);
+  await p.fill("#t-filter", "");
+  await p.click('[data-sort="value"]');
+  await p.click('[data-sort="value"]');
+  assert.deepEqual(await p.locator("tr[data-row]").evaluateAll((rows) => rows.map((x) => x.dataset.row)), ["fleet", "store_hosts", "collectors_hosts"]);
+  // A row opens in the inspector, which walks the chain either way.
+  await p.click('[data-pick="fleet"]');
+  assert.deepEqual(await p.locator("#panel [data-goto]").evaluateAll((b) => b.map((x) => x.dataset.goto)), ["collectors_hosts", "store_hosts"]);
+  await p.click('#panel [data-goto="store_hosts"]');
+  assert.equal(await p.evaluate(() => builder.ui.selected), "store_hosts");
+  // The file the book reads has the typed number, and the book agrees.
+  const verdict = book(await r.files());
+  if (verdict) {
+    assert.ok(verdict.ok, JSON.stringify(verdict.problems));
+    assert.equal(verdict.points.reference.fleet, 20);
+  }
+  // On a phone, the table scrolls inside its own box; the page does not scroll sideways.
+  await p.setViewportSize({ width: 360, height: 740 });
+  assert.equal(await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), 0);
+  assert.deepEqual(r.errors, []);
+  await r.context.close();
+});
+
 test("a scenario whose draws alone go wrong is refused, as the book's sampler refuses it", async () => {
   const r = await Reader.start();
   await r.answer({ name: "rooted", label: "a square root of a range", unit: "dimensionless", decision: "A test of the sampler." });

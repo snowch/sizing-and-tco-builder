@@ -10,6 +10,7 @@ import { emptyState, forget, load, reference, save } from "./state.js";
 import { $, esc, useOutline } from "./ui.js";
 import { drawAnswers, drawCoach, drawGraph, drawHeader, drawPanel, drawRefine, drawTree } from "./view.js";
 import { openWizard, wireWizardButtons } from "./wizard.js";
+import { drawTable } from "./table.js";
 import { ANSWERS, PATTERNS, money } from "./words.js";
 import { judge } from "./judge.js";
 import { checks, files, nextStep, preview, reinfer } from "./workbench.js";
@@ -106,6 +107,7 @@ async function boot() {
     drawRefine(app);
     drawCoach(app);
     drawGraph(app);
+    drawTable(app);
     drawAnswers(app);
     drawPanel(app);
   }
@@ -198,6 +200,12 @@ async function boot() {
     $("start").hidden = true;
     app.commit();
   });
+  for (const b of document.querySelectorAll("[data-view]")) {
+    b.addEventListener("click", () => {
+      app.ui.view = b.dataset.view;
+      draw();
+    });
+  }
   $("theme").addEventListener("click", () => {
     const root = document.documentElement;
     const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;

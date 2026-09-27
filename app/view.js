@@ -281,6 +281,19 @@ export function drawPanel(app) {
   view.wire?.(app, P);
 }
 
+/* What a node is made of and what uses it, each with its value, to walk the model either way. */
+function chain(app, name) {
+  const nodes = graph(app.state);
+  const list = (names) => names.map((n) => {
+    const node = app.state.doc.nodes.find((x) => x.name === n);
+    const v = app.previewed.values.get(n);
+    return `<li><button type="button" class="linkish" data-goto="${esc(n)}"><code>${esc(n)}</code></button> <span class="mono note">${esc(valueText(v, node?.unit ?? ""))}</span></li>`;
+  }).join("");
+  const from = sorted([...(nodes.get(name)?.depends ?? [])]);
+  const into = sorted(parentsOf(nodes, name));
+  return `${from.length ? `<h2>Made of</h2><ul class="chain">${list(from)}</ul>` : ""}${into.length ? `<h2>Used by</h2><ul class="chain">${list(into)}</ul>` : ""}`;
+}
+
 const PANELS = {
   node: {
     html(app) {
@@ -310,6 +323,7 @@ const PANELS = {
         ${node.kind === "measured" ? `<dt>result</dt><dd class="mono">${esc(node.result)}</dd>${result ? `<dt>measured on</dt><dd>${esc(result.produced_by?.stack)}</dd><dt>error</dt><dd class="mono">± ${fmt(result.summary.sd)}</dd><dt>holds for</dt><dd>${esc(Object.values(result.conditions ?? {})[0] ?? "")}</dd>` : "<dt>state</dt><dd>not taken yet</dd>"}` : ""}
         ${node.kind === "ceiling" ? `<dt>checks</dt><dd class="mono">${esc(node.of)}</dd><dt>limit</dt><dd class="mono">${esc(node.limit)}${c ? ` (${fmt(c.limit)})` : ""}</dd><dt>margin</dt><dd class="mono">${esc(node.headroom)}${c ? ` → allowed ${fmt(c.allowed)}` : ""}</dd>${c ? `<dt>verdict</dt><dd><strong>${esc(c.verdict)}</strong>${app.ranges?.ceilings?.[name] ? ` · over the allowed level in ${fmt(100 * app.ranges.ceilings[name].p_over_allowed)}% of draws` : ""}</dd>` : ""}<dt>because</dt><dd>${esc(node.because)}</dd>` : ""}
         ${node.note ? `<dt>note</dt><dd>${esc(node.note)}</dd>` : ""}</dl>
+        ${chain(app, name)}
         ${v?.state === "unit" ? `<div class="verdict bad">The units of this formula do not work. The Checks tab has the book's wording once the model is complete.</div>` : ""}
         ${v?.message ? `<div class="verdict bad">${esc(v.message)}</div>` : ""}
         <div class="row"><button type="button" data-act="edit">Edit</button><button type="button" data-act="remove">Remove</button>
@@ -317,6 +331,12 @@ const PANELS = {
     },
     wire(app, P) {
       const name = app.ui.selected;
+      for (const b of P.querySelectorAll("[data-goto]")) {
+        b.addEventListener("click", () => {
+          app.ui.selected = b.dataset.goto;
+          app.render();
+        });
+      }
       P.querySelector("[data-act=define]")?.addEventListener("click", () => openWizard(app, { type: "define", name }));
       P.querySelector("[data-act=edit]")?.addEventListener("click", () => openWizard(app, { type: "edit", name }));
       P.querySelector("[data-act=range]")?.addEventListener("click", () => { app.ui.askRange = null; openWizard(app, { type: "edit", name }); });

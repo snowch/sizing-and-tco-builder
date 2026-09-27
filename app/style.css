@@ -259,3 +259,30 @@ legend { font-weight: 600; font-size: 13px; margin-bottom: 6px; padding: 0; }
 #outline, #side, #centre { min-width: 0; }
 .treeitem { min-width: 0; }
 .treeitem .v, .treeitem .todo { flex: none; max-width: 45%; overflow: hidden; text-overflow: ellipsis; }
+
+/* The model as a table: a view of the same nodes the graph draws. */
+.viewswitch { display: inline-flex; gap: 0; margin: 4px 0 8px; }
+.viewswitch button { border-radius: 0; }
+.viewswitch button:first-child { border-radius: 6px 0 0 6px; }
+.viewswitch button:last-child { border-radius: 0 6px 6px 0; margin-left: -1px; }
+.viewswitch button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tablebar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px; }
+.tablebar input[type="search"] { flex: 1 1 220px; width: auto; }
+.tablebar select { width: auto; }
+table.sheet { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+table.sheet th, table.sheet td { border-bottom: 1px solid var(--line); padding: 5px 8px; text-align: left; vertical-align: top; }
+table.sheet thead th { position: sticky; top: 0; background: var(--panel); z-index: 1; padding: 0; }
+table.sheet thead button { width: 100%; text-align: left; border: 0; background: none; padding: 6px 8px; font-weight: 600; white-space: nowrap; }
+table.sheet tbody th { font-weight: 400; font-size: inherit; letter-spacing: normal; text-transform: none; color: inherit; min-width: 11em; }
+table.sheet td.num { text-align: right; }
+table.sheet td.num .mono, table.sheet td.mono { white-space: nowrap; }
+table.sheet td.num .note { display: block; min-width: 12em; font-size: 12px; }
+table.sheet td.from { min-width: 18em; max-width: 30em; }
+/* A long source reads in full in the inspector; here it is kept to three lines. */
+table.sheet td.from > .clamp { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; overflow-wrap: anywhere; }
+table.sheet tr[aria-selected="true"] { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+table.sheet tr.vendor td:nth-child(2) { background: var(--vendor); }
+table.sheet .cell { width: 9em; text-align: right; padding: 3px 6px; }
+.linkish { border: 0; background: none; padding: 0; text-align: left; color: inherit; cursor: pointer; }
+.linkish code { text-decoration: underline; text-decoration-color: var(--line); }
+ul.chain { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 3px; }

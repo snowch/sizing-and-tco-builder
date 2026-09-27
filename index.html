@@ -46,7 +46,12 @@
       <span><i class="swatch vendor"></i>a vendor's claim</span>
       <span>▌ you decide it</span>
     </div>
+    <div class="viewswitch" role="group" aria-label="How to see the model">
+      <button type="button" data-view="graph" aria-pressed="true">Graph</button>
+      <button type="button" data-view="table" aria-pressed="false">Table</button>
+    </div>
     <div id="graph-wrap"><svg id="graph" role="img" aria-label="The model's graph"></svg></div>
+    <div id="table-view" hidden></div>
     <div class="results">
       <h2>Answers</h2>
       <div class="table-wrap"><table id="answers"></table></div>
