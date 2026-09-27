@@ -1,0 +1,5 @@
+about: >-
+  A square root of an input whose range crosses zero: fine at the point, undefined in some
+  draws. The book's sampler refuses it.
+expect:
+  - scenario.does-not-evaluate

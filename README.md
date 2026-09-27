@@ -6,8 +6,10 @@ writes the same YAML model files as the book *Sizing and TCO*
 at the moment they matter, starting from the answer you are being asked for, and never fills in a
 number for you.
 
-**Status: the rules engine is built and agrees with the book on every case; the interface is
-next.** See [PLAN.md](PLAN.md).
+**Status: all four milestones are built and checked.** The rules engine agrees with the book's
+toolkit on every conformance case, the interface builds models whose files the book accepts, and
+the sampler's ranges land where the book's do. See [PLAN.md](PLAN.md) for what was checked and
+how, and what is not done.
 
 - [PLAN.md](PLAN.md): the reading of the design, the milestones, the technology and the open
   questions.
@@ -18,6 +20,10 @@ next.** See [PLAN.md](PLAN.md).
 
 ```bash
 npm test                                   # the engine against the fixtures (Node 22)
+npm run flows                              # the builder in Chromium, its files checked by the book
 python3 conformance/generate.py --check    # the fixtures against the book (Python 3.11)
 python3 conformance/roundtrip.py           # the book reads what the engine writes
 ```
+
+To run the site locally, serve the repository's root as static files (for example
+`python3 -m http.server`) and open `index.html`. There is no build step.

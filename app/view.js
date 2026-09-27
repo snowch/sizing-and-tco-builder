@@ -168,6 +168,8 @@ export function drawCoach(app) {
       return set("fix", "Fix first", next.check.text, "The book's build refuses a file with this problem.", next.check.chapter, [["See the checks", () => { app.ui.tab = "checks"; if (next.check.node) app.ui.selected = next.check.node; app.render(); }]]);
     case "refine":
       return set("", "Next step", next.refine.what, esc(next.refine.why), next.refine.chapters[0], [["Skip", () => { state.skipped.push(next.refine.id); app.commit(); }], ["Do it", () => refine(app, next.refine.id)]]);
+    case "checking":
+      return set("", "Checking", "Checking the file with the book's rules.", "Every scenario is sampled as the book's build samples it. This takes a moment on a large model.", null, []);
     default:
       return set("done", "Done", "The answer is worked back to its inputs, the book's checks pass, and every refinement is done or skipped.", "Open File to copy or download the model.", null, [["Open the file", () => { app.ui.tab = "file"; app.render(); }]]);
   }

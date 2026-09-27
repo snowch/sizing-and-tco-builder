@@ -1,0 +1,70 @@
+model: tiny
+title: Moving together
+currency: USD
+
+nodes:
+
+  request_rate:
+    kind: input
+    decided: outside
+    unit: request/second
+    value: 200
+    provenance: {kind: assumption, source: "the busy hour, as stated for this case"}
+
+  service_demand:
+    kind: input
+    decided: outside
+    unit: core*second/request
+    value: 0.02
+    provenance: {kind: assumption, source: "processor time per request, as stated for this case"}
+
+  cores:
+    kind: input
+    decided: you
+    unit: core
+    value: 16
+    provenance: {kind: assumption, source: "the fleet chosen for this case"}
+
+  busy_cores:
+    kind: derived
+    unit: core
+    formula: request_rate * service_demand
+
+  utilisation:
+    kind: derived
+    unit: dimensionless
+    formula: busy_cores / cores
+
+  first_cost:
+    kind: input
+    decided: outside
+    unit: USD
+    distribution: {lognormal: {p10: 100.0, p90: 400.0}}
+    provenance: {kind: assumption, source: "lognormal: a price"}
+
+  second_cost:
+    kind: input
+    decided: outside
+    unit: USD
+    distribution: {lognormal: {p10: 50.0, p90: 900.0}}
+    provenance: {kind: assumption, source: "lognormal: a price"}
+
+  third_cost:
+    kind: input
+    decided: outside
+    unit: USD
+    distribution: {triangular: {minimum: 10.0, likely: 40.0, maximum: 300.0}}
+    provenance: {kind: assumption, source: "triangular: a quote's range"}
+
+  total_cost:
+    kind: derived
+    unit: USD
+    formula: first_cost + second_cost + third_cost
+
+outputs:
+  - utilisation
+  - total_cost
+
+correlations:
+  - {a: first_cost, b: second_cost, rho: 0.9, because: "the same supplier"}
+  - {a: second_cost, b: third_cost, rho: -0.3, because: "stated for this case"}

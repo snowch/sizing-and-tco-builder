@@ -239,6 +239,8 @@ CAUSES: tuple[tuple[str, str], ...] = (
     ("distribution", r"_ppf\(\) (?:got an unexpected keyword argument|missing \d+ required positional argument)|triangular needs|lognormal needs|normal needs|a distribution declares exactly one shape"),
     # A pair missing `a`, `b` or `rho`: the book indexes it and gets a KeyError, whose text is the key.
     ("correlation", r"does not evaluate — '(?:a|b|rho)'$|correlation names|correlation between .* is .*outside|not mutually consistent|correlation matrix is"),
+    # The sampler drew values that are not finite; the histogram of them refuses its range.
+    ("sampling", r"autodetected range of .* is not finite"),
     ("arithmetic", r"division by zero|math domain error|Result too large|Numerical result out of range|cannot convert float|complex|out of range|overflow"),
 )
 
@@ -720,6 +722,74 @@ def outline() -> dict:
     }
 
 
+#: Cases whose sampled ranges the builder is held to, every scenario of each.
+SAMPLED = ("reference/web_service", "reference/observability", "edge/all-four-shapes", "edge/strong-correlation")
+
+#: How many other seeds each scenario is run with, to measure how far each figure moves by
+#: chance alone at its sample count. That spread is the tolerance the builder is held to.
+RESEEDS = 16
+
+#: The figures compared, for every node that varies.
+STATISTICS = ("p5", "p25", "p50", "p75", "p95", "mean")
+
+
+def staged(case_id: str):
+    """A case's model directory inside the checkout: in place for the book's own models."""
+    directory = next(d for i, d, _ in case_sources() if i == case_id)
+    if case_id.startswith(("reference/", "stages/")):
+        return directory, lambda: None
+    where = CHECKOUT / STAGING / directory.name
+    shutil.rmtree(where, ignore_errors=True)
+    where.mkdir(parents=True)
+    for name, text in read_case_files(directory).items():
+        (where / name).parent.mkdir(parents=True, exist_ok=True)
+        (where / name).write_text(text)
+    return where, lambda: shutil.rmtree(where, ignore_errors=True)
+
+
+def sampling_fixture(case_id: str, modules) -> dict:
+    """The book's sampled figures for every scenario of a case, and how far each moves by chance.
+
+    For each scenario: every varying node's percentiles and mean at the scenario's own seed, and
+    the standard deviation, least and greatest of each across RESEEDS further seeds; the same for
+    each ceiling's share of draws over its allowed level. Draw for draw the builder cannot match
+    the book (its random stream is its own), so it is held to these, by distribution.
+    """
+    import dataclasses
+    import statistics
+
+    dsl, evaluate, *_ = modules
+    where, cleanup = staged(case_id)
+    try:
+        model = dsl.load_model(where / "model.yaml")
+        out = {"case": case_id, "reseeds": RESEEDS, "scenarios": {}}
+        for scenario in dsl.scenarios_for(model):
+            runs = [evaluate.evaluate(model, scenario)]
+            for k in range(1, RESEEDS + 1):
+                runs.append(evaluate.evaluate(model, dataclasses.replace(scenario, seed=scenario.seed + 1000 * k)))
+            first = runs[0]
+            nodes = {}
+            for name, summary in first.summaries.items():
+                entry = {}
+                for stat in STATISTICS:
+                    others = [r.summaries[name][stat] for r in runs[1:]]
+                    entry[stat] = {"value": summary[stat], "sd": statistics.stdev(others),
+                                   "low": min(others), "high": max(others)}
+                nodes[name] = entry
+            ceilings = {}
+            for name, report in first.ceilings.items():
+                if "p_over_allowed" not in report:
+                    continue
+                others = [r.ceilings[name]["p_over_allowed"] for r in runs[1:]]
+                ceilings[name] = {"value": report["p_over_allowed"], "sd": statistics.stdev(others),
+                                  "low": min(others), "high": max(others)}
+            out["scenarios"][scenario.name] = {"samples": scenario.samples, "seed": scenario.seed,
+                                               "nodes": nodes, "ceilings": ceilings}
+        return out
+    finally:
+        cleanup()
+
+
 def tornado_fixture(case_id: str, modules) -> dict:
     """The book's tornado() for every output of a case, at its reference scenario."""
     dsl, evaluate, *_ = modules
@@ -838,6 +908,8 @@ def inside(out: Path) -> int:
     write(out / "products.json", products())
     for case_id in ("reference/web_service", "reference/observability", "edge/all-four-shapes", "edge/measured-book-result"):
         write(out / "tornado" / f"{case_id}.json", tornado_fixture(case_id, modules))
+    for case_id in SAMPLED:
+        write(out / "sampling" / f"{case_id}.json", sampling_fixture(case_id, modules))
     write(out / "outline.json", outline())
     # What the site itself reads: the same three things, without the probes and cases.
     write(out / "data" / "units.json", unit_table(units))

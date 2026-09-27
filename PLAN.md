@@ -183,15 +183,15 @@ tolerance written next to the test.
   2026-09-26). It is the only place the pin lives.
 - `conformance/generate.py` checks the book out at that commit, builds an environment from the
   book's `requirements.txt` (numpy 2.4.6, Pint 0.25.3, PyYAML 6.0.1 on Python 3.11), and writes
-  106 cases: both reference models, all 15 stages, 59 hand-written invalid models (one or more for
-  every refusal the loader and `verify-models.py` know) and 30 edge cases; plus 190 unit probes,
+  108 cases: both reference models, all 15 stages, 60 hand-written invalid models (one or more for
+  every refusal the loader and `verify-models.py` know) and 31 edge cases; plus 190 unit probes,
   143 formula probes, 61 YAML probes, the measured-result catalogue (four constants) and the
   outline. `--check` regenerates and compares, numbers to a part in a trillion (the book's own
   point values differ in the last bit between processors; CI found that).
 - Each hand-written case declares what it is for, and the generator refuses to write fixtures if
   the book does not say it. It stopped three times while the cases were written, each time
   correctly: a failure it had no code for, and one case whose expectation was mine and wrong.
-- `npm test`: 194 passing, none failing. Every case and every probe agrees with the book; every
+- `npm test`: 232 passing, none failing (at the end of milestone 4). Every case and every probe agrees with the book; every
   model the book loads round-trips through the engine's writer; the comparison itself is tested
   against altered answers; the vendored YAML package is checked against the pinned install.
 - `python3 conformance/roundtrip.py`: the book's toolkit reads all 76 writable models, as written
@@ -199,25 +199,70 @@ tolerance written next to the test.
   override or one `decided:` makes it fail, as it should.
 - CI runs all of it on every push.
 
-### Known gaps in the engine
+### Milestone 2: done, and checked
 
-- **A scenario whose draws alone go wrong.** The book's `verify-models.py` samples every scenario
-  (100,000 draws by default) and refuses one whose sampled values are not finite, for example a
-  square root of an input whose range crosses zero. The engine checks everything that can be
-  known without drawing, and leaves this to milestone 4, which brings sampling. No case exercises
-  it yet; milestone 4 adds one.
+The answer-first interface (`index.html`, `app/`): the answer and its unit, the decision it feeds,
+the horizon (or "for today"), then each name to define, breadth first from the answers, as given,
+worked out or measured. One question per screen, each linked to the chapter that teaches it, with
+the chapter's number taken from the book's outline. Unit inference for new names, patterns from
+the book's models filtered to the node's unit, the tree worked back from the answer, the graph,
+the next-step bar, the build checks (the engine's report on the written files), the
+classification, and the files with copy and download. Deployed to GitHub Pages from `main`
+(`.github/workflows/pages.yml`), and usable offline once loaded (`sw.js`).
+
+Checked by `npm run flows` (Chromium, driving the page as a reader would; every number typed by
+the flow, every number field checked empty before it is typed into) with every written file
+handed to the book's toolkit (`conformance/check-files.py`): the chapter-two demand model rebuilt
+answer first gives the book's own stage-05 values; the build's refusals stop the wizard; an input
+with no number yet shows as not yet measured and the book refuses the file, as the builder says
+it will; the page fits a phone's width; the book's own models open and pass; and it works with
+no network. `test/neutrality.test.js` holds every file to the book's product list.
+
+### Milestone 3: done, and checked
+
+Sources grouped by claim; ceilings with a margin and a reason; ranges in the four shapes, each
+named in its source; inputs that move together, with a reason (which the builder asks for and
+says the book does not check); scenarios, each its own file; the hosts question, one kind of host
+(the answer is the largest of its chains) or several roles (the pools add up). Several
+generations is not offered, and the screen says why.
+
+Measure first is `engine/tornado.js`, held to the book's `tornado()` bar for bar and in the same
+order, for every output of both reference models and two edge cases (`test/tornado.test.js`).
+A flow builds a host count through every refinement, including the book's refusal of a measured
+constant with no ceiling arriving as "fix first", and the book's toolkit accepts the file and
+gives the same tornado for it as the page shows.
+
+### Milestone 4: done, and checked
+
+`engine/sample.js`: inverse transform sampling with the book's percentile functions, Iman and
+Conover's method for inputs that move together (this repository's own implementation, citing the
+method), and the draws pushed through the formulas by numpy's rules. Its random stream is its own
+(xoshiro128\*\*), so it is held to the book by distribution: `test/sampling.test.js` compares the
+5th, 25th, 50th, 75th and 95th percentiles and the mean of every varying node, and every
+ceiling's share of draws over its allowed level, for every scenario of both reference models and
+two edge cases, within the tolerance stated in the test (six times the combined chance spread
+measured from 16 reseeds of the book's sampler, plus the reseeds' own range, plus one for a
+whole-number answer). In practice the gaps look like pure chance: over 2,849 figures that vary
+between seeds, the median gap is 0.62 of the combined spread and the largest 2.66. A control
+test shows the tolerance catches correlations dropped from the strongly correlated case.
+
+The engine's scenario check now samples as the book's does and refuses a scenario whose draws
+are not all finite (the case `invalid/sampling-goes-non-finite`), which closes the gap the first
+milestone left. In the page the verdict and the ranges run in a worker, so sampling a large model
+never freezes it.
+
+### Known gaps
+
+- **A failure only rare draws produce.** The builder's random stream is not the book's, so a
+  scenario the book refuses because one draw in a hundred thousand goes non-finite may pass here,
+  or the other way round. Structural failures (a square root of a range crossing zero) land the
+  same way.
 - **Offset and logarithmic units** (`degC`, `dB`): the book loads them; the engine refuses them
   rather than check them differently (BOOK-REQUESTS 5). The builder never offers them.
 - **A mapping key YAML reads as something other than a string** (a node named `on` is the key
   `True` to PyYAML): the engine uses the key's text. No case covers it.
 - **Integers in the unit pass.** After `ceil` or `floor` the book carries a Python integer, which
-  cannot overflow when raised to a large power; the engine carries a float, which can. No
-  realistic formula reaches it.
-
-### Not started
-
-Milestones 2 to 4. The GitHub Pages deploy comes with the first screen, in milestone 2 (Pages is
-already set to deploy from Actions).
+  cannot overflow when raised to a large power; the engine carries a float, which can.
 
 ## Open questions
 

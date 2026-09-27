@@ -21,7 +21,7 @@ export function reachable() {
     seen.add(file);
     if (!file.endsWith(".js")) continue;
     const text = readFileSync(join(ROOT, file), "utf8");
-    for (const m of text.matchAll(/(?:from|import)\s*\(?\s*["'](\.{1,2}\/[^"']+)["']/g)) {
+    for (const m of text.matchAll(/(?:from|import\s*\(?|new URL\()\s*["'](\.{1,2}\/[^"']+\.js)["']/g)) {
       queue.push(relative(ROOT, join(ROOT, dirname(file), m[1])));
     }
   }

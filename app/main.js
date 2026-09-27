@@ -11,8 +11,8 @@ import { $, esc, useOutline } from "./ui.js";
 import { drawAnswers, drawCoach, drawGraph, drawHeader, drawPanel, drawRefine, drawTree } from "./view.js";
 import { openWizard, wireWizardButtons } from "./wizard.js";
 import { ANSWERS, PATTERNS } from "./words.js";
-import { checks, files, nextStep, preview, reinfer, verdict } from "./workbench.js";
-import { sampleRanges } from "./ranges.js";
+import { judge } from "./judge.js";
+import { checks, files, nextStep, preview, reinfer } from "./workbench.js";
 
 async function data(name) {
   const response = await fetch(new URL(`../data/${name}`, import.meta.url));
@@ -48,17 +48,57 @@ async function boot() {
   };
   globalThis.builder = app; // for the browser's console, and the flow tests
 
+  // The verdict and the ranges come from a worker, so sampling never freezes the page. Each
+  // request carries a number; an answer to an older request than the latest is dropped.
+  let worker = null;
+  try {
+    worker = new Worker(new URL("./worker.js", import.meta.url), { type: "module" });
+    worker.postMessage({ type: "init", results: ctx.results, units });
+  } catch {
+    worker = null;
+  }
+  let asked = 0;
+  let waiting = [];
+  app.verdict = { id: 0, files: null, report: null, ranges: null };
+  app.settled = () => (app.verdict.id === asked ? Promise.resolve() : new Promise((resolve) => waiting.push(resolve)));
+  function received(message) {
+    if (message.id !== asked) return;
+    app.verdict = { id: message.id, files: app.files, report: message.report ?? { load: { ok: false, message: message.error } }, ranges: message.ranges ?? null };
+    draw();
+    for (const resolve of waiting.splice(0)) resolve();
+  }
+  worker?.addEventListener("message", (event) => received(event.data));
+  function ask() {
+    const written = app.files;
+    if (app.state.pending.length || !app.state.doc.nodes.length) {
+      asked += 1;
+      received({ id: asked, report: null, ranges: null });
+      return;
+    }
+    if (app.verdict.files && JSON.stringify(app.verdict.files) === JSON.stringify(written)) return;
+    asked += 1;
+    if (worker) worker.postMessage({ type: "judge", id: asked, files: written });
+    else received({ id: asked, ...judge(written, { results: ctx.results, units }) });
+  }
+
   function render() {
     const { state } = app;
     const context = { registry: ctx.registry, results: ctx.results };
     app.previewed = preview(state, context);
-    const judged = verdict(state, context);
-    app.checks = checks(state, judged);
     app.files = files(state);
-    app.ranges = judged?.report?.load?.ok ? sampleRanges(app, judged) : null;
+    ask();
+    draw();
+  }
+
+  function draw() {
+    const { state } = app;
+    const current = app.verdict.id === asked && app.verdict.report ? { files: app.verdict.files, report: app.verdict.report } : null;
+    const checking = app.verdict.id !== asked;
+    app.checks = checking ? [{ level: "todo", text: "Checking the file with the book's rules…" }] : checks(state, current);
+    app.ranges = checking ? null : app.verdict.ranges;
     const answerUnit = state.pending.find((p) => p.name === state.answer)?.unit;
     const answerUnitIsHosts = Boolean(answerUnit) && /^hosts?$/.test(answerUnit.trim());
-    app.next = nextStep(state, { checks: app.checks, answerUnitIsHosts });
+    app.next = checking && !state.pending.length && state.answer && state.horizon !== null ? { id: "checking" } : nextStep(state, { checks: app.checks, answerUnitIsHosts });
     if (!app.ui.selected && state.answer) app.ui.selected = state.answer;
     $("add-output").hidden = !state.answer || Boolean(state.example);
     drawHeader(app);

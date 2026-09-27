@@ -1,0 +1,287 @@
+{
+ "about": "Two lognormal inputs that move together strongly, summed. The sum's spread depends on the correlation, so a wrong Iman-Conover step shows in its percentiles.",
+ "files": {
+  "model.yaml": "model: tiny\ntitle: Moving together\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  first_cost:\n    kind: input\n    decided: outside\n    unit: USD\n    distribution: {lognormal: {p10: 100.0, p90: 400.0}}\n    provenance: {kind: assumption, source: \"lognormal: a price\"}\n\n  second_cost:\n    kind: input\n    decided: outside\n    unit: USD\n    distribution: {lognormal: {p10: 50.0, p90: 900.0}}\n    provenance: {kind: assumption, source: \"lognormal: a price\"}\n\n  third_cost:\n    kind: input\n    decided: outside\n    unit: USD\n    distribution: {triangular: {minimum: 10.0, likely: 40.0, maximum: 300.0}}\n    provenance: {kind: assumption, source: \"triangular: a quote's range\"}\n\n  total_cost:\n    kind: derived\n    unit: USD\n    formula: first_cost + second_cost + third_cost\n\noutputs:\n  - utilisation\n  - total_cost\n\ncorrelations:\n  - {a: first_cost, b: second_cost, rho: 0.9, because: \"the same supplier\"}\n  - {a: second_cost, b: third_cost, rho: -0.3, because: \"stated for this case\"}\n",
+  "scenarios/more_cores.yaml": "scenario: more_cores\ntitle: Reference\nbecause: the model as declared\nsamples: 100000\nseed: 20260916\noverrides:\n  cores: 16\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 100000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "edge/strong-correlation",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "definitional",
+  "correlations": [
+   {
+    "a": "first_cost",
+    "b": "second_cost",
+    "because": "the same supplier",
+    "rho": 0.9
+   },
+   {
+    "a": "second_cost",
+    "b": "third_cost",
+    "because": "stated for this case",
+    "rho": -0.3
+   }
+  ],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "cores",
+   "first_cost",
+   "request_rate",
+   "second_cost",
+   "service_demand",
+   "busy_cores",
+   "third_cost",
+   "total_cost",
+   "utilisation"
+  ],
+  "outputs": [
+   "utilisation",
+   "total_cost"
+  ],
+  "title": "Moving together",
+  "unit_problems": 0,
+  "unmeasured": []
+ },
+ "nodes": {
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "first_cost": {
+   "decided": "outside",
+   "dimensionality": {
+    "[currency]": 1.0
+   },
+   "distribution": {
+    "lognormal": {
+     "p10": 100.0,
+     "p90": 400.0
+    }
+   },
+   "kind": "input",
+   "magnitude": 200.0000000000001,
+   "provenance": {
+    "kind": "assumption",
+    "source": "lognormal: a price"
+   },
+   "range": null,
+   "unit": "USD",
+   "value": null
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "second_cost": {
+   "decided": "outside",
+   "dimensionality": {
+    "[currency]": 1.0
+   },
+   "distribution": {
+    "lognormal": {
+     "p10": 50.0,
+     "p90": 900.0
+    }
+   },
+   "kind": "input",
+   "magnitude": 212.1320343559642,
+   "provenance": {
+    "kind": "assumption",
+    "source": "lognormal: a price"
+   },
+   "range": null,
+   "unit": "USD",
+   "value": null
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "third_cost": {
+   "decided": "outside",
+   "dimensionality": {
+    "[currency]": 1.0
+   },
+   "distribution": {
+    "triangular": {
+     "likely": 40.0,
+     "maximum": 300.0,
+     "minimum": 10.0
+    }
+   },
+   "kind": "input",
+   "magnitude": 105.835121610524,
+   "provenance": {
+    "kind": "assumption",
+    "source": "triangular: a quote's range"
+   },
+   "range": null,
+   "unit": "USD",
+   "value": null
+  },
+  "total_cost": {
+   "dimensionality": {
+    "[currency]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "first_cost",
+        "op": "ref"
+       },
+       {
+        "name": "second_cost",
+        "op": "ref"
+       }
+      ],
+      "op": "+"
+     },
+     {
+      "name": "third_cost",
+      "op": "ref"
+     }
+    ],
+    "op": "+"
+   },
+   "kind": "derived",
+   "magnitude": 517.9671559664883,
+   "unit": "USD"
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.25,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/strong-correlation/model.yaml",
+ "results": {},
+ "scenarios": {
+  "more_cores": {
+   "ceilings": {},
+   "overrides": {
+    "cores": 16.0
+   },
+   "point": {
+    "busy_cores": 4.0,
+    "cores": 16.0,
+    "first_cost": 200.0000000000001,
+    "request_rate": 200.0,
+    "second_cost": 212.1320343559642,
+    "service_demand": 0.02,
+    "third_cost": 105.835121610524,
+    "total_cost": 517.9671559664883,
+    "utilisation": 0.25
+   },
+   "samples": 100000,
+   "seed": 20260916,
+   "title": "Reference"
+  },
+  "reference": {
+   "ceilings": {},
+   "overrides": {},
+   "point": {
+    "busy_cores": 4.0,
+    "cores": 16.0,
+    "first_cost": 200.0000000000001,
+    "request_rate": 200.0,
+    "second_cost": 212.1320343559642,
+    "service_demand": 0.02,
+    "third_cost": 105.835121610524,
+    "total_cost": 517.9671559664883,
+    "utilisation": 0.25
+   },
+   "samples": 100000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": true,
+  "problems": []
+ }
+}

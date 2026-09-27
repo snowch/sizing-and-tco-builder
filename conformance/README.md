@@ -35,6 +35,7 @@ in the last bit between processors.
 | `probes/formulas.txt` | Formulas; the engine must parse each to the same tree, or refuse it the same way |
 | `probes/yaml.txt` | YAML documents; the engine must build the same typed Python values PyYAML does |
 | `roundtrip.py`, `write-cases.mjs` | The engine writes every case back out; the book's toolkit must read the same model |
+| `check-files.py` | Hands a directory the builder wrote to the book's toolkit; the flow tests use it |
 | `compare.js` | What counts as agreeing: codes, nodes and values, never message wording |
 | `fixtures/` | Generated. Committed, so the engine's tests run with no Python and no network |
 
@@ -65,6 +66,16 @@ probe line starting `json:` is a JSON string, so a probe can hold a newline.
 
 `results.json` is every stamped measurement a `measured` node can name, with the implementation
 it was measured on. The builder offers these and no others.
+
+`tornado/<case>.json` is the book's `tornado()` for every output of a case at its reference
+scenario: the bars, their order, and each end's value.
+
+`sampling/<case>.json` is the book's sampled figures for every scenario of a case: each varying
+node's percentiles and mean at the scenario's seed, and their spread across 16 other seeds; the
+same for each ceiling's share of draws over its allowed level. `test/sampling.test.js` states the
+tolerance the builder is held to.
+
+`products.json` is the book's list of product names (from its `tests/test_book.py`).
 
 `outline.json` is the book's chapter list by slug. The builder links a question to the chapter
 that teaches it by slug, and shows the number from here, as the book does.

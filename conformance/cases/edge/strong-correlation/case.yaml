@@ -1,0 +1,5 @@
+about: >-
+  Two lognormal inputs that move together strongly, summed. The sum's spread depends on the
+  correlation, so a wrong Iman-Conover step shows in its percentiles.
+expect:
+  - valid

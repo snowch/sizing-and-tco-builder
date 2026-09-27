@@ -61,6 +61,7 @@
   "invalid/provenance-kind-invalid",
   "invalid/provenance-missing",
   "invalid/range-not-a-list",
+  "invalid/sampling-goes-non-finite",
   "invalid/scenario-bad-triangular",
   "invalid/scenario-division-by-zero",
   "invalid/scenario-missing-name",
@@ -107,6 +108,7 @@
   "edge/scenario-overrides-measured",
   "edge/shape-named-loosely",
   "edge/sqrt-then-divide-by-zero",
+  "edge/strong-correlation",
   "edge/three-way-max",
   "edge/types-in-the-yaml",
   "edge/unit-conversions",
@@ -122,6 +124,7 @@
    "no-measured-value",
    "distribution",
    "correlation",
+   "sampling",
    "arithmetic"
   ],
   "citation_markers": [

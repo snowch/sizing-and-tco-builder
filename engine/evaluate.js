@@ -407,7 +407,29 @@ export function checkScenario(model, scenario, units) {
   } catch (error) {
     throw withCause(error, causeOf(error));
   }
+  // The book's evaluate() then samples every input with a shape and refuses a scenario in which
+  // any node's draws are not all finite (its histogram cannot bin them). The builder's own stream
+  // differs from the book's, so a failure that only rare draws produce may land differently;
+  // anything structural (a square root of a range that crosses zero) lands the same.
+  if (uncertain.length && sampleFn) {
+    const drawn = sampleFn(model, scenario, units.factors, { summarise: [], samples: Math.min(scenario.samples, limit ?? Infinity) });
+    if (drawn.nonFinite.length) {
+      throw withCause(new EvaluationError(`some draws of ${drawn.nonFinite.join(", ")} are not finite`), "sampling");
+    }
+  }
   return values;
+}
+
+/* The sampler, handed in by sample.js when it loads, so the two modules do not import each other. */
+let sampleFn = null;
+let limit = null;
+export function useSampler(fn) {
+  sampleFn = fn;
+}
+
+/* At most this many draws per scenario when the verdict is checked, or every draw when null. */
+export function limitDraws(n) {
+  limit = n;
 }
 
 function withCause(error, cause) {

@@ -90,7 +90,12 @@ class Reader {
     assert.equal(now, "", `${selector} held ${now} before the reader typed anything`);
     await this.page.fill(selector, String(value));
   }
+  /* The builder's verdict comes from a worker: wait for the latest before reading it. */
+  async settled() {
+    await this.page.evaluate(() => builder.settled());
+  }
   async coach() {
+    await this.settled();
     return this.page.evaluate(() => builder.next);
   }
   async answer({ goal = "other", name, label, unit, decision }) {
@@ -175,9 +180,11 @@ class Reader {
     await this.next();
   }
   async files() {
+    await this.settled();
     return this.page.evaluate(() => builder.files);
   }
   async checks() {
+    await this.settled();
     return this.page.evaluate(() => builder.checks);
   }
 }
@@ -432,6 +439,11 @@ test("a host count, refined: the hosts question, a measurement, a ceiling, range
   await p.fill("#s-why", "The denser host on the second quote.");
   await p.click("#s-add");
   assert.equal((await r.coach()).id, "done");
+  // Inputs with shapes give every answer a range, drawn as the book draws them.
+  const ranges = await p.evaluate(() => builder.ranges);
+  assert.ok(ranges.outputs.hosts.p5 <= ranges.outputs.hosts.p95 && ranges.samples === 100000, JSON.stringify(ranges.outputs));
+  assert.match(await p.textContent("#answers"), /Nine in ten draws between/);
+  assert.ok(ranges.ceilings.queueing_headroom.p_over_allowed >= 0);
   if (process.env.SHOTS) {
     await p.click('[data-tab="measure"]');
     await p.screenshot({ path: `${process.env.SHOTS}/refined.png` });
@@ -471,6 +483,23 @@ test("the hosts question, several roles: the pools add up", async () => {
     assert.equal(verdict.points.reference.fleet, 18);
   }
   if (process.env.SHOTS) await p.screenshot({ path: `${process.env.SHOTS}/roles.png` });
+  assert.deepEqual(r.errors, []);
+  await r.context.close();
+});
+
+test("a scenario whose draws alone go wrong is refused, as the book's sampler refuses it", async () => {
+  const r = await Reader.start();
+  await r.answer({ name: "rooted", label: "a square root of a range", unit: "dimensionless", decision: "A test of the sampler." });
+  await r.forToday();
+  await r.page.click("#coach button.primary");
+  await r.define({ kind: "derived", formula: "sqrt(swing)" });
+  await r.defineAll({
+    swing: { kind: "input", decided: "outside", prov: "assumption", source: "uniform: the ends are all that is known", shape: "uniform", parameters: { minimum: -1, maximum: 3 } },
+  });
+  const checks = await r.checks();
+  assert.ok(checks.some((c) => c.level === "fail" && /draws/.test(c.text)), JSON.stringify(checks));
+  const verdict = book(await r.files());
+  if (verdict) assert.ok(!verdict.ok && verdict.problems.some((p) => /not finite/.test(p)), JSON.stringify(verdict.problems));
   assert.deepEqual(r.errors, []);
   await r.context.close();
 });

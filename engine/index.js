@@ -17,6 +17,7 @@
 
 import { FormulaError, parse as parseFormulaText } from "./formula.js";
 import { ceilingReport, point } from "./evaluate.js";
+import "./sample.js";
 import { blocked, classification, loadModel, loadScenario, LoadError, unmeasured } from "./model.js";
 import { PyError, floatRepr, isDict, isInt } from "./python.js";
 import { Registry, UnitError } from "./units.js";
