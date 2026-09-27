@@ -334,11 +334,11 @@ test("the page fits a phone's width", async () => {
   await r.context.close();
 });
 
-test("on a phone, the question and its buttons fit the screen, and the label hint fits the answer", async () => {
+test("on a phone, the question and its buttons fit the screen, and the label fits the answer", async () => {
   const r = await Reader.start({ viewport: { width: 360, height: 740 } });
   const p = r.page;
   await p.click('[data-goal="cost"]');
-  assert.equal(await p.getAttribute("#w-label", "placeholder"), "the cost over the life of the purchase");
+  assert.equal(await p.inputValue("#w-label"), "total cost");
   const fit = await p.evaluate(() => {
     const vw = document.documentElement.clientWidth;
     const outside = [...document.querySelectorAll("#wizard *")].filter((e) => e.getBoundingClientRect().right > vw + 1).map((e) => e.id || e.tagName);
@@ -348,7 +348,7 @@ test("on a phone, the question and its buttons fit the screen, and the label hin
   await p.click("#wcancel");
   await p.click("#new");
   await p.click('[data-goal="hosts"]');
-  assert.equal(await p.getAttribute("#w-label", "placeholder"), "hosts to buy");
+  assert.equal(await p.inputValue("#w-label"), "hosts to buy");
   assert.deepEqual(r.errors, []);
   await r.context.close();
 });

@@ -62,8 +62,11 @@ export function openWizard(app, spec) {
   if (spec.type === "answer") {
     const goal = ANSWERS[state.goal] ?? ANSWERS.other;
     const unit = (nodeNamed(state, state.answer) ?? pendingNamed(state, state.answer))?.unit ?? money(goal.unit, state.doc.currency);
-    Object.assign(draft, { name: state.answer ?? "", label: "", unit, decision: state.decision, currency: state.doc.currency });
+    const had = nodeNamed(state, state.answer) ?? pendingNamed(state, state.answer);
+    Object.assign(draft, { name: state.answer ?? "", label: had?.label ?? "", unit, decision: state.decision, currency: state.doc.currency });
+    // A chosen answer comes with its name and its words; "Something else" leaves both to you.
     if (!draft.name) draft.name = { hosts: "hosts", storage: "storage_to_buy", cost: "total_cost" }[state.goal] ?? "";
+    if (!draft.label && state.goal !== "other") draft.label = goal.label;
   } else if (spec.type === "output") {
     Object.assign(draft, { name: "", label: "", unit: "" });
   } else if (spec.type === "decision") {

@@ -27,7 +27,7 @@ export const ANSWERS = {
     title: "What will it cost?",
     blurb: "The machines you need, priced over the life of the purchase: what you pay up front and what it costs to run them.",
     unit: "{currency}",
-    label: "the cost over the life of the purchase",
+    label: "total cost",
   },
   other: {
     title: "Something else",
