@@ -15,21 +15,25 @@ export const ANSWERS = {
     title: "How many machines?",
     blurb: "A fleet sized for the busy hour at the end of the purchase, with a margin below the point where it slows down.",
     unit: "host",
+    label: "hosts to buy",
   },
   storage: {
     title: "How much storage?",
     blurb: "What is held today, grown to the horizon, after copies and compression, below the point where the disks fill.",
     unit: "TB",
+    label: "storage to buy",
   },
   cost: {
     title: "What will it cost?",
     blurb: "The machines you need, priced over the life of the purchase: what you pay up front and what it costs to run them.",
     unit: "{currency}",
+    label: "the cost over the life of the purchase",
   },
   other: {
     title: "Something else",
     blurb: "Any quantity: a request rate, a bandwidth, a number of racks. You say what it is and what it is measured in.",
     unit: "",
+    label: "peak request rate at the horizon",
   },
 };
 

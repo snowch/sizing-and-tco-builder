@@ -334,6 +334,25 @@ test("the page fits a phone's width", async () => {
   await r.context.close();
 });
 
+test("on a phone, the question and its buttons fit the screen, and the label hint fits the answer", async () => {
+  const r = await Reader.start({ viewport: { width: 360, height: 740 } });
+  const p = r.page;
+  await p.click('[data-goal="cost"]');
+  assert.equal(await p.getAttribute("#w-label", "placeholder"), "the cost over the life of the purchase");
+  const fit = await p.evaluate(() => {
+    const vw = document.documentElement.clientWidth;
+    const outside = [...document.querySelectorAll("#wizard *")].filter((e) => e.getBoundingClientRect().right > vw + 1).map((e) => e.id || e.tagName);
+    return { outside, next: document.getElementById("wnext").getBoundingClientRect().right <= vw, scroll: document.documentElement.scrollWidth - vw };
+  });
+  assert.deepEqual(fit, { outside: [], next: true, scroll: 0 });
+  await p.click("#wcancel");
+  await p.click("#new");
+  await p.click('[data-goal="hosts"]');
+  assert.equal(await p.getAttribute("#w-label", "placeholder"), "hosts to buy");
+  assert.deepEqual(r.errors, []);
+  await r.context.close();
+});
+
 test("it opens the book's own models and agrees with the book about them", async () => {
   const r = await Reader.start();
   for (const id of ["demand", "web_service", "observability"]) {

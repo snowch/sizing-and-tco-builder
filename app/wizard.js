@@ -119,7 +119,7 @@ const VIEWS = {
     const goal = ANSWERS[APP.state.goal] ?? ANSWERS.other;
     return `${question("answer")}
       ${field("w-name", "Name in formulas", d.name, { mono: true, placeholder: "hosts", hint: "Lower case, letters, digits and underscores. Formulas use it." })}
-      ${field("w-label", "Label", d.label, { placeholder: goal.title === "Something else" ? "peak request rate at the horizon" : "hosts to buy", hint: "The words a table shows." })}
+      ${field("w-label", "Label", d.label, { placeholder: goal.label, hint: "The words a table shows." })}
       ${field("w-unit", "Unit", d.unit, { mono: true, placeholder: "host", hint: unitHint(d.unit) })}
       <div class="chips">${["host", "TB", d.currency, "request/second", "MB/s"].map((c) => `<button type="button" data-unit="${esc(c)}">${esc(c)}</button>`).join("")}</div>
       <div class="field" style="margin-top:12px"><label for="w-currency">The currency the model prices in</label><select id="w-currency">${APP.ctx.registry.currencies.map((c) => `<option value="${esc(c)}"${c === d.currency ? " selected" : ""}>${esc(c)}</option>`).join("")}</select><span class="hint">${esc(CURRENCY_WHY)} ${chapters(["unit_economics"])}</span></div>`;
