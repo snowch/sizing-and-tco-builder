@@ -6,6 +6,10 @@ writes the same YAML model files as the book *Sizing and TCO*
 at the moment they matter, starting from the answer you are being asked for, and never fills in a
 number for you.
 
+**Use it at <https://snowch.github.io/sizing-and-tco-builder/>.** It runs entirely in your
+browser, keeps working offline once loaded, and sends nothing anywhere. The site is deployed from
+`main` by [`pages.yml`](.github/workflows/pages.yml), after the engine's tests pass.
+
 **Status: all four milestones are built and checked.** The rules engine agrees with the book's
 toolkit on every conformance case, the interface builds models whose files the book accepts, and
 the sampler's ranges land where the book's do. See [PLAN.md](PLAN.md) for what was checked and
