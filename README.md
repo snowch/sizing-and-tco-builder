@@ -6,6 +6,9 @@ writes the same YAML model files as the book *Sizing and TCO*
 at the moment they matter, starting from the answer you are being asked for, and never fills in a
 number for you.
 
+A TCO model you can understand, reproduce, test and share. The model can be seen as a graph or
+as a table, and downloaded as a spreadsheet whose formulas still work.
+
 **Use it at <https://snowch.github.io/sizing-and-tco-builder/>.** It runs entirely in your
 browser, keeps working offline once loaded, and sends nothing anywhere. The site is deployed from
 `main` by [`pages.yml`](.github/workflows/pages.yml), after the engine's tests pass.

@@ -26,7 +26,7 @@ async function boot() {
     data("units.json"), data("results.json"), data("outline.json"), data("examples.json"),
   ]);
   useOutline(outline);
-  const ctx = { registry: new Registry(units), results, outline, examples, patterns: PATTERNS };
+  const ctx = { registry: new Registry(units), units, results, outline, examples, patterns: PATTERNS };
   const stored = load();
   const app = {
     ctx,

@@ -270,6 +270,25 @@ Rows filter, sort and copy out as tab-separated text that pastes into a spreadsh
 A row opens in the inspector, which now lists what each node is made of and what uses it, with
 values, to walk the model either way. A flow drives it and hands the result to the book.
 
+### After the milestones: the spreadsheet export
+
+For a process that wants a spreadsheet, the File tab and the table download the model as an
+.xlsx (`engine/spreadsheet.js`, written by `engine/xlsx.js`: no library, no network). Every given
+number is a shaded cell; every worked-out value and every ceiling is a live formula over workbook
+names, so it reads as the model does (`=CEILING.MATH(busy_cores/(cores_per_host*(1-queueing_margin)))`)
+and a price changed there moves the total. A formula whose units need converting carries the
+factor the book's evaluator applies. The translation writes around the two places a spreadsheet's
+arithmetic differs from Python's: unary minus binds tighter than power, and power groups from the
+left. Sheets: Answers (with the sampled ranges as a snapshot), Model, Ceilings, Scenarios. The
+Model sheet shows the reference scenario, as the book quotes it.
+
+Checked by recalculation, not by reading the formulas: `test/spreadsheet.test.js` writes every
+fixture model the export accepts with no cached values, has LibreOffice Calc recalculate them,
+and holds every cell to the book's own value from the fixtures, every ceiling's verdict and
+allowed level to the book's, and every scenario's answers to the book's. CI installs Calc and
+fails rather than skipping without it. A spreadsheet has no units, so it cannot check them, and
+nothing changed in it comes back: each sheet says the model file is the source of truth.
+
 ### Known gaps
 
 - **A failure only rare draws produce.** The builder's random stream is not the book's, so a

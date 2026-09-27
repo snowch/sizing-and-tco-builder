@@ -11,6 +11,7 @@ import {
   graph, isComplete, measureFirst, parentsOf, pendingOrder, refinementDone, upstream,
 } from "./workbench.js";
 import { openWizard } from "./wizard.js";
+import { downloadSpreadsheet } from "./table.js";
 
 // -- the value a node shows ------------------------------------------------------------------------
 
@@ -380,6 +381,8 @@ const PANELS = {
       return `<h2>The model file</h2><p class="why">The book's own format: the book's checks, its viewer and its problems read it as they read the book's models. Each scenario is a file of its own, in a <code>scenarios/</code> folder beside the model. ${chapters([], "appendix_a_dsl_reference")}</p>
         ${app.state.pending.length ? `<div class="verdict warn">Still to define: ${esc(app.state.pending.map((p) => p.name).join(", "))}. The book cannot load the file until they are, because a formula names them.</div>` : ""}
         <div class="grid2">${fieldHtml("f-model", "Model name", app.state.doc.model)}${fieldHtml("f-title", "Title", app.state.doc.title)}</div>
+        <div class="xlsx"><h3>As a spreadsheet</h3><p class="note">For a process that wants a spreadsheet: an .xlsx with every given number in a shaded cell and everything else a live formula over them, so a price changed there moves the total. A spreadsheet has no units and cannot check them, and nothing changed in it comes back here: the model file stays the source of truth.</p>
+          <div class="row"><button type="button" id="f-xlsx">Download as a spreadsheet (.xlsx)</button><span class="note" id="f-xlsx-msg" aria-live="polite"></span></div></div>
         <div class="files">${blocks.join("")}</div>`;
     },
     wire(app, P) {
@@ -412,6 +415,7 @@ const PANELS = {
           setTimeout(() => URL.revokeObjectURL(url), 1000);
         });
       }
+      P.querySelector("#f-xlsx")?.addEventListener("click", () => { P.querySelector("#f-xlsx-msg").textContent = downloadSpreadsheet(app); });
       const model = P.querySelector("#f-model");
       model?.addEventListener("change", () => {
         const v = model.value.trim();

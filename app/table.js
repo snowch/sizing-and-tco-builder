@@ -9,6 +9,7 @@
  * from.
  */
 
+import { NotExportable, workbook } from "../engine/spreadsheet.js";
 import { $, esc, fmt } from "./ui.js";
 import { DECIDED_WORDS, PROVENANCE_WORDS } from "./words.js";
 import { graph } from "./workbench.js";
@@ -88,6 +89,28 @@ export function asText(list) {
     .join("\n");
 }
 
+/*
+ * The model as an .xlsx file with live formulas, from the files the builder writes. Returns what
+ * to tell the reader; the file is refused while the model cannot be worked out.
+ */
+export function downloadSpreadsheet(app) {
+  if (app.state.pending.length) return `Define ${app.state.pending.map((p) => p.name).join(", ")} first: a formula names them.`;
+  let bytes;
+  try {
+    bytes = workbook(app.files, { units: app.ctx.units, results: app.ctx.results, ranges: app.ranges });
+  } catch (error) {
+    if (error instanceof NotExportable) return error.message;
+    return `The book would not load the file yet, so there is nothing to export: ${error.message}`;
+  }
+  const url = URL.createObjectURL(new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${app.state.doc.model || "model"}.xlsx`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return `Downloaded ${a.download}. Its given numbers are shaded; everything else is a live formula over them.`;
+}
+
 export function drawTable(app) {
   const wrap = $("table-view");
   const on = app.ui.view === "table";
@@ -105,7 +128,7 @@ export function drawTable(app) {
   wrap.innerHTML = `<div class="tablebar">
       <input id="t-filter" type="search" placeholder="Filter by name, unit, source or formula" value="${esc(t.filter ?? "")}" aria-label="Filter the rows">
       <select id="t-kind" aria-label="Show one kind"><option value="">Every kind</option>${kinds.map((k) => `<option value="${esc(k)}"${t.kind === k ? " selected" : ""}>${esc(k)}</option>`).join("")}</select>
-      <button type="button" id="t-copy">Copy as a table</button><span class="note" id="t-msg" aria-live="polite">${esc(t.msg ?? "")}</span>
+      <button type="button" id="t-copy">Copy as a table</button><button type="button" id="t-xlsx">Download as a spreadsheet</button><span class="note" id="t-msg" aria-live="polite">${esc(t.msg ?? "")}</span>
     </div>
     <p class="note">Type a given number and everything worked out from it changes. Worked-out and measured values come from their formula or measurement, so they cannot be typed over; a unit, a source or a range is changed with Edit.</p>
     <div class="table-wrap"><table class="sheet">
@@ -160,6 +183,10 @@ function wire(app, wrap, list) {
       t.msg = "The browser would not copy. Select the table and copy it instead.";
       msg.textContent = t.msg;
     }
+  });
+  wrap.querySelector("#t-xlsx").addEventListener("click", () => {
+    t.msg = downloadSpreadsheet(app);
+    msg.textContent = t.msg;
   });
   for (const b of wrap.querySelectorAll("[data-pick]")) {
     b.addEventListener("click", () => {

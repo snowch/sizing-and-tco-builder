@@ -35,8 +35,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      # The spreadsheet export is recalculated by a spreadsheet application and held to the book.
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libreoffice-calc-nogui
       - run: npm ci
       - run: npm test
+        env:
+          REQUIRE_SOFFICE: "1"
 
   flows:
     # The builder in a browser, as a reader drives it, with every file it writes handed to the
@@ -57,4 +61,7 @@ jobs:
           key: book-${{ runner.os }}-py3.11-${{ hashFiles('book.lock.json') }}
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - run: sudo apt-get install -y --no-install-recommends libreoffice-calc-nogui
       - run: npm run flows
+        env:
+          REQUIRE_SOFFICE: "1"

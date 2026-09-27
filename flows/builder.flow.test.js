@@ -206,6 +206,21 @@ function book(files) {
 
 const close = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(b));
 
+/* One sheet of an .xlsx as LibreOffice Calc works it out, as rows of text; null without it. */
+function recalculated(file, sheet) {
+  try {
+    execFileSync("soffice", ["--version"], { stdio: "ignore" });
+  } catch {
+    if (process.env.REQUIRE_SOFFICE) throw new Error("REQUIRE_SOFFICE is set and LibreOffice (soffice) is not installed");
+    return null;
+  }
+  const dir = mkdtempSync(join(tmpdir(), "builder-xlsx-"));
+  const copy = join(dir, "book.xlsx");
+  writeFileSync(copy, readFileSync(file));
+  execFileSync("soffice", [`-env:UserInstallation=file://${join(dir, "profile")}`, "--headless", "--convert-to", "csv:Text - txt - csv (StarCalc):44,34,76,1,,0,false,true,false,false,false,-1", "--outdir", dir, copy], { stdio: "ignore", timeout: 120000 });
+  return readFileSync(join(dir, `book-${sheet}.csv`), "utf8").trim().split("\n").map((line) => line.split(","));
+}
+
 // -- the flows ------------------------------------------------------------------------------------
 
 const DEMAND = {
@@ -672,6 +687,12 @@ test("the table: type a given number and what is worked out from it changes; not
     assert.ok(verdict.ok, JSON.stringify(verdict.problems));
     assert.equal(verdict.points.reference.fleet, 20);
   }
+  // As a spreadsheet: downloaded from the File tab, and recalculated by a spreadsheet application.
+  await p.click('[data-tab="file"]');
+  const [download] = await Promise.all([p.waitForEvent("download"), p.click("#f-xlsx")]);
+  assert.equal(download.suggestedFilename(), "fleet.xlsx");
+  const sheet = recalculated(await download.path(), "Answers");
+  if (sheet) assert.deepEqual(sheet.find((row) => row[0] === "fleet")?.slice(2, 4), ["20", "host"]);
   // On a phone, the table scrolls inside its own box; the page does not scroll sideways.
   await p.setViewportSize({ width: 360, height: 740 });
   assert.equal(await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), 0);
