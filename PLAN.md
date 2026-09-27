@@ -281,5 +281,6 @@ never freezes it.
 4. **A reader's own measurements** (BOOK-REQUESTS 12, still open). Until the book has a place for
    them, the builder offers only the book's constants or *not yet measured*.
 5. **Licence.** Settled: MIT (`LICENSE`). The vendored YAML package keeps its own ISC licence.
-6. **The decision the answer feeds.** The format has no field for it, so it goes in the model's
-   `description`. Would the book want a field of its own (design, *The flow*, step 2)?
+6. **The decision the answer feeds.** Settled: it stays in the model's `description`. The models
+   the builder writes are the reader's, not the book's, so the format needs no field of its own
+   for it and the book is not asked for one.
