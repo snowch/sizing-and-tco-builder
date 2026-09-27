@@ -2,7 +2,8 @@
  "book": {
   "commit": "888ac509f2e923a50f6ac6b51153e2c1b6119172",
   "python": "3.11",
-  "repository": "https://github.com/snowch/sizing-and-tco"
+  "repository": "https://github.com/snowch/sizing-and-tco",
+  "site": "https://snowch.github.io/sizing-and-tco/"
  },
  "cases": [
   "reference/web_service",

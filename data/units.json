@@ -1,0 +1,4852 @@
+{
+ "keys": {
+  "%": "percent",
+  "A": "ampere",
+  "AU": "absorbance_unit",
+  "A_90": "conventional_ampere_90",
+  "A_US": "US_international_ampere",
+  "A_it": "mean_international_ampere",
+  "Ah": "ampere_hour",
+  "At": "ampere_turn",
+  "B": "byte",
+  "BDFT": "board_foot",
+  "BF": "board_foot",
+  "BTU": "british_thermal_unit",
+  "Ba": "barye",
+  "Bd": "baud",
+  "Bi": "biot",
+  "Bq": "becquerel",
+  "Btu": "british_thermal_unit",
+  "Btu_iso": "british_thermal_unit",
+  "Btu_it": "international_british_thermal_unit",
+  "Btu_th": "thermochemical_british_thermal_unit",
+  "C": "coulomb",
+  "C_90": "conventional_coulomb_90",
+  "Ci": "curie",
+  "Cl": "clausius",
+  "D": "debye",
+  "DPI": "pixels_per_inch",
+  "Da": "dalton",
+  "ECC": "number_english",
+  "EC_therm": "therm",
+  "E_h": "hartree",
+  "Eh": "hartree",
+  "F": "farad",
+  "FBM": "board_foot",
+  "F_90": "conventional_farad_90",
+  "Fr": "franklin",
+  "G": "gauss",
+  "G_0": "conductance_quantum",
+  "Gal": "galileo",
+  "Gb": "gilbert",
+  "Gy": "gray",
+  "H": "henry",
+  "H_90": "conventional_henry_90",
+  "Hz": "hertz",
+  "J": "joule",
+  "K": "kelvin",
+  "KPH": "kilometer_per_hour",
+  "K_J": "josephson_constant",
+  "K_J90": "conventional_josephson_constant",
+  "L": "liter",
+  "LMH": "LMH",
+  "Ly": "langley",
+  "M": "molar",
+  "MPH": "mile_per_hour",
+  "Mx": "maxwell",
+  "N": "newton",
+  "N_A": "avogadro_constant",
+  "Ne": "number_english",
+  "NeC": "number_english",
+  "Nm": "number_meter",
+  "Np": "neper",
+  "Oe": "oersted",
+  "P": "poise",
+  "PPCM": "pixels_per_centimeter",
+  "PPI": "pixels_per_inch",
+  "PSH": "peak_sun_hour",
+  "Pa": "pascal",
+  "Phi_0": "magnetic_flux_quantum",
+  "R": "molar_gas_constant",
+  "RIU": "refractive_index_unit",
+  "RKM": "RKM",
+  "R_K": "von_klitzing_constant",
+  "R_K90": "conventional_von_klitzing_constant",
+  "R_inf": "rydberg_constant",
+  "R_∞": "rydberg_constant",
+  "Rd": "rutherford",
+  "Ry": "rydberg",
+  "S": "siemens",
+  "SPL": "sound_pressure_level",
+  "St": "stokes",
+  "Sv": "sievert",
+  "T": "tesla",
+  "Ta": "aberdeen",
+  "Td": "townsend",
+  "Tj": "jute",
+  "Tt": "tex",
+  "U": "enzyme_unit",
+  "UK_bbl": "imperial_barrel",
+  "UK_bushel": "imperial_bushel",
+  "UK_cup": "imperial_cup",
+  "UK_cwt": "UK_hundredweight",
+  "UK_fluid_ounce": "imperial_fluid_ounce",
+  "UK_force_ton": "UK_force_ton",
+  "UK_gallon": "imperial_gallon",
+  "UK_gill": "imperial_gill",
+  "UK_horsepower": "horsepower",
+  "UK_hundredweight": "UK_hundredweight",
+  "UK_pint": "imperial_pint",
+  "UK_pk": "imperial_peck",
+  "UK_quart": "imperial_quart",
+  "UK_ton": "UK_ton",
+  "UK_ton_force": "UK_force_ton",
+  "USD": "USD",
+  "US_cwt": "US_hundredweight",
+  "US_dry_barrel": "dry_barrel",
+  "US_dry_gallon": "dry_gallon",
+  "US_dry_pint": "dry_pint",
+  "US_dry_quart": "dry_quart",
+  "US_fluid_dram": "fluid_dram",
+  "US_fluid_ounce": "fluid_ounce",
+  "US_force_ton": "US_force_ton",
+  "US_hundredweight": "US_hundredweight",
+  "US_international_ampere": "US_international_ampere",
+  "US_international_ohm": "US_international_ohm",
+  "US_international_volt": "US_international_volt",
+  "US_liquid_cup": "cup",
+  "US_liquid_dram": "fluid_dram",
+  "US_liquid_fifth": "fifth",
+  "US_liquid_gallon": "gallon",
+  "US_liquid_gill": "gill",
+  "US_liquid_ounce": "fluid_ounce",
+  "US_liquid_quart": "quart",
+  "US_pint": "pint",
+  "US_shot": "shot",
+  "US_therm": "US_therm",
+  "US_ton": "US_ton",
+  "US_ton_force": "US_force_ton",
+  "V": "volt",
+  "VA": "volt_ampere",
+  "V_90": "conventional_volt_90",
+  "V_US": "US_international_volt",
+  "V_it": "mean_international_volt",
+  "W": "watt",
+  "W_90": "conventional_watt_90",
+  "Wb": "weber",
+  "Wh": "watt_hour",
+  "Xu_Cu": "x_unit_Cu",
+  "Xu_Mo": "x_unit_Mo",
+  "Z_0": "impedance_of_free_space",
+  "a": "year",
+  "a0": "bohr",
+  "a_0": "bohr",
+  "a_u_action": "dirac_constant",
+  "a_u_current": "atomic_unit_of_current",
+  "a_u_efg": "atomic_unit_of_electric_field_gradient",
+  "a_u_electric_field": "atomic_unit_of_electric_field",
+  "a_u_energy": "hartree",
+  "a_u_force": "atomic_unit_of_force",
+  "a_u_intensity": "atomic_unit_of_intensity",
+  "a_u_length": "bohr",
+  "a_u_mass": "electron_mass",
+  "a_u_temp": "atomic_unit_of_temperature",
+  "a_u_time": "atomic_unit_of_time",
+  "abA": "abampere",
+  "abC": "abcoulomb",
+  "abF": "abfarad",
+  "abH": "abhenry",
+  "abS": "absiemens",
+  "abV": "abvolt",
+  "abampere": "abampere",
+  "abcoulomb": "abcoulomb",
+  "aberdeen": "aberdeen",
+  "abfarad": "abfarad",
+  "abhenry": "abhenry",
+  "abmho": "absiemens",
+  "abohm": "abohm",
+  "absiemens": "absiemens",
+  "absorbance_unit": "absorbance_unit",
+  "abvolt": "abvolt",
+  "abΩ": "abohm",
+  "acre": "acre",
+  "acre_feet": "acre_foot",
+  "acre_foot": "acre_foot",
+  "alpha": "fine_structure_constant",
+  "amp": "ampere",
+  "ampere": "ampere",
+  "ampere_hour": "ampere_hour",
+  "ampere_turn": "ampere_turn",
+  "amu": "unified_atomic_mass_unit",
+  "angstrom": "angstrom",
+  "angstrom_star": "angstrom_star",
+  "angular_degree": "degree",
+  "angular_minute": "arcminute",
+  "angular_second": "arcsecond",
+  "ap_dr": "apothecary_dram",
+  "ap_lb": "apothecary_pound",
+  "ap_oz": "apothecary_ounce",
+  "apothecary_drachm": "apothecary_dram",
+  "apothecary_dram": "apothecary_dram",
+  "apothecary_ounce": "apothecary_ounce",
+  "apothecary_pound": "apothecary_pound",
+  "arc_minute": "arcminute",
+  "arc_second": "arcsecond",
+  "arcdeg": "degree",
+  "arcdegree": "degree",
+  "arcmin": "arcminute",
+  "arcminute": "arcminute",
+  "arcsec": "arcsecond",
+  "arcsecond": "arcsecond",
+  "are": "are",
+  "astronomical_unit": "astronomical_unit",
+  "at": "technical_atmosphere",
+  "atm": "standard_atmosphere",
+  "atm_l": "atmosphere_liter",
+  "atmosphere": "standard_atmosphere",
+  "atmosphere_liter": "atmosphere_liter",
+  "atomic_mass_constant": "atomic_mass_constant",
+  "atomic_unit_of_action": "dirac_constant",
+  "atomic_unit_of_current": "atomic_unit_of_current",
+  "atomic_unit_of_electric_field": "atomic_unit_of_electric_field",
+  "atomic_unit_of_electric_field_gradient": "atomic_unit_of_electric_field_gradient",
+  "atomic_unit_of_energy": "hartree",
+  "atomic_unit_of_force": "atomic_unit_of_force",
+  "atomic_unit_of_intensity": "atomic_unit_of_intensity",
+  "atomic_unit_of_length": "bohr",
+  "atomic_unit_of_mass": "electron_mass",
+  "atomic_unit_of_temperature": "atomic_unit_of_temperature",
+  "atomic_unit_of_time": "atomic_unit_of_time",
+  "au": "astronomical_unit",
+  "avdp_dram": "dram",
+  "avdp_ounce": "ounce",
+  "avdp_pound": "pound",
+  "avogadro_constant": "avogadro_constant",
+  "avogadro_number": "avogadro_number",
+  "avoirdupois_dram": "dram",
+  "avoirdupois_ounce": "ounce",
+  "avoirdupois_pound": "pound",
+  "b": "barn",
+  "bag": "bag",
+  "bar": "bar",
+  "barad": "barye",
+  "barie": "barye",
+  "barn": "barn",
+  "barrel": "barrel",
+  "barrie": "barye",
+  "baryd": "barye",
+  "barye": "barye",
+  "baud": "baud",
+  "bbl": "barrel",
+  "becquerel": "becquerel",
+  "beer_barrel": "beer_barrel",
+  "beer_bbl": "beer_barrel",
+  "big_point": "point",
+  "biot": "biot",
+  "biot_turn": "biot_turn",
+  "bit": "bit",
+  "bits_per_pixel": "bits_per_pixel",
+  "blob": "slinch",
+  "board_feet": "board_foot",
+  "board_foot": "board_foot",
+  "bohr": "bohr",
+  "bohr_magneton": "bohr_magneton",
+  "bohr_radius": "bohr",
+  "boiler_horsepower": "boiler_horsepower",
+  "boltzmann_constant": "boltzmann_constant",
+  "bp": "point",
+  "bpp": "bits_per_pixel",
+  "bps": "baud",
+  "british_thermal_unit": "british_thermal_unit",
+  "bu": "bushel",
+  "buckingham": "buckingham",
+  "bushel": "bushel",
+  "byte": "byte",
+  "c": "speed_of_light",
+  "c_0": "speed_of_light",
+  "c_1": "first_radiation_constant",
+  "c_2": "second_radiation_constant",
+  "cables_length": "cables_length",
+  "cal": "calorie",
+  "cal_15": "fifteen_degree_calorie",
+  "cal_it": "international_calorie",
+  "cal_th": "calorie",
+  "calorie": "calorie",
+  "candela": "candela",
+  "candle": "candela",
+  "carat": "carat",
+  "cc": "cubic_centimeter",
+  "cd": "candela",
+  "celsius": "degree_Celsius",
+  "centimeter": "centimeter",
+  "centipoise": "centipoise",
+  "centuries": "century",
+  "century": "century",
+  "chain": "chain",
+  "characteristic_impedance_of_vacuum": "impedance_of_free_space",
+  "cicero": "cicero",
+  "circle": "turn",
+  "circular_mil": "circular_mil",
+  "classical_electron_radius": "classical_electron_radius",
+  "clausius": "clausius",
+  "cm_1": "reciprocal_centimeter",
+  "cmil": "circular_mil",
+  "common_year": "common_year",
+  "conductance_quantum": "conductance_quantum",
+  "conventional_ampere_90": "conventional_ampere_90",
+  "conventional_coulomb_90": "conventional_coulomb_90",
+  "conventional_farad_90": "conventional_farad_90",
+  "conventional_henry_90": "conventional_henry_90",
+  "conventional_josephson_constant": "conventional_josephson_constant",
+  "conventional_mercury_density": "conventional_mercury_density",
+  "conventional_ohm_90": "conventional_ohm_90",
+  "conventional_volt_90": "conventional_volt_90",
+  "conventional_von_klitzing_constant": "conventional_von_klitzing_constant",
+  "conventional_water_density": "conventional_water_density",
+  "conventional_watt_90": "conventional_watt_90",
+  "cooling_tower_ton": "cooling_tower_ton",
+  "core": "core",
+  "coulomb": "coulomb",
+  "coulomb_constant": "coulomb_constant",
+  "count": "count",
+  "counts_per_second": "counts_per_second",
+  "cp": "cup",
+  "cps": "counts_per_second",
+  "css_pixel": "css_pixel",
+  "ct": "carat",
+  "cu_ft": "cubic_foot",
+  "cu_in": "cubic_inch",
+  "cu_yd": "cubic_yard",
+  "cubic_centimeter": "cubic_centimeter",
+  "cubic_feet": "cubic_foot",
+  "cubic_foot": "cubic_foot",
+  "cubic_inch": "cubic_inch",
+  "cubic_yard": "cubic_yard",
+  "cup": "cup",
+  "curie": "curie",
+  "cwt": "hundredweight",
+  "cycle": "turn",
+  "d": "day",
+  "dB": "decibel",
+  "dBW": "decibelwatt",
+  "dBm": "decibelmilliwatt",
+  "dBu": "decibelmicrowatt",
+  "dalton": "dalton",
+  "darcy": "darcy",
+  "day": "day",
+  "debye": "debye",
+  "decade": "decade",
+  "decibel": "decibel",
+  "decibelmicrowatt": "decibelmicrowatt",
+  "decibelmilliwatt": "decibelmilliwatt",
+  "decibelwatt": "decibelwatt",
+  "decimeter": "decimeter",
+  "decitex": "decitex",
+  "deg": "degree",
+  "degC": "degree_Celsius",
+  "degF": "degree_Fahrenheit",
+  "degK": "kelvin",
+  "degR": "degree_Rankine",
+  "degRe": "degree_Reaumur",
+  "degree": "degree",
+  "degreeC": "degree_Celsius",
+  "degreeF": "degree_Fahrenheit",
+  "degreeK": "kelvin",
+  "degreeR": "degree_Rankine",
+  "degreeRe": "degree_Reaumur",
+  "degree_Celsius": "degree_Celsius",
+  "degree_Fahrenheit": "degree_Fahrenheit",
+  "degree_Kelvin": "kelvin",
+  "degree_Rankine": "degree_Rankine",
+  "degree_Reaumur": "degree_Reaumur",
+  "degree_Réaumur": "degree_Reaumur",
+  "delta_celsius": "delta_degree_Celsius",
+  "delta_degC": "delta_degree_Celsius",
+  "delta_degF": "delta_degree_Fahrenheit",
+  "delta_degRe": "delta_degree_Reaumur",
+  "delta_degreeC": "delta_degree_Celsius",
+  "delta_degreeF": "delta_degree_Fahrenheit",
+  "delta_degreeRe": "delta_degree_Reaumur",
+  "delta_degree_Celsius": "delta_degree_Celsius",
+  "delta_degree_Fahrenheit": "delta_degree_Fahrenheit",
+  "delta_degree_Reaumur": "delta_degree_Reaumur",
+  "delta_degree_Réaumur": "delta_degree_Reaumur",
+  "delta_fahrenheit": "delta_degree_Fahrenheit",
+  "delta_reaumur": "delta_degree_Reaumur",
+  "delta_réaumur": "delta_degree_Reaumur",
+  "den": "denier",
+  "denier": "denier",
+  "dgal": "dry_gallon",
+  "didot": "didot",
+  "dirac_constant": "dirac_constant",
+  "dollar": "USD",
+  "dot": "pixel",
+  "dots_per_inch": "pixels_per_inch",
+  "dpi": "dry_pint",
+  "dqt": "dry_quart",
+  "dr": "dram",
+  "drachm": "apothecary_dram",
+  "dram": "dram",
+  "drive": "drive",
+  "dry_barrel": "dry_barrel",
+  "dry_gallon": "dry_gallon",
+  "dry_pint": "dry_pint",
+  "dry_quart": "dry_quart",
+  "dtex": "dtex",
+  "dwt": "pennyweight",
+  "dyn": "dyne",
+  "dyne": "dyne",
+  "e": "elementary_charge",
+  "eV": "electron_volt",
+  "electric_constant": "vacuum_permittivity",
+  "electrical_horsepower": "electrical_horsepower",
+  "electron_g_factor": "electron_g_factor",
+  "electron_mass": "electron_mass",
+  "electron_volt": "electron_volt",
+  "electronvolt": "electron_volt",
+  "elementary_charge": "elementary_charge",
+  "entropy_unit": "entropy_unit",
+  "enzyme_unit": "enzyme_unit",
+  "enzymeunit": "enzyme_unit",
+  "eon": "eon",
+  "eps0": "vacuum_permittivity",
+  "eps_0": "vacuum_permittivity",
+  "epsilon_0": "vacuum_permittivity",
+  "erg": "erg",
+  "esu": "franklin",
+  "eu": "entropy_unit",
+  "eulers_number": "eulers_number",
+  "fahrenheit": "degree_Fahrenheit",
+  "failure": "failure",
+  "farad": "farad",
+  "faraday": "faraday",
+  "faraday_constant": "faraday_constant",
+  "fathom": "fathom",
+  "feet": "foot",
+  "feetH2O": "foot_H2O",
+  "feetH2O_4C": "foot_H2O_4C",
+  "feetH2O_60F": "foot_H2O_60F",
+  "feetHg": "foot_Hg",
+  "feetHg_0C": "foot_Hg_0C",
+  "feetHg_32F": "foot_Hg_32F",
+  "feetHg_60F": "foot_Hg_60F",
+  "feet_H2O": "foot_H2O",
+  "feet_H2O_4C": "foot_H2O_4C",
+  "feet_H2O_60F": "foot_H2O_60F",
+  "feet_Hg": "foot_Hg",
+  "feet_Hg_0C": "foot_Hg_0C",
+  "feet_Hg_32F": "foot_Hg_32F",
+  "feet_Hg_60F": "foot_Hg_60F",
+  "femtometer": "femtometer",
+  "fermi": "fermi",
+  "fifteen_degree_calorie": "fifteen_degree_calorie",
+  "fifth": "fifth",
+  "fine_structure_constant": "fine_structure_constant",
+  "first_radiation_constant": "first_radiation_constant",
+  "fldr": "fluid_dram",
+  "floz": "fluid_ounce",
+  "fluid_dram": "fluid_dram",
+  "fluid_ounce": "fluid_ounce",
+  "fluidram": "fluid_dram",
+  "fm": "fermi",
+  "foot": "foot",
+  "foot_H2O": "foot_H2O",
+  "foot_H2O_4C": "foot_H2O_4C",
+  "foot_H2O_60F": "foot_H2O_60F",
+  "foot_Hg": "foot_Hg",
+  "foot_Hg_0C": "foot_Hg_0C",
+  "foot_Hg_32F": "foot_Hg_32F",
+  "foot_Hg_60F": "foot_Hg_60F",
+  "foot_per_second": "foot_per_second",
+  "foot_pound": "foot_pound",
+  "footpound": "foot_pound",
+  "force_gram": "force_gram",
+  "force_kilogram": "force_kilogram",
+  "force_long_ton": "force_long_ton",
+  "force_metric_ton": "force_metric_ton",
+  "force_ounce": "force_ounce",
+  "force_pound": "force_pound",
+  "force_short_ton": "force_ton",
+  "force_t": "force_metric_ton",
+  "force_ton": "force_ton",
+  "fortnight": "fortnight",
+  "fps": "foot_per_second",
+  "franklin": "franklin",
+  "ft": "foot",
+  "ftH2O": "foot_H2O",
+  "ftH2O_4C": "foot_H2O_4C",
+  "ftH2O_60F": "foot_H2O_60F",
+  "ftHg": "foot_Hg",
+  "ftHg_0C": "foot_Hg_0C",
+  "ftHg_32F": "foot_Hg_32F",
+  "ftHg_60F": "foot_Hg_60F",
+  "ft_H2O": "foot_H2O",
+  "ft_H2O_4C": "foot_H2O_4C",
+  "ft_H2O_60F": "foot_H2O_60F",
+  "ft_Hg": "foot_Hg",
+  "ft_Hg_0C": "foot_Hg_0C",
+  "ft_Hg_32F": "foot_Hg_32F",
+  "ft_Hg_60F": "foot_Hg_60F",
+  "ft_lb": "foot_pound",
+  "fur": "furlong",
+  "furlong": "furlong",
+  "g": "gram",
+  "g0": "standard_gravity",
+  "g_0": "standard_gravity",
+  "g_e": "electron_g_factor",
+  "g_n": "standard_gravity",
+  "gal": "gallon",
+  "galileo": "galileo",
+  "gallon": "gallon",
+  "gamma": "gamma",
+  "gamma_mass": "gamma_mass",
+  "gauss": "gauss",
+  "gf": "force_gram",
+  "gi": "gill",
+  "gilbert": "gilbert",
+  "gill": "gill",
+  "gon": "grade",
+  "gr": "grain",
+  "grad": "grade",
+  "grade": "grade",
+  "gradian": "grade",
+  "grain": "grain",
+  "gram": "gram",
+  "gram_force": "force_gram",
+  "gravitational_constant": "newtonian_constant_of_gravitation",
+  "gravity": "standard_gravity",
+  "gray": "gray",
+  "gregorian_year": "gregorian_year",
+  "h": "hour",
+  "ha": "hectare",
+  "hand": "hand",
+  "hartree": "hartree",
+  "hartree_energy": "hartree",
+  "hbar": "dirac_constant",
+  "hectare": "hectare",
+  "henry": "henry",
+  "hertz": "hertz",
+  "hogshead": "hogshead",
+  "horsepower": "horsepower",
+  "host": "host",
+  "hour": "hour",
+  "hp": "horsepower",
+  "hr": "hour",
+  "hundredweight": "hundredweight",
+  "hydraulic_horsepower": "horsepower",
+  "impedance_of_free_space": "impedance_of_free_space",
+  "imperial_barrel": "imperial_barrel",
+  "imperial_bbl": "imperial_barrel",
+  "imperial_bu": "imperial_bushel",
+  "imperial_bushel": "imperial_bushel",
+  "imperial_cp": "imperial_cup",
+  "imperial_cup": "imperial_cup",
+  "imperial_fldr": "imperial_fluid_drachm",
+  "imperial_floz": "imperial_fluid_ounce",
+  "imperial_fluid_drachm": "imperial_fluid_drachm",
+  "imperial_fluid_dram": "imperial_fluid_drachm",
+  "imperial_fluid_ounce": "imperial_fluid_ounce",
+  "imperial_fluid_scruple": "imperial_fluid_scruple",
+  "imperial_gal": "imperial_gallon",
+  "imperial_gallon": "imperial_gallon",
+  "imperial_gi": "imperial_gill",
+  "imperial_gill": "imperial_gill",
+  "imperial_minim": "imperial_minim",
+  "imperial_peck": "imperial_peck",
+  "imperial_pint": "imperial_pint",
+  "imperial_pk": "imperial_peck",
+  "imperial_pt": "imperial_pint",
+  "imperial_qt": "imperial_quart",
+  "imperial_quart": "imperial_quart",
+  "in": "inch",
+  "inH2O": "inch_H2O",
+  "inH2O_4C": "inch_H2O_4C",
+  "inH2O_60F": "inch_H2O_60F",
+  "inHg": "inch_Hg",
+  "inHg_0C": "inch_Hg_0C",
+  "inHg_32F": "inch_Hg_32F",
+  "inHg_60F": "inch_Hg_60F",
+  "in_H2O": "inch_H2O",
+  "in_H2O_4C": "inch_H2O_4C",
+  "in_H2O_60F": "inch_H2O_60F",
+  "in_Hg": "inch_Hg",
+  "in_Hg_0C": "inch_Hg_0C",
+  "in_Hg_32F": "inch_Hg_32F",
+  "in_Hg_60F": "inch_Hg_60F",
+  "inch": "inch",
+  "inch_H2O": "inch_H2O",
+  "inch_H2O_4C": "inch_H2O_4C",
+  "inch_H2O_60F": "inch_H2O_60F",
+  "inch_Hg": "inch_Hg",
+  "inch_Hg_0C": "inch_Hg_0C",
+  "inch_Hg_32F": "inch_Hg_32F",
+  "inch_Hg_60F": "inch_Hg_60F",
+  "inches": "inch",
+  "inchesH2O": "inch_H2O",
+  "inchesH2O_4C": "inch_H2O_4C",
+  "inchesH2O_60F": "inch_H2O_60F",
+  "inchesHg": "inch_Hg",
+  "inchesHg_0C": "inch_Hg_0C",
+  "inchesHg_32F": "inch_Hg_32F",
+  "inchesHg_60F": "inch_Hg_60F",
+  "inches_H2O": "inch_H2O",
+  "inches_H2O_4C": "inch_H2O_4C",
+  "inches_H2O_60F": "inch_H2O_60F",
+  "inches_Hg": "inch_Hg",
+  "inches_Hg_0C": "inch_Hg_0C",
+  "inches_Hg_32F": "inch_Hg_32F",
+  "inches_Hg_60F": "inch_Hg_60F",
+  "international_british_thermal_unit": "international_british_thermal_unit",
+  "international_calorie": "international_calorie",
+  "international_feet": "foot",
+  "international_foot": "foot",
+  "international_inch": "inch",
+  "international_inches": "inch",
+  "international_knot": "knot",
+  "international_mile": "mile",
+  "international_steam_table_calorie": "international_calorie",
+  "international_yard": "yard",
+  "jig": "shot",
+  "josephson_constant": "josephson_constant",
+  "joule": "joule",
+  "julian_year": "year",
+  "jute": "jute",
+  "k": "boltzmann_constant",
+  "k_B": "boltzmann_constant",
+  "k_C": "coulomb_constant",
+  "kat": "katal",
+  "katal": "katal",
+  "kayser": "reciprocal_centimeter",
+  "kelvin": "kelvin",
+  "kgf": "force_kilogram",
+  "kilogram": "kilogram",
+  "kilogram_force": "force_kilogram",
+  "kilometer": "kilometer",
+  "kilometer_per_hour": "kilometer_per_hour",
+  "kilometer_per_second": "kilometer_per_second",
+  "kip": "kip",
+  "kip_per_square_inch": "kip_per_square_inch",
+  "kn": "knot",
+  "knot": "knot",
+  "knot_international": "knot",
+  "kph": "kilometer_per_hour",
+  "kps": "kilometer_per_second",
+  "ksi": "kip_per_square_inch",
+  "kt": "knot",
+  "l": "liter",
+  "label": "label",
+  "lambda": "lambda",
+  "lambert": "lambert",
+  "langley": "langley",
+  "lb": "pound",
+  "lbf": "force_pound",
+  "lbt": "troy_pound",
+  "league": "league",
+  "leap_year": "leap_year",
+  "li": "link",
+  "light_year": "light_year",
+  "lightyear": "light_year",
+  "line": "line",
+  "link": "link",
+  "liquid_cup": "cup",
+  "liquid_gallon": "gallon",
+  "liquid_gill": "gill",
+  "liquid_pint": "pint",
+  "liquid_quart": "quart",
+  "liter": "liter",
+  "litre": "liter",
+  "lm": "lumen",
+  "ln10": "ln10",
+  "long_hundredweight": "long_hundredweight",
+  "long_ton": "long_ton",
+  "long_ton_force": "force_long_ton",
+  "lumen": "lumen",
+  "lunar_month": "synodic_month",
+  "lux": "lux",
+  "lx": "lux",
+  "ly": "light_year",
+  "m": "meter",
+  "mH2O": "meter_H2O",
+  "mH2O_4C": "meter_H2O_4C",
+  "mH2O_60F": "meter_H2O_60F",
+  "mHg": "meter_Hg",
+  "mHg_0C": "meter_Hg_0C",
+  "mHg_32F": "meter_Hg_32F",
+  "mHg_60F": "meter_Hg_60F",
+  "m_H2O": "meter_H2O",
+  "m_H2O_4C": "meter_H2O_4C",
+  "m_H2O_60F": "meter_H2O_60F",
+  "m_Hg": "meter_Hg",
+  "m_Hg_0C": "meter_Hg_0C",
+  "m_Hg_32F": "meter_Hg_32F",
+  "m_Hg_60F": "meter_Hg_60F",
+  "m_e": "electron_mass",
+  "m_n": "neutron_mass",
+  "m_p": "proton_mass",
+  "m_u": "atomic_mass_constant",
+  "magnetic_constant": "vacuum_permeability",
+  "magnetic_flux_quantum": "magnetic_flux_quantum",
+  "mas": "milliarcsecond",
+  "maxwell": "maxwell",
+  "mean_international_ampere": "mean_international_ampere",
+  "mean_international_ohm": "mean_international_ohm",
+  "mean_international_volt": "mean_international_volt",
+  "mercury_density_0C": "mercury_density_0C",
+  "mercury_density_32F": "mercury_density_32F",
+  "mercury_density_60F": "mercury_density_60F",
+  "meter": "meter",
+  "meter_H2O": "meter_H2O",
+  "meter_H2O_4C": "meter_H2O_4C",
+  "meter_H2O_60F": "meter_H2O_60F",
+  "meter_Hg": "meter_Hg",
+  "meter_Hg_0C": "meter_Hg_0C",
+  "meter_Hg_32F": "meter_Hg_32F",
+  "meter_Hg_60F": "meter_Hg_60F",
+  "meter_per_second": "meter_per_second",
+  "meter_per_second_squared": "meter_per_second_squared",
+  "metre": "meter",
+  "metric_horsepower": "metric_horsepower",
+  "metric_ton": "metric_ton",
+  "metric_ton_force": "force_metric_ton",
+  "mho": "siemens",
+  "mi": "mile",
+  "microgram": "microgram",
+  "microliter": "microliter",
+  "micrometer": "micrometer",
+  "micromole": "micromole",
+  "micron": "micron",
+  "mil": "mil",
+  "mil_length": "thou",
+  "mile": "mile",
+  "mile_per_hour": "mile_per_hour",
+  "millennia": "millennium",
+  "millennium": "millennium",
+  "milliarcsecond": "milliarcsecond",
+  "milligram": "milligram",
+  "min": "minute",
+  "minim": "minim",
+  "minute": "minute",
+  "mol": "mole",
+  "molar": "molar",
+  "molar_gas_constant": "molar_gas_constant",
+  "mole": "mole",
+  "molec": "particle",
+  "molecule": "particle",
+  "month": "month",
+  "mph": "mile_per_hour",
+  "mps": "meter_per_second",
+  "mu0": "vacuum_permeability",
+  "mu_0": "vacuum_permeability",
+  "mu_B": "bohr_magneton",
+  "mu_N": "nuclear_magneton",
+  "nautical_mile": "nautical_mile",
+  "neper": "neper",
+  "neutron_mass": "neutron_mass",
+  "newton": "newton",
+  "newtonian_constant_of_gravitation": "newtonian_constant_of_gravitation",
+  "nit": "nit",
+  "nmi": "nautical_mile",
+  "node": "node",
+  "nuclear_magneton": "nuclear_magneton",
+  "number_english": "number_english",
+  "number_meter": "number_meter",
+  "oct": "octave",
+  "octave": "octave",
+  "octet": "byte",
+  "oersted": "oersted",
+  "ohm": "ohm",
+  "ohm_90": "conventional_ohm_90",
+  "ohm_US": "US_international_ohm",
+  "ohm_it": "mean_international_ohm",
+  "oil_barrel": "oil_barrel",
+  "oil_bbl": "oil_barrel",
+  "ounce": "ounce",
+  "ounce_force": "force_ounce",
+  "oz": "ounce",
+  "ozf": "force_ounce",
+  "ozt": "troy_ounce",
+  "parsec": "parsec",
+  "particle": "particle",
+  "pascal": "pascal",
+  "pc": "parsec",
+  "pdl": "poundal",
+  "peak_sun_hour": "peak_sun_hour",
+  "peck": "peck",
+  "pel": "pixel",
+  "pennyweight": "pennyweight",
+  "percent": "percent",
+  "perch": "rod",
+  "permille": "permille",
+  "pi": "pi",
+  "pica": "pica",
+  "picture_element": "pixel",
+  "pint": "pint",
+  "pixel": "pixel",
+  "pixels_per_centimeter": "pixels_per_centimeter",
+  "pixels_per_inch": "pixels_per_inch",
+  "pk": "peck",
+  "planck_constant": "planck_constant",
+  "planck_current": "planck_current",
+  "planck_length": "planck_length",
+  "planck_mass": "planck_mass",
+  "planck_temperature": "planck_temperature",
+  "planck_time": "planck_time",
+  "point": "point",
+  "poise": "poise",
+  "pole": "rod",
+  "pond": "force_gram",
+  "pound": "pound",
+  "pound_force": "force_pound",
+  "pound_force_per_square_inch": "pound_force_per_square_inch",
+  "poundal": "poundal",
+  "pp": "point",
+  "ppi": "pixels_per_inch",
+  "ppm": "ppm",
+  "printers_dpi": "pixels_per_inch",
+  "printers_pica": "pica",
+  "printers_point": "point",
+  "proton_mass": "proton_mass",
+  "psi": "pound_force_per_square_inch",
+  "pt": "pint",
+  "px": "css_pixel",
+  "qt": "quart",
+  "quad": "quadrillion_Btu",
+  "quadrillion_Btu": "quadrillion_Btu",
+  "quart": "quart",
+  "quarter": "quarter",
+  "query": "query",
+  "r_e": "classical_electron_radius",
+  "rad": "radian",
+  "radian": "radian",
+  "rads": "rads",
+  "rankine": "degree_Rankine",
+  "rd": "rod",
+  "reaumur": "degree_Reaumur",
+  "reciprocal_centimeter": "reciprocal_centimeter",
+  "refractive_index_unit": "refractive_index_unit",
+  "refrigeration_ton": "refrigeration_ton",
+  "rem": "rem",
+  "req": "request",
+  "request": "request",
+  "revolution": "turn",
+  "revolutions_per_minute": "revolutions_per_minute",
+  "revolutions_per_second": "revolutions_per_second",
+  "reyn": "reyn",
+  "rhe": "rhe",
+  "rod": "rod",
+  "roentgen": "roentgen",
+  "rpm": "revolutions_per_minute",
+  "rps": "revolutions_per_second",
+  "rutherford": "rutherford",
+  "rydberg": "rydberg",
+  "rydberg_constant": "rydberg_constant",
+  "réaumur": "degree_Reaumur",
+  "röntgen": "roentgen",
+  "s": "second",
+  "sample": "sample",
+  "scaled_point": "scaled_point",
+  "scruple": "scruple",
+  "sec": "second",
+  "second": "second",
+  "second_radiation_constant": "second_radiation_constant",
+  "section": "square_survey_mile",
+  "series": "series",
+  "sft": "survey_foot",
+  "shake": "shake",
+  "short_hundredweight": "hundredweight",
+  "short_ton": "ton",
+  "short_ton_force": "force_ton",
+  "shot": "shot",
+  "sidereal_day": "sidereal_day",
+  "sidereal_month": "sidereal_month",
+  "sidereal_year": "sidereal_year",
+  "siemens": "siemens",
+  "sievert": "sievert",
+  "sigma": "stefan_boltzmann_constant",
+  "sigma_e": "thomson_cross_section",
+  "slinch": "slinch",
+  "slm": "standard_liter_per_minute",
+  "slpm": "standard_liter_per_minute",
+  "slug": "slug",
+  "slugette": "slinch",
+  "smi": "survey_mile",
+  "sound_pressure_level": "sound_pressure_level",
+  "span": "span",
+  "speed_of_light": "speed_of_light",
+  "sq_deg": "square_degree",
+  "sq_ft": "square_foot",
+  "sq_in": "square_inch",
+  "sq_mi": "square_mile",
+  "sq_perch": "square_rod",
+  "sq_pole": "square_rod",
+  "sq_rod": "square_rod",
+  "sq_yd": "square_yard",
+  "sqdeg": "square_degree",
+  "square_degree": "square_degree",
+  "square_feet": "square_foot",
+  "square_foot": "square_foot",
+  "square_inch": "square_inch",
+  "square_inches": "square_inch",
+  "square_league": "square_league",
+  "square_mile": "square_mile",
+  "square_rod": "square_rod",
+  "square_survey_mile": "square_survey_mile",
+  "square_yard": "square_yard",
+  "sr": "steradian",
+  "standard_atmosphere": "standard_atmosphere",
+  "standard_gravity": "standard_gravity",
+  "standard_liter_per_minute": "standard_liter_per_minute",
+  "statA": "statampere",
+  "statC": "franklin",
+  "statF": "statfarad",
+  "statH": "stathenry",
+  "statT": "stattesla",
+  "statV": "statvolt",
+  "statWb": "statweber",
+  "statampere": "statampere",
+  "statcoulomb": "franklin",
+  "statfarad": "statfarad",
+  "stathenry": "stathenry",
+  "statmho": "statmho",
+  "statohm": "statohm",
+  "stattesla": "stattesla",
+  "statvolt": "statvolt",
+  "statweber": "statweber",
+  "statΩ": "statohm",
+  "stefan_boltzmann_constant": "stefan_boltzmann_constant",
+  "steradian": "steradian",
+  "stere": "stere",
+  "stilb": "stilb",
+  "stokes": "stokes",
+  "stone": "stone",
+  "strain": "strain",
+  "super_feet": "board_foot",
+  "super_foot": "board_foot",
+  "superficial_feet": "board_foot",
+  "superficial_foot": "board_foot",
+  "survey_foot": "survey_foot",
+  "survey_link": "link",
+  "survey_mile": "survey_mile",
+  "sv": "sverdrup",
+  "svedberg": "svedberg",
+  "sverdrup": "sverdrup",
+  "synodic_month": "synodic_month",
+  "t": "metric_ton",
+  "tTNT": "ton_TNT",
+  "t_force": "force_metric_ton",
+  "tablespoon": "tablespoon",
+  "tansec": "tansec",
+  "tbsp": "tablespoon",
+  "teaspoon": "teaspoon",
+  "technical_atmosphere": "technical_atmosphere",
+  "tesla": "tesla",
+  "tex": "tex",
+  "tex_cicero": "tex_cicero",
+  "tex_didot": "tex_didot",
+  "tex_pica": "tex_pica",
+  "tex_point": "tex_point",
+  "tf": "force_metric_ton",
+  "th": "thou",
+  "therm": "therm",
+  "thermochemical_british_thermal_unit": "thermochemical_british_thermal_unit",
+  "thermochemical_calorie": "calorie",
+  "thm": "therm",
+  "thomson_cross_section": "thomson_cross_section",
+  "thou": "thou",
+  "tlb": "troy_pound",
+  "toe": "tonne_of_oil_equivalent",
+  "ton": "ton",
+  "ton_TNT": "ton_TNT",
+  "ton_force": "force_ton",
+  "ton_of_refrigeration": "refrigeration_ton",
+  "tonne": "metric_ton",
+  "tonne_of_oil_equivalent": "tonne_of_oil_equivalent",
+  "torr": "torr",
+  "townsend": "townsend",
+  "toz": "troy_ounce",
+  "tropical_month": "tropical_month",
+  "tropical_year": "tropical_year",
+  "troy_ounce": "troy_ounce",
+  "troy_pound": "troy_pound",
+  "tsp": "teaspoon",
+  "turn": "turn",
+  "u": "unified_atomic_mass_unit",
+  "unified_atomic_mass_unit": "unified_atomic_mass_unit",
+  "unit_pole": "unit_pole",
+  "us_statute_mile": "survey_mile",
+  "usd": "USD",
+  "vacuum_permeability": "vacuum_permeability",
+  "vacuum_permittivity": "vacuum_permittivity",
+  "volt": "volt",
+  "volt_ampere": "volt_ampere",
+  "von_klitzing_constant": "von_klitzing_constant",
+  "water_density_4C": "water_density_4C",
+  "water_density_60F": "water_density_60F",
+  "watt": "watt",
+  "watt_hour": "watt_hour",
+  "watthour": "watt_hour",
+  "weber": "weber",
+  "week": "week",
+  "wien_frequency_displacement_law_constant": "wien_frequency_displacement_law_constant",
+  "wien_u": "wien_u",
+  "wien_wavelength_displacement_law_constant": "wien_wavelength_displacement_law_constant",
+  "wien_x": "wien_x",
+  "x_unit_Cu": "x_unit_Cu",
+  "x_unit_Mo": "x_unit_Mo",
+  "yard": "yard",
+  "yd": "yard",
+  "year": "year",
+  "yr": "year",
+  "zeta": "zeta",
+  "°C": "degree_Celsius",
+  "°F": "degree_Fahrenheit",
+  "°K": "kelvin",
+  "°R": "degree_Rankine",
+  "°Re": "degree_Reaumur",
+  "µ": "micron",
+  "µ_0": "vacuum_permeability",
+  "µ_B": "bohr_magneton",
+  "µ_N": "nuclear_magneton",
+  "Å": "angstrom",
+  "Å_star": "angstrom_star",
+  "ångström": "angstrom",
+  "ørsted": "oersted",
+  "ħ": "dirac_constant",
+  "Δcelsius": "delta_degree_Celsius",
+  "ΔdegC": "delta_degree_Celsius",
+  "ΔdegF": "delta_degree_Fahrenheit",
+  "ΔdegRe": "delta_degree_Reaumur",
+  "ΔdegreeC": "delta_degree_Celsius",
+  "ΔdegreeF": "delta_degree_Fahrenheit",
+  "ΔdegreeRe": "delta_degree_Reaumur",
+  "Δdegree_Réaumur": "delta_degree_Reaumur",
+  "Δfahrenheit": "delta_degree_Fahrenheit",
+  "Δreaumur": "delta_degree_Reaumur",
+  "Δréaumur": "delta_degree_Reaumur",
+  "Δ°C": "delta_degree_Celsius",
+  "Δ°F": "delta_degree_Fahrenheit",
+  "Δ°Re": "delta_degree_Reaumur",
+  "Φ_0": "magnetic_flux_quantum",
+  "Ω": "ohm",
+  "Ω_90": "conventional_ohm_90",
+  "Ω_US": "US_international_ohm",
+  "Ω_it": "mean_international_ohm",
+  "α": "fine_structure_constant",
+  "γ": "gamma",
+  "ε": "strain",
+  "ε_0": "vacuum_permittivity",
+  "ζ": "zeta",
+  "λ": "lambda",
+  "μ": "micron",
+  "π": "pi",
+  "ρH2O": "conventional_water_density",
+  "ρH2O_4C": "water_density_4C",
+  "ρH2O_60F": "water_density_60F",
+  "ρHg": "conventional_mercury_density",
+  "ρHg_0C": "mercury_density_0C",
+  "ρHg_32F": "mercury_density_32F",
+  "ρHg_60F": "mercury_density_60F",
+  "σ": "stefan_boltzmann_constant",
+  "σ_e": "thomson_cross_section",
+  "ϵ": "strain",
+  "‰": "permille",
+  "ℎ": "planck_constant",
+  "ℓ": "liter",
+  "Å": "angstrom"
+ },
+ "prefixes": [
+  [
+   "",
+   "",
+   1.0
+  ],
+  [
+   "quecto",
+   "quecto",
+   1e-30
+  ],
+  [
+   "q",
+   "quecto",
+   1e-30
+  ],
+  [
+   "ronto",
+   "ronto",
+   1e-27
+  ],
+  [
+   "r",
+   "ronto",
+   1e-27
+  ],
+  [
+   "yocto",
+   "yocto",
+   1e-24
+  ],
+  [
+   "y",
+   "yocto",
+   1e-24
+  ],
+  [
+   "zepto",
+   "zepto",
+   1e-21
+  ],
+  [
+   "z",
+   "zepto",
+   1e-21
+  ],
+  [
+   "atto",
+   "atto",
+   1e-18
+  ],
+  [
+   "a",
+   "atto",
+   1e-18
+  ],
+  [
+   "femto",
+   "femto",
+   1e-15
+  ],
+  [
+   "f",
+   "femto",
+   1e-15
+  ],
+  [
+   "pico",
+   "pico",
+   1e-12
+  ],
+  [
+   "p",
+   "pico",
+   1e-12
+  ],
+  [
+   "nano",
+   "nano",
+   1e-09
+  ],
+  [
+   "n",
+   "nano",
+   1e-09
+  ],
+  [
+   "micro",
+   "micro",
+   1e-06
+  ],
+  [
+   "µ",
+   "micro",
+   1e-06
+  ],
+  [
+   "μ",
+   "micro",
+   1e-06
+  ],
+  [
+   "u",
+   "micro",
+   1e-06
+  ],
+  [
+   "mu",
+   "micro",
+   1e-06
+  ],
+  [
+   "mc",
+   "micro",
+   1e-06
+  ],
+  [
+   "milli",
+   "milli",
+   0.001
+  ],
+  [
+   "m",
+   "milli",
+   0.001
+  ],
+  [
+   "centi",
+   "centi",
+   0.01
+  ],
+  [
+   "c",
+   "centi",
+   0.01
+  ],
+  [
+   "deci",
+   "deci",
+   0.1
+  ],
+  [
+   "d",
+   "deci",
+   0.1
+  ],
+  [
+   "deca",
+   "deca",
+   10.0
+  ],
+  [
+   "da",
+   "deca",
+   10.0
+  ],
+  [
+   "deka",
+   "deca",
+   10.0
+  ],
+  [
+   "hecto",
+   "hecto",
+   100.0
+  ],
+  [
+   "h",
+   "hecto",
+   100.0
+  ],
+  [
+   "kilo",
+   "kilo",
+   1000.0
+  ],
+  [
+   "k",
+   "kilo",
+   1000.0
+  ],
+  [
+   "mega",
+   "mega",
+   1000000.0
+  ],
+  [
+   "M",
+   "mega",
+   1000000.0
+  ],
+  [
+   "giga",
+   "giga",
+   1000000000.0
+  ],
+  [
+   "G",
+   "giga",
+   1000000000.0
+  ],
+  [
+   "tera",
+   "tera",
+   1000000000000.0
+  ],
+  [
+   "T",
+   "tera",
+   1000000000000.0
+  ],
+  [
+   "peta",
+   "peta",
+   1000000000000000.0
+  ],
+  [
+   "P",
+   "peta",
+   1000000000000000.0
+  ],
+  [
+   "exa",
+   "exa",
+   1e+18
+  ],
+  [
+   "E",
+   "exa",
+   1e+18
+  ],
+  [
+   "zetta",
+   "zetta",
+   1e+21
+  ],
+  [
+   "Z",
+   "zetta",
+   1e+21
+  ],
+  [
+   "yotta",
+   "yotta",
+   1e+24
+  ],
+  [
+   "Y",
+   "yotta",
+   1e+24
+  ],
+  [
+   "ronna",
+   "ronna",
+   1e+27
+  ],
+  [
+   "R",
+   "ronna",
+   1e+27
+  ],
+  [
+   "quetta",
+   "quetta",
+   1e+30
+  ],
+  [
+   "Q",
+   "quetta",
+   1e+30
+  ],
+  [
+   "kibi",
+   "kibi",
+   1024.0
+  ],
+  [
+   "Ki",
+   "kibi",
+   1024.0
+  ],
+  [
+   "mebi",
+   "mebi",
+   1048576.0
+  ],
+  [
+   "Mi",
+   "mebi",
+   1048576.0
+  ],
+  [
+   "gibi",
+   "gibi",
+   1073741824.0
+  ],
+  [
+   "Gi",
+   "gibi",
+   1073741824.0
+  ],
+  [
+   "tebi",
+   "tebi",
+   1099511627776.0
+  ],
+  [
+   "Ti",
+   "tebi",
+   1099511627776.0
+  ],
+  [
+   "pebi",
+   "pebi",
+   1125899906842624.0
+  ],
+  [
+   "Pi",
+   "pebi",
+   1125899906842624.0
+  ],
+  [
+   "exbi",
+   "exbi",
+   1.152921504606847e+18
+  ],
+  [
+   "Ei",
+   "exbi",
+   1.152921504606847e+18
+  ],
+  [
+   "zebi",
+   "zebi",
+   1.1805916207174113e+21
+  ],
+  [
+   "Zi",
+   "zebi",
+   1.1805916207174113e+21
+  ],
+  [
+   "yobi",
+   "yobi",
+   1.2089258196146292e+24
+  ],
+  [
+   "Yi",
+   "yobi",
+   1.2089258196146292e+24
+  ],
+  [
+   "semi",
+   "semi",
+   0.5
+  ],
+  [
+   "demi",
+   "semi",
+   0.5
+  ],
+  [
+   "sesqui",
+   "sesqui",
+   1.5
+  ]
+ ],
+ "suffixes": [
+  [
+   "",
+   ""
+  ],
+  [
+   "s",
+   ""
+  ]
+ ],
+ "units": {
+  "LMH": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 2.7777777777777787e-07,
+   "multiplicative": true
+  },
+  "RKM": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[time]": -2.0
+   },
+   "factor": 9806.65,
+   "multiplicative": true
+  },
+  "UK_force_ton": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 9964.01641818352,
+   "multiplicative": true
+  },
+  "UK_hundredweight": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 50.80234544,
+   "multiplicative": true
+  },
+  "UK_ton": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 1016.0469088000001,
+   "multiplicative": true
+  },
+  "USD": {
+   "dimensionality": {
+    "[currency]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "US_force_ton": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 8896.443230521003,
+   "multiplicative": true
+  },
+  "US_hundredweight": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 45.35923700000001,
+   "multiplicative": true
+  },
+  "US_international_ampere": {
+   "dimensionality": {
+    "[current]": 1.0
+   },
+   "factor": 0.9998350816345909,
+   "multiplicative": true
+  },
+  "US_international_ohm": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.000495,
+   "multiplicative": true
+  },
+  "US_international_volt": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.00033,
+   "multiplicative": true
+  },
+  "US_therm": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 105480400.0,
+   "multiplicative": true
+  },
+  "US_ton": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 907.1847400000001,
+   "multiplicative": true
+  },
+  "abampere": {
+   "dimensionality": {
+    "[current]": 1.0
+   },
+   "factor": 10.0,
+   "multiplicative": true
+  },
+  "abcoulomb": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[time]": 1.0
+   },
+   "factor": 10.0,
+   "multiplicative": true
+  },
+  "aberdeen": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0
+   },
+   "factor": 3.444823943448042e-05,
+   "multiplicative": true
+  },
+  "abfarad": {
+   "dimensionality": {
+    "[current]": 2.0,
+    "[length]": -2.0,
+    "[mass]": -1.0,
+    "[time]": 4.0
+   },
+   "factor": 1000000000.0,
+   "multiplicative": true
+  },
+  "abhenry": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0000000000000003e-09,
+   "multiplicative": true
+  },
+  "abohm": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.0000000000000003e-09,
+   "multiplicative": true
+  },
+  "absiemens": {
+   "dimensionality": {
+    "[current]": 2.0,
+    "[length]": -2.0,
+    "[mass]": -1.0,
+    "[time]": 3.0
+   },
+   "factor": 1000000000.0,
+   "multiplicative": true
+  },
+  "absorbance_unit": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "abvolt": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1e-08,
+   "multiplicative": true
+  },
+  "acre": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 4046.8726098742513,
+   "multiplicative": true
+  },
+  "acre_foot": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 1233.4892384681489,
+   "multiplicative": true
+  },
+  "ampere": {
+   "dimensionality": {
+    "[current]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "ampere_hour": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[time]": 1.0
+   },
+   "factor": 3600.0,
+   "multiplicative": true
+  },
+  "ampere_turn": {
+   "dimensionality": {
+    "[current]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "angstrom": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1e-10,
+   "multiplicative": true
+  },
+  "angstrom_star": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1.00001495e-10,
+   "multiplicative": true
+  },
+  "apothecary_dram": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 0.003887934600000001,
+   "multiplicative": true
+  },
+  "apothecary_ounce": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 0.03110347680000001,
+   "multiplicative": true
+  },
+  "apothecary_pound": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 0.3732417216000001,
+   "multiplicative": true
+  },
+  "arcminute": {
+   "dimensionality": {},
+   "factor": 0.00029088820866572163,
+   "multiplicative": true
+  },
+  "arcsecond": {
+   "dimensionality": {},
+   "factor": 4.84813681109536e-06,
+   "multiplicative": true
+  },
+  "are": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 100.0,
+   "multiplicative": true
+  },
+  "astronomical_unit": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 149597870700.0,
+   "multiplicative": true
+  },
+  "atmosphere_liter": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 101.32500000000003,
+   "multiplicative": true
+  },
+  "atomic_mass_constant": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 1.6605390689200003e-27,
+   "multiplicative": true
+  },
+  "atomic_unit_of_current": {
+   "dimensionality": {
+    "[current]": 1.0
+   },
+   "factor": 0.006623618237508185,
+   "multiplicative": true
+  },
+  "atomic_unit_of_electric_field": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 514220675112.0944,
+   "multiplicative": true
+  },
+  "atomic_unit_of_electric_field_gradient": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 9.717362442414777e+21,
+   "multiplicative": true
+  },
+  "atomic_unit_of_force": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 8.238723503843028e-08,
+   "multiplicative": true
+  },
+  "atomic_unit_of_intensity": {
+   "dimensionality": {
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 3.509445527729845e+20,
+   "multiplicative": true
+  },
+  "atomic_unit_of_temperature": {
+   "dimensionality": {
+    "[temperature]": 1.0
+   },
+   "factor": 315775.0248039855,
+   "multiplicative": true
+  },
+  "atomic_unit_of_time": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 2.4188843265863416e-17,
+   "multiplicative": true
+  },
+  "avogadro_constant": {
+   "dimensionality": {
+    "[substance]": -1.0
+   },
+   "factor": 6.02214076e+23,
+   "multiplicative": true
+  },
+  "avogadro_number": {
+   "dimensionality": {},
+   "factor": 6.02214076e+23,
+   "multiplicative": true
+  },
+  "bag": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 42.637682780000006,
+   "multiplicative": true
+  },
+  "bar": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 100000.0,
+   "multiplicative": true
+  },
+  "barn": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 1e-28,
+   "multiplicative": true
+  },
+  "barrel": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.11924047119599998,
+   "multiplicative": true
+  },
+  "barye": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 0.1,
+   "multiplicative": true
+  },
+  "baud": {
+   "dimensionality": {
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "becquerel": {
+   "dimensionality": {
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "beer_barrel": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.11734776530399997,
+   "multiplicative": true
+  },
+  "biot": {
+   "dimensionality": {
+    "[current]": 1.0
+   },
+   "factor": 10.0,
+   "multiplicative": true
+  },
+  "biot_turn": {
+   "dimensionality": {
+    "[current]": 1.0
+   },
+   "factor": 10.0,
+   "multiplicative": true
+  },
+  "bit": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "bits_per_pixel": {
+   "dimensionality": {
+    "[printing_unit]": -1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "board_foot": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.0023597372159999998,
+   "multiplicative": true
+  },
+  "bohr": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 5.291772105438828e-11,
+   "multiplicative": true
+  },
+  "bohr_magneton": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[length]": 2.0
+   },
+   "factor": 9.274010065738068e-24,
+   "multiplicative": true
+  },
+  "boiler_horsepower": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 9810.555444444444,
+   "multiplicative": true
+  },
+  "boltzmann_constant": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[temperature]": -1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.380649e-23,
+   "multiplicative": true
+  },
+  "british_thermal_unit": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1055.056,
+   "multiplicative": true
+  },
+  "buckingham": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[length]": 2.0,
+    "[time]": 1.0
+   },
+   "factor": 3.3356409519815214e-40,
+   "multiplicative": true
+  },
+  "bushel": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.03523907016687999,
+   "multiplicative": true
+  },
+  "byte": {
+   "dimensionality": {},
+   "factor": 8.0,
+   "multiplicative": true
+  },
+  "cables_length": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 219.45643891287781,
+   "multiplicative": true
+  },
+  "calorie": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 4.184,
+   "multiplicative": true
+  },
+  "candela": {
+   "dimensionality": {
+    "[luminosity]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "carat": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 0.0002,
+   "multiplicative": true
+  },
+  "centimeter": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.01,
+   "multiplicative": true
+  },
+  "centipoise": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 0.001,
+   "multiplicative": true
+  },
+  "century": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 3155760000.0,
+   "multiplicative": true
+  },
+  "chain": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 20.116840233680467,
+   "multiplicative": true
+  },
+  "cicero": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.004511278195488722,
+   "multiplicative": true
+  },
+  "circular_mil": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 5.067074790974977e-10,
+   "multiplicative": true
+  },
+  "classical_electron_radius": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 2.8179403204619567e-15,
+   "multiplicative": true
+  },
+  "clausius": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[temperature]": -1.0,
+    "[time]": -2.0
+   },
+   "factor": 4.184,
+   "multiplicative": true
+  },
+  "common_year": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 31536000.0,
+   "multiplicative": true
+  },
+  "conductance_quantum": {
+   "dimensionality": {
+    "[current]": 2.0,
+    "[length]": -2.0,
+    "[mass]": -1.0,
+    "[time]": 3.0
+   },
+   "factor": 7.74809172986365e-05,
+   "multiplicative": true
+  },
+  "conventional_ampere_90": {
+   "dimensionality": {
+    "[current]": 1.0
+   },
+   "factor": 1.000000088871438,
+   "multiplicative": true
+  },
+  "conventional_coulomb_90": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[time]": 1.0
+   },
+   "factor": 1.000000088871438,
+   "multiplicative": true
+  },
+  "conventional_farad_90": {
+   "dimensionality": {
+    "[current]": 2.0,
+    "[length]": -2.0,
+    "[mass]": -1.0,
+    "[time]": 4.0
+   },
+   "factor": 0.9999999822063327,
+   "multiplicative": true
+  },
+  "conventional_henry_90": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0000000177936679,
+   "multiplicative": true
+  },
+  "conventional_josephson_constant": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[length]": -2.0,
+    "[mass]": -1.0,
+    "[time]": 2.0
+   },
+   "factor": 483597900000000.0,
+   "multiplicative": true
+  },
+  "conventional_mercury_density": {
+   "dimensionality": {
+    "[length]": -3.0,
+    "[mass]": 1.0
+   },
+   "factor": 13595.1,
+   "multiplicative": true
+  },
+  "conventional_ohm_90": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.0000000177936679,
+   "multiplicative": true
+  },
+  "conventional_volt_90": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.0000001066651074,
+   "multiplicative": true
+  },
+  "conventional_von_klitzing_constant": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 25812.807,
+   "multiplicative": true
+  },
+  "conventional_water_density": {
+   "dimensionality": {
+    "[length]": -3.0,
+    "[mass]": 1.0
+   },
+   "factor": 1000.0,
+   "multiplicative": true
+  },
+  "conventional_watt_90": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.0000001955365547,
+   "multiplicative": true
+  },
+  "cooling_tower_ton": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 4396.0666666666675,
+   "multiplicative": true
+  },
+  "core": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "coulomb": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[time]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "coulomb_constant": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 3.0,
+    "[mass]": 1.0,
+    "[time]": -4.0
+   },
+   "factor": 8987551786.178669,
+   "multiplicative": true
+  },
+  "count": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "counts_per_second": {
+   "dimensionality": {
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "css_pixel": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.0002645833333333333,
+   "multiplicative": true
+  },
+  "cubic_centimeter": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 1.0000000000000002e-06,
+   "multiplicative": true
+  },
+  "cubic_foot": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.028316846591999994,
+   "multiplicative": true
+  },
+  "cubic_inch": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 1.6387063999999996e-05,
+   "multiplicative": true
+  },
+  "cubic_yard": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.764554857984,
+   "multiplicative": true
+  },
+  "cup": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.00023658823649999996,
+   "multiplicative": true
+  },
+  "curie": {
+   "dimensionality": {
+    "[time]": -1.0
+   },
+   "factor": 37000000000.0,
+   "multiplicative": true
+  },
+  "dalton": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 1.6605390689200003e-27,
+   "multiplicative": true
+  },
+  "darcy": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 9.86923266716013e-13,
+   "multiplicative": true
+  },
+  "day": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 86400.0,
+   "multiplicative": true
+  },
+  "debye": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[length]": 1.0,
+    "[time]": 1.0
+   },
+   "factor": 3.335640951981521e-30,
+   "multiplicative": true
+  },
+  "decade": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "multiplicative": false
+  },
+  "decibel": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "multiplicative": false
+  },
+  "decibelmicrowatt": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1e-06,
+   "multiplicative": false
+  },
+  "decibelmilliwatt": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 0.001,
+   "multiplicative": false
+  },
+  "decibelwatt": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.0,
+   "multiplicative": false
+  },
+  "decimeter": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.1,
+   "multiplicative": true
+  },
+  "decitex": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0
+   },
+   "factor": 1.0000000000000001e-07,
+   "multiplicative": true
+  },
+  "degree": {
+   "dimensionality": {},
+   "factor": 0.017453292519943295,
+   "multiplicative": true
+  },
+  "degree_Celsius": {
+   "dimensionality": {
+    "[temperature]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": false
+  },
+  "degree_Fahrenheit": {
+   "dimensionality": {
+    "[temperature]": 1.0
+   },
+   "factor": 0.5555555555555556,
+   "multiplicative": false
+  },
+  "degree_Rankine": {
+   "dimensionality": {
+    "[temperature]": 1.0
+   },
+   "factor": 0.5555555555555556,
+   "multiplicative": true
+  },
+  "degree_Reaumur": {
+   "dimensionality": {
+    "[temperature]": 1.0
+   },
+   "factor": 1.25,
+   "multiplicative": false
+  },
+  "delta_degree_Celsius": {
+   "dimensionality": {
+    "[temperature]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "delta_degree_Fahrenheit": {
+   "dimensionality": {
+    "[temperature]": 1.0
+   },
+   "factor": 0.5555555555555556,
+   "multiplicative": true
+  },
+  "delta_degree_Reaumur": {
+   "dimensionality": {
+    "[temperature]": 1.0
+   },
+   "factor": 1.25,
+   "multiplicative": true
+  },
+  "denier": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0
+   },
+   "factor": 1.1111111111111111e-07,
+   "multiplicative": true
+  },
+  "didot": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.00037593984962406017,
+   "multiplicative": true
+  },
+  "dirac_constant": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 1.0545718176461565e-34,
+   "multiplicative": true
+  },
+  "dram": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 0.0017718451953125003,
+   "multiplicative": true
+  },
+  "drive": {
+   "dimensionality": {
+    "[drive]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "dry_barrel": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.11562712358399999,
+   "multiplicative": true
+  },
+  "dry_gallon": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.004404883770859999,
+   "multiplicative": true
+  },
+  "dry_pint": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.0005506104713574999,
+   "multiplicative": true
+  },
+  "dry_quart": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.0011012209427149998,
+   "multiplicative": true
+  },
+  "dtex": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0
+   },
+   "factor": 1.0000000000000001e-07,
+   "multiplicative": true
+  },
+  "dyne": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1e-05,
+   "multiplicative": true
+  },
+  "electrical_horsepower": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 746.0,
+   "multiplicative": true
+  },
+  "electron_g_factor": {
+   "dimensionality": {},
+   "factor": -2.00231930436092,
+   "multiplicative": true
+  },
+  "electron_mass": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 9.1093837139e-31,
+   "multiplicative": true
+  },
+  "electron_volt": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.602176634e-19,
+   "multiplicative": true
+  },
+  "elementary_charge": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[time]": 1.0
+   },
+   "factor": 1.602176634e-19,
+   "multiplicative": true
+  },
+  "entropy_unit": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[substance]": -1.0,
+    "[temperature]": -1.0,
+    "[time]": -2.0
+   },
+   "factor": 4.184,
+   "multiplicative": true
+  },
+  "enzyme_unit": {
+   "dimensionality": {
+    "[substance]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 1.6666666666666667e-08,
+   "multiplicative": true
+  },
+  "eon": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 3.15576e+16,
+   "multiplicative": true
+  },
+  "erg": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0000000000000001e-07,
+   "multiplicative": true
+  },
+  "eulers_number": {
+   "dimensionality": {},
+   "factor": 2.718281828459045,
+   "multiplicative": true
+  },
+  "failure": {
+   "dimensionality": {
+    "[failure]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "farad": {
+   "dimensionality": {
+    "[current]": 2.0,
+    "[length]": -2.0,
+    "[mass]": -1.0,
+    "[time]": 4.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "faraday": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[time]": 1.0
+   },
+   "factor": 96485.33212331001,
+   "multiplicative": true
+  },
+  "faraday_constant": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[substance]": -1.0,
+    "[time]": 1.0
+   },
+   "factor": 96485.33212331001,
+   "multiplicative": true
+  },
+  "fathom": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1.828803657607315,
+   "multiplicative": true
+  },
+  "femtometer": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1e-15,
+   "multiplicative": true
+  },
+  "fermi": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1e-15,
+   "multiplicative": true
+  },
+  "fifteen_degree_calorie": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 4.1855,
+   "multiplicative": true
+  },
+  "fifth": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.0007570823567999999,
+   "multiplicative": true
+  },
+  "fine_structure_constant": {
+   "dimensionality": {},
+   "factor": 0.0072973525643394025,
+   "multiplicative": true
+  },
+  "first_radiation_constant": {
+   "dimensionality": {
+    "[length]": 4.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 3.7417718521927573e-16,
+   "multiplicative": true
+  },
+  "fluid_dram": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 3.6966911953124993e-06,
+   "multiplicative": true
+  },
+  "fluid_ounce": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 2.9573529562499994e-05,
+   "multiplicative": true
+  },
+  "foot": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.30479999999999996,
+   "multiplicative": true
+  },
+  "foot_H2O": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 2989.0669199999993,
+   "multiplicative": true
+  },
+  "foot_H2O_4C": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 2988.9832261262395,
+   "multiplicative": true
+  },
+  "foot_H2O_60F": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 2986.080842146919,
+   "multiplicative": true
+  },
+  "foot_Hg": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 40636.663684092004,
+   "multiplicative": true
+  },
+  "foot_Hg_0C": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 40636.663684092004,
+   "multiplicative": true
+  },
+  "foot_Hg_32F": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 40636.663684092004,
+   "multiplicative": true
+  },
+  "foot_Hg_60F": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 40522.182421055986,
+   "multiplicative": true
+  },
+  "foot_per_second": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 0.30479999999999996,
+   "multiplicative": true
+  },
+  "foot_pound": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.3558179483314001,
+   "multiplicative": true
+  },
+  "force_gram": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 0.00980665,
+   "multiplicative": true
+  },
+  "force_kilogram": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 9.80665,
+   "multiplicative": true
+  },
+  "force_long_ton": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 9964.01641818352,
+   "multiplicative": true
+  },
+  "force_metric_ton": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 9806.65,
+   "multiplicative": true
+  },
+  "force_ounce": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 0.2780138509537813,
+   "multiplicative": true
+  },
+  "force_pound": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 4.4482216152605005,
+   "multiplicative": true
+  },
+  "force_ton": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 8896.443230521003,
+   "multiplicative": true
+  },
+  "fortnight": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 1209600.0,
+   "multiplicative": true
+  },
+  "franklin": {
+   "dimensionality": {
+    "[length]": 1.5,
+    "[mass]": 0.5,
+    "[time]": -1.0
+   },
+   "factor": 3.1622776601683795e-05,
+   "multiplicative": true
+  },
+  "furlong": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 201.16840233680466,
+   "multiplicative": true
+  },
+  "galileo": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 0.01,
+   "multiplicative": true
+  },
+  "gallon": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.0037854117839999993,
+   "multiplicative": true
+  },
+  "gamma": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0000000000000003e-09,
+   "multiplicative": true
+  },
+  "gamma_mass": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 1e-09,
+   "multiplicative": true
+  },
+  "gauss": {
+   "dimensionality": {
+    "[length]": -0.5,
+    "[mass]": 0.5,
+    "[time]": -1.0
+   },
+   "factor": 0.3162277660168379,
+   "multiplicative": true
+  },
+  "gilbert": {
+   "dimensionality": {
+    "[current]": 1.0
+   },
+   "factor": 0.7957747154594768,
+   "multiplicative": true
+  },
+  "gill": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.00011829411824999998,
+   "multiplicative": true
+  },
+  "grade": {
+   "dimensionality": {},
+   "factor": 0.015707963267948967,
+   "multiplicative": true
+  },
+  "grain": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 6.479891000000001e-05,
+   "multiplicative": true
+  },
+  "gram": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 0.001,
+   "multiplicative": true
+  },
+  "gray": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "gregorian_year": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 31556952.0,
+   "multiplicative": true
+  },
+  "hand": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.1016,
+   "multiplicative": true
+  },
+  "hartree": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 4.359744722205978e-18,
+   "multiplicative": true
+  },
+  "hectare": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 10000.0,
+   "multiplicative": true
+  },
+  "henry": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "hertz": {
+   "dimensionality": {
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "hogshead": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.23848094239199996,
+   "multiplicative": true
+  },
+  "horsepower": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 745.6998715822701,
+   "multiplicative": true
+  },
+  "host": {
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "hour": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 3600.0,
+   "multiplicative": true
+  },
+  "hundredweight": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 45.35923700000001,
+   "multiplicative": true
+  },
+  "impedance_of_free_space": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 376.7303134119101,
+   "multiplicative": true
+  },
+  "imperial_barrel": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.16365924000000004,
+   "multiplicative": true
+  },
+  "imperial_bushel": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.036368720000000014,
+   "multiplicative": true
+  },
+  "imperial_cup": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.0002841306250000001,
+   "multiplicative": true
+  },
+  "imperial_fluid_drachm": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 3.551632812500001e-06,
+   "multiplicative": true
+  },
+  "imperial_fluid_ounce": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 2.8413062500000008e-05,
+   "multiplicative": true
+  },
+  "imperial_fluid_scruple": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 1.1838776041666672e-06,
+   "multiplicative": true
+  },
+  "imperial_gallon": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.004546090000000002,
+   "multiplicative": true
+  },
+  "imperial_gill": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.00014206531250000006,
+   "multiplicative": true
+  },
+  "imperial_minim": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 5.919388020833336e-08,
+   "multiplicative": true
+  },
+  "imperial_peck": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.009092180000000004,
+   "multiplicative": true
+  },
+  "imperial_pint": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.0005682612500000002,
+   "multiplicative": true
+  },
+  "imperial_quart": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.0011365225000000004,
+   "multiplicative": true
+  },
+  "inch": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.0254,
+   "multiplicative": true
+  },
+  "inch_H2O": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 249.08890999999997,
+   "multiplicative": true
+  },
+  "inch_H2O_4C": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 249.08193551052,
+   "multiplicative": true
+  },
+  "inch_H2O_60F": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 248.84007017891,
+   "multiplicative": true
+  },
+  "inch_Hg": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 3386.3886403409997,
+   "multiplicative": true
+  },
+  "inch_Hg_0C": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 3386.3886403409997,
+   "multiplicative": true
+  },
+  "inch_Hg_32F": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 3386.3886403409997,
+   "multiplicative": true
+  },
+  "inch_Hg_60F": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 3376.8485350879996,
+   "multiplicative": true
+  },
+  "international_british_thermal_unit": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1055.05585262,
+   "multiplicative": true
+  },
+  "international_calorie": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 4.1868,
+   "multiplicative": true
+  },
+  "josephson_constant": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[length]": -2.0,
+    "[mass]": -1.0,
+    "[time]": 2.0
+   },
+   "factor": 483597848416983.56,
+   "multiplicative": true
+  },
+  "joule": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "jute": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0
+   },
+   "factor": 3.444823943448042e-05,
+   "multiplicative": true
+  },
+  "katal": {
+   "dimensionality": {
+    "[substance]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "kelvin": {
+   "dimensionality": {
+    "[temperature]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "kilogram": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "kilometer": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1000.0,
+   "multiplicative": true
+  },
+  "kilometer_per_hour": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 0.2777777777777778,
+   "multiplicative": true
+  },
+  "kilometer_per_second": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 1000.0,
+   "multiplicative": true
+  },
+  "kip": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 4448.2216152605015,
+   "multiplicative": true
+  },
+  "kip_per_square_inch": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 6894757.293168365,
+   "multiplicative": true
+  },
+  "knot": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 0.5144444444444445,
+   "multiplicative": true
+  },
+  "label": {
+   "dimensionality": {
+    "[label]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "lambda": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 1.0000000000000003e-09,
+   "multiplicative": true
+  },
+  "lambert": {
+   "dimensionality": {
+    "[length]": -2.0,
+    "[luminosity]": 1.0
+   },
+   "factor": 3183.098861837907,
+   "multiplicative": true
+  },
+  "langley": {
+   "dimensionality": {
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 41840.0,
+   "multiplicative": true
+  },
+  "league": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 4828.041656083312,
+   "multiplicative": true
+  },
+  "leap_year": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 31622400.0,
+   "multiplicative": true
+  },
+  "light_year": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 9460730472580800.0,
+   "multiplicative": true
+  },
+  "line": {
+   "dimensionality": {
+    "[line]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "link": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.20116840233680466,
+   "multiplicative": true
+  },
+  "liter": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.0010000000000000002,
+   "multiplicative": true
+  },
+  "ln10": {
+   "dimensionality": {},
+   "factor": 2.302585092994046,
+   "multiplicative": true
+  },
+  "long_hundredweight": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 50.80234544,
+   "multiplicative": true
+  },
+  "long_ton": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 1016.0469088000001,
+   "multiplicative": true
+  },
+  "lumen": {
+   "dimensionality": {
+    "[luminosity]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "lux": {
+   "dimensionality": {
+    "[length]": -2.0,
+    "[luminosity]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "magnetic_flux_quantum": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 2.0678338484619295e-15,
+   "multiplicative": true
+  },
+  "maxwell": {
+   "dimensionality": {
+    "[length]": 1.5,
+    "[mass]": 0.5,
+    "[time]": -1.0
+   },
+   "factor": 3.1622776601683795e-05,
+   "multiplicative": true
+  },
+  "mean_international_ampere": {
+   "dimensionality": {
+    "[current]": 1.0
+   },
+   "factor": 0.9998500734640026,
+   "multiplicative": true
+  },
+  "mean_international_ohm": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.00049,
+   "multiplicative": true
+  },
+  "mean_international_volt": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.00034,
+   "multiplicative": true
+  },
+  "mercury_density_0C": {
+   "dimensionality": {
+    "[length]": -3.0,
+    "[mass]": 1.0
+   },
+   "factor": 13595.1,
+   "multiplicative": true
+  },
+  "mercury_density_32F": {
+   "dimensionality": {
+    "[length]": -3.0,
+    "[mass]": 1.0
+   },
+   "factor": 13595.1,
+   "multiplicative": true
+  },
+  "mercury_density_60F": {
+   "dimensionality": {
+    "[length]": -3.0,
+    "[mass]": 1.0
+   },
+   "factor": 13556.800000000001,
+   "multiplicative": true
+  },
+  "meter": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "meter_H2O": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 9806.65,
+   "multiplicative": true
+  },
+  "meter_H2O_4C": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 9806.3754138,
+   "multiplicative": true
+  },
+  "meter_H2O_60F": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 9796.853156649999,
+   "multiplicative": true
+  },
+  "meter_Hg": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 133322.387415,
+   "multiplicative": true
+  },
+  "meter_Hg_0C": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 133322.387415,
+   "multiplicative": true
+  },
+  "meter_Hg_32F": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 133322.387415,
+   "multiplicative": true
+  },
+  "meter_Hg_60F": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 132946.79272,
+   "multiplicative": true
+  },
+  "meter_per_second": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "meter_per_second_squared": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "metric_horsepower": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 735.49875,
+   "multiplicative": true
+  },
+  "metric_ton": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 1000.0,
+   "multiplicative": true
+  },
+  "microgram": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 1e-09,
+   "multiplicative": true
+  },
+  "microliter": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 1.0000000000000003e-09,
+   "multiplicative": true
+  },
+  "micrometer": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1e-06,
+   "multiplicative": true
+  },
+  "micromole": {
+   "dimensionality": {
+    "[substance]": 1.0
+   },
+   "factor": 1e-06,
+   "multiplicative": true
+  },
+  "micron": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1e-06,
+   "multiplicative": true
+  },
+  "mil": {
+   "dimensionality": {},
+   "factor": 9.817477042468104e-05,
+   "multiplicative": true
+  },
+  "mile": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1609.344,
+   "multiplicative": true
+  },
+  "mile_per_hour": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 0.44704,
+   "multiplicative": true
+  },
+  "millennium": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 31557600000.0,
+   "multiplicative": true
+  },
+  "milliarcsecond": {
+   "dimensionality": {},
+   "factor": 4.84813681109536e-09,
+   "multiplicative": true
+  },
+  "milligram": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 1e-06,
+   "multiplicative": true
+  },
+  "minim": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 6.161151992187499e-08,
+   "multiplicative": true
+  },
+  "minute": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 60.0,
+   "multiplicative": true
+  },
+  "molar": {
+   "dimensionality": {
+    "[length]": -3.0,
+    "[substance]": 1.0
+   },
+   "factor": 999.9999999999999,
+   "multiplicative": true
+  },
+  "molar_gas_constant": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[substance]": -1.0,
+    "[temperature]": -1.0,
+    "[time]": -2.0
+   },
+   "factor": 8.314462618153241,
+   "multiplicative": true
+  },
+  "mole": {
+   "dimensionality": {
+    "[substance]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "month": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 2629800.0,
+   "multiplicative": true
+  },
+  "nautical_mile": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1852.0,
+   "multiplicative": true
+  },
+  "neper": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "multiplicative": false
+  },
+  "neutron_mass": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 1.6749275005600005e-27,
+   "multiplicative": true
+  },
+  "newton": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "newtonian_constant_of_gravitation": {
+   "dimensionality": {
+    "[length]": 3.0,
+    "[mass]": -1.0,
+    "[time]": -2.0
+   },
+   "factor": 6.6743e-11,
+   "multiplicative": true
+  },
+  "nit": {
+   "dimensionality": {
+    "[length]": -2.0,
+    "[luminosity]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "node": {
+   "dimensionality": {
+    "[node]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "nuclear_magneton": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[length]": 2.0
+   },
+   "factor": 5.050783739271897e-27,
+   "multiplicative": true
+  },
+  "number_english": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": -1.0
+   },
+   "factor": 1693.3618173515572,
+   "multiplicative": true
+  },
+  "number_meter": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": -1.0
+   },
+   "factor": 1000.0,
+   "multiplicative": true
+  },
+  "octave": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "multiplicative": false
+  },
+  "oersted": {
+   "dimensionality": {
+    "[length]": -0.5,
+    "[mass]": 0.5,
+    "[time]": -1.0
+   },
+   "factor": 0.3162277660168379,
+   "multiplicative": true
+  },
+  "ohm": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "oil_barrel": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.15898729492799996,
+   "multiplicative": true
+  },
+  "ounce": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 0.028349523125000005,
+   "multiplicative": true
+  },
+  "parsec": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 3.0856775814671916e+16,
+   "multiplicative": true
+  },
+  "particle": {
+   "dimensionality": {
+    "[substance]": 1.0
+   },
+   "factor": 1.6605390671738466e-24,
+   "multiplicative": true
+  },
+  "pascal": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "peak_sun_hour": {
+   "dimensionality": {
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 3600000.0,
+   "multiplicative": true
+  },
+  "peck": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.008809767541719998,
+   "multiplicative": true
+  },
+  "pennyweight": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 0.00155517384,
+   "multiplicative": true
+  },
+  "percent": {
+   "dimensionality": {},
+   "factor": 0.01,
+   "multiplicative": true
+  },
+  "permille": {
+   "dimensionality": {},
+   "factor": 0.001,
+   "multiplicative": true
+  },
+  "pi": {
+   "dimensionality": {},
+   "factor": 3.141592653589793,
+   "multiplicative": true
+  },
+  "pica": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.004233333333333333,
+   "multiplicative": true
+  },
+  "pint": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.0004731764729999999,
+   "multiplicative": true
+  },
+  "pixel": {
+   "dimensionality": {
+    "[printing_unit]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "pixels_per_centimeter": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[printing_unit]": 1.0
+   },
+   "factor": 100.0,
+   "multiplicative": true
+  },
+  "pixels_per_inch": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[printing_unit]": 1.0
+   },
+   "factor": 39.37007874015748,
+   "multiplicative": true
+  },
+  "planck_constant": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 6.626070150000001e-34,
+   "multiplicative": true
+  },
+  "planck_current": {
+   "dimensionality": {
+    "[current]": 1.0
+   },
+   "factor": 3.478872754928505e+25,
+   "multiplicative": true
+  },
+  "planck_length": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1.616255024423705e-35,
+   "multiplicative": true
+  },
+  "planck_mass": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 2.176434342717899e-08,
+   "multiplicative": true
+  },
+  "planck_temperature": {
+   "dimensionality": {
+    "[temperature]": 1.0
+   },
+   "factor": 1.4167841621573425e+32,
+   "multiplicative": true
+  },
+  "planck_time": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 5.391246448313604e-44,
+   "multiplicative": true
+  },
+  "point": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.00035277777777777776,
+   "multiplicative": true
+  },
+  "poise": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 0.1,
+   "multiplicative": true
+  },
+  "pound": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 0.4535923700000001,
+   "multiplicative": true
+  },
+  "pound_force_per_square_inch": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 6894.7572931683635,
+   "multiplicative": true
+  },
+  "poundal": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 0.138254954376,
+   "multiplicative": true
+  },
+  "ppm": {
+   "dimensionality": {},
+   "factor": 1e-06,
+   "multiplicative": true
+  },
+  "proton_mass": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 1.67262192595e-27,
+   "multiplicative": true
+  },
+  "quadrillion_Btu": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.055056e+18,
+   "multiplicative": true
+  },
+  "quart": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 0.0009463529459999998,
+   "multiplicative": true
+  },
+  "quarter": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 12.70058636,
+   "multiplicative": true
+  },
+  "query": {
+   "dimensionality": {
+    "[query]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "radian": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "rads": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[time]": -2.0
+   },
+   "factor": 0.01,
+   "multiplicative": true
+  },
+  "reciprocal_centimeter": {
+   "dimensionality": {
+    "[length]": -1.0
+   },
+   "factor": 100.0,
+   "multiplicative": true
+  },
+  "refractive_index_unit": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "refrigeration_ton": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 3516.8533333333335,
+   "multiplicative": true
+  },
+  "rem": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[time]": -2.0
+   },
+   "factor": 0.01,
+   "multiplicative": true
+  },
+  "request": {
+   "dimensionality": {
+    "[request]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "revolutions_per_minute": {
+   "dimensionality": {
+    "[time]": -1.0
+   },
+   "factor": 0.10471975511965977,
+   "multiplicative": true
+  },
+  "revolutions_per_second": {
+   "dimensionality": {
+    "[time]": -1.0
+   },
+   "factor": 6.283185307179586,
+   "multiplicative": true
+  },
+  "reyn": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 6894.7572931683635,
+   "multiplicative": true
+  },
+  "rhe": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[mass]": -1.0,
+    "[time]": 1.0
+   },
+   "factor": 10.0,
+   "multiplicative": true
+  },
+  "rod": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 5.029210058420117,
+   "multiplicative": true
+  },
+  "roentgen": {
+   "dimensionality": {
+    "[current]": 1.0,
+    "[mass]": -1.0,
+    "[time]": 1.0
+   },
+   "factor": 0.000258,
+   "multiplicative": true
+  },
+  "rutherford": {
+   "dimensionality": {
+    "[time]": -1.0
+   },
+   "factor": 1000000.0,
+   "multiplicative": true
+  },
+  "rydberg": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 2.179872361102989e-18,
+   "multiplicative": true
+  },
+  "rydberg_constant": {
+   "dimensionality": {
+    "[length]": -1.0
+   },
+   "factor": 10973731.568157,
+   "multiplicative": true
+  },
+  "sample": {
+   "dimensionality": {
+    "[sample]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "scaled_point": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 5.362851005776947e-09,
+   "multiplicative": true
+  },
+  "scruple": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 0.0012959782,
+   "multiplicative": true
+  },
+  "second": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "second_radiation_constant": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[temperature]": 1.0
+   },
+   "factor": 0.014387768775039337,
+   "multiplicative": true
+  },
+  "series": {
+   "dimensionality": {
+    "[series]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "shake": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 1e-08,
+   "multiplicative": true
+  },
+  "shot": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 4.436029434374999e-05,
+   "multiplicative": true
+  },
+  "sidereal_day": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 86164.09053083285,
+   "multiplicative": true
+  },
+  "sidereal_month": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 2360591.55792,
+   "multiplicative": true
+  },
+  "sidereal_year": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 31558149.7635456,
+   "multiplicative": true
+  },
+  "siemens": {
+   "dimensionality": {
+    "[current]": 2.0,
+    "[length]": -2.0,
+    "[mass]": -1.0,
+    "[time]": 3.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "sievert": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "slinch": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 175.12683524647645,
+   "multiplicative": true
+  },
+  "slug": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 14.59390293720637,
+   "multiplicative": true
+  },
+  "sound_pressure_level": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 2e-05,
+   "multiplicative": true
+  },
+  "span": {
+   "dimensionality": {
+    "[span]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "speed_of_light": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 299792458.0,
+   "multiplicative": true
+  },
+  "square_degree": {
+   "dimensionality": {},
+   "factor": 0.00030461741978670857,
+   "multiplicative": true
+  },
+  "square_foot": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 0.09290303999999999,
+   "multiplicative": true
+  },
+  "square_inch": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 0.00064516,
+   "multiplicative": true
+  },
+  "square_league": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 23309986.232875686,
+   "multiplicative": true
+  },
+  "square_mile": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 2589988.110336,
+   "multiplicative": true
+  },
+  "square_rod": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 25.29295381171407,
+   "multiplicative": true
+  },
+  "square_survey_mile": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 2589998.4703195207,
+   "multiplicative": true
+  },
+  "square_yard": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 0.83612736,
+   "multiplicative": true
+  },
+  "standard_atmosphere": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 101325.0,
+   "multiplicative": true
+  },
+  "standard_gravity": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 9.80665,
+   "multiplicative": true
+  },
+  "standard_liter_per_minute": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.6887500000000004,
+   "multiplicative": true
+  },
+  "statampere": {
+   "dimensionality": {
+    "[length]": 1.5,
+    "[mass]": 0.5,
+    "[time]": -2.0
+   },
+   "factor": 3.1622776601683795e-05,
+   "multiplicative": true
+  },
+  "statfarad": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.01,
+   "multiplicative": true
+  },
+  "stathenry": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[time]": 2.0
+   },
+   "factor": 100.0,
+   "multiplicative": true
+  },
+  "statmho": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 0.01,
+   "multiplicative": true
+  },
+  "statohm": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[time]": 1.0
+   },
+   "factor": 100.0,
+   "multiplicative": true
+  },
+  "stattesla": {
+   "dimensionality": {
+    "[length]": -1.5,
+    "[mass]": 0.5
+   },
+   "factor": 31.622776601683793,
+   "multiplicative": true
+  },
+  "statvolt": {
+   "dimensionality": {
+    "[length]": 0.5,
+    "[mass]": 0.5,
+    "[time]": -1.0
+   },
+   "factor": 0.0031622776601683794,
+   "multiplicative": true
+  },
+  "statweber": {
+   "dimensionality": {
+    "[length]": 0.5,
+    "[mass]": 0.5
+   },
+   "factor": 0.0031622776601683794,
+   "multiplicative": true
+  },
+  "stefan_boltzmann_constant": {
+   "dimensionality": {
+    "[mass]": 1.0,
+    "[temperature]": -4.0,
+    "[time]": -3.0
+   },
+   "factor": 5.670374419184431e-08,
+   "multiplicative": true
+  },
+  "steradian": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "stere": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "stilb": {
+   "dimensionality": {
+    "[length]": -2.0,
+    "[luminosity]": 1.0
+   },
+   "factor": 10000.0,
+   "multiplicative": true
+  },
+  "stokes": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[time]": -1.0
+   },
+   "factor": 0.0001,
+   "multiplicative": true
+  },
+  "stone": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 6.35029318,
+   "multiplicative": true
+  },
+  "strain": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "survey_foot": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.3048006096012192,
+   "multiplicative": true
+  },
+  "survey_mile": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1609.3472186944373,
+   "multiplicative": true
+  },
+  "svedberg": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 1e-13,
+   "multiplicative": true
+  },
+  "sverdrup": {
+   "dimensionality": {
+    "[length]": 3.0,
+    "[time]": -1.0
+   },
+   "factor": 1000000.0,
+   "multiplicative": true
+  },
+  "synodic_month": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 2551442.8896000003,
+   "multiplicative": true
+  },
+  "tablespoon": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 1.4786764781249997e-05,
+   "multiplicative": true
+  },
+  "tansec": {
+   "dimensionality": {},
+   "factor": 4.848136811133344e-06,
+   "multiplicative": true
+  },
+  "teaspoon": {
+   "dimensionality": {
+    "[length]": 3.0
+   },
+   "factor": 4.928921593749999e-06,
+   "multiplicative": true
+  },
+  "technical_atmosphere": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 98066.5,
+   "multiplicative": true
+  },
+  "tesla": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "tex": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0
+   },
+   "factor": 1e-06,
+   "multiplicative": true
+  },
+  "tex_cicero": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.004512780329311036,
+   "multiplicative": true
+  },
+  "tex_didot": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.0003760650274425863,
+   "multiplicative": true
+  },
+  "tex_pica": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.004217517642175176,
+   "multiplicative": true
+  },
+  "tex_point": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.000351459803514598,
+   "multiplicative": true
+  },
+  "therm": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 105505600.0,
+   "multiplicative": true
+  },
+  "thermochemical_british_thermal_unit": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1054.3502644888893,
+   "multiplicative": true
+  },
+  "thomson_cross_section": {
+   "dimensionality": {
+    "[length]": 2.0
+   },
+   "factor": 6.65245870505805e-29,
+   "multiplicative": true
+  },
+  "thou": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 2.5399999999999997e-05,
+   "multiplicative": true
+  },
+  "ton": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 907.1847400000001,
+   "multiplicative": true
+  },
+  "ton_TNT": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 4184000000.0,
+   "multiplicative": true
+  },
+  "tonne_of_oil_equivalent": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 41868000000.0,
+   "multiplicative": true
+  },
+  "torr": {
+   "dimensionality": {
+    "[length]": -1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 133.32236842105263,
+   "multiplicative": true
+  },
+  "townsend": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[length]": 4.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1e-21,
+   "multiplicative": true
+  },
+  "tropical_month": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 2360584.6848,
+   "multiplicative": true
+  },
+  "tropical_year": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 31556925.2507328,
+   "multiplicative": true
+  },
+  "troy_ounce": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 0.03110347680000001,
+   "multiplicative": true
+  },
+  "troy_pound": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 0.3732417216000001,
+   "multiplicative": true
+  },
+  "turn": {
+   "dimensionality": {},
+   "factor": 6.283185307179586,
+   "multiplicative": true
+  },
+  "unified_atomic_mass_unit": {
+   "dimensionality": {
+    "[mass]": 1.0
+   },
+   "factor": 1.6605390689200003e-27,
+   "multiplicative": true
+  },
+  "unit_pole": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.2566370612696005e-07,
+   "multiplicative": true
+  },
+  "vacuum_permeability": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 1.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.2566370612696005e-06,
+   "multiplicative": true
+  },
+  "vacuum_permittivity": {
+   "dimensionality": {
+    "[current]": 2.0,
+    "[length]": -3.0,
+    "[mass]": -1.0,
+    "[time]": 4.0
+   },
+   "factor": 8.854187818792247e-12,
+   "multiplicative": true
+  },
+  "volt": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "volt_ampere": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "von_klitzing_constant": {
+   "dimensionality": {
+    "[current]": -2.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 25812.807459304513,
+   "multiplicative": true
+  },
+  "water_density_4C": {
+   "dimensionality": {
+    "[length]": -3.0,
+    "[mass]": 1.0
+   },
+   "factor": 999.972,
+   "multiplicative": true
+  },
+  "water_density_60F": {
+   "dimensionality": {
+    "[length]": -3.0,
+    "[mass]": 1.0
+   },
+   "factor": 999.001,
+   "multiplicative": true
+  },
+  "watt": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "watt_hour": {
+   "dimensionality": {
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 3600.0,
+   "multiplicative": true
+  },
+  "weber": {
+   "dimensionality": {
+    "[current]": -1.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -2.0
+   },
+   "factor": 1.0,
+   "multiplicative": true
+  },
+  "week": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 604800.0,
+   "multiplicative": true
+  },
+  "wien_frequency_displacement_law_constant": {
+   "dimensionality": {
+    "[temperature]": -1.0,
+    "[time]": -1.0
+   },
+   "factor": 58789257576.468254,
+   "multiplicative": true
+  },
+  "wien_u": {
+   "dimensionality": {},
+   "factor": 2.8214393721220787,
+   "multiplicative": true
+  },
+  "wien_wavelength_displacement_law_constant": {
+   "dimensionality": {
+    "[length]": 1.0,
+    "[temperature]": 1.0
+   },
+   "factor": 0.0028977719551851727,
+   "multiplicative": true
+  },
+  "wien_x": {
+   "dimensionality": {},
+   "factor": 4.965114231744276,
+   "multiplicative": true
+  },
+  "x_unit_Cu": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1.00207697e-13,
+   "multiplicative": true
+  },
+  "x_unit_Mo": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 1.00209952e-13,
+   "multiplicative": true
+  },
+  "yard": {
+   "dimensionality": {
+    "[length]": 1.0
+   },
+   "factor": 0.9144,
+   "multiplicative": true
+  },
+  "year": {
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "factor": 31557600.0,
+   "multiplicative": true
+  },
+  "zeta": {
+   "dimensionality": {},
+   "factor": 29979245800.0,
+   "multiplicative": true
+  }
+ }
+}

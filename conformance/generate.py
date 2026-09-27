@@ -48,6 +48,8 @@ CHECKOUT = BOOK / "checkout"
 CASES = HERE / "cases"
 PROBES = HERE / "probes"
 FIXTURES = HERE / "fixtures"
+#: What the site reads at run time: the unit table, the measured constants, the book's outline.
+DATA = ROOT / "data"
 
 #: Where hand-written cases are copied inside the checkout, so that the book's messages name a
 #: path relative to its own root and the fixtures do not depend on where a temporary directory was.
@@ -110,10 +112,14 @@ def outside(check: bool) -> int:
     target = Path(tempfile.mkdtemp(prefix="fixtures-")) / "fixtures"
     try:
         run(str(python), str(Path(__file__).resolve()), "--inside", "--out", str(target))
+        # The site's data is generated with the fixtures and lives at the top, where the site is.
+        shutil.move(str(target / "data"), str(target.parent / "data"))
         if check:
-            return compare(target, FIXTURES)
+            return max(compare(target, FIXTURES), compare(target.parent / "data", DATA))
         shutil.rmtree(FIXTURES, ignore_errors=True)
         shutil.copytree(target, FIXTURES)
+        shutil.rmtree(DATA, ignore_errors=True)
+        shutil.copytree(target.parent / "data", DATA)
         return 0
     finally:
         shutil.rmtree(target.parent, ignore_errors=True)
@@ -162,7 +168,7 @@ def compare(fresh: Path, committed: Path) -> int:
         if found:
             problems[name] = found
     if not problems:
-        print(f"conformance fixtures: current ({len(want)} files)")
+        print(f"conformance fixtures: {committed.name}/ current ({len(want)} files)")
         return 0
     print("conformance fixtures: NOT current. Run `python3 conformance/generate.py` and commit.")
     for name, found in problems.items():
@@ -689,19 +695,69 @@ def measured_catalogue() -> dict:
     return out
 
 
-def outline() -> list[dict]:
-    """The book's chapters by slug, with the number a reader sees.
+def outline() -> dict:
+    """The book's chapters and appendices, with the label a reader sees and the page each is on.
 
     The book never uses a chapter number as an identifier: it derives each from its outline, so
     inserting a chapter renumbers every reference at once. The builder does the same, from here,
-    and links a question to the chapter that teaches it by slug.
+    and links a question to the chapter that teaches it by slug. A page is named for its slug
+    (scripts/build-site.py, ``href_for``).
     """
-    from bench.outline import CHAPTERS
+    from bench.outline import APPENDICES, CHAPTERS
 
-    return [
-        {"number": c.number, "slug": c.slug, "title": c.title, "part": c.part, "question": c.question}
-        for c in CHAPTERS
+    page = lambda slug: f"{slug.replace('_', '-')}.html"  # noqa: E731
+    return {
+        "site": lock()["site"],
+        "chapters": [
+            {"label": c.label, "number": c.number, "slug": c.slug, "title": c.title, "part": c.part,
+             "question": c.question, "page": page(c.slug)}
+            for c in CHAPTERS
+        ],
+        "appendices": [
+            {"label": a.label, "letter": a.letter, "slug": a.slug, "title": a.title, "page": page(a.slug)}
+            for a in APPENDICES
+        ],
+    }
+
+
+def products() -> list[str]:
+    """The book's list of product names, which no chapter, model or figure may use.
+
+    Read from tests/test_book.py as a literal, without importing the book's tests. The builder
+    holds its interface, docs and fixtures to the same list (test/neutrality.test.js).
+    """
+    import ast
+
+    tree = ast.parse((CHECKOUT / "tests" / "test_book.py").read_text())
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(getattr(t, "id", "") == "PRODUCTS" for t in node.targets):
+            return list(ast.literal_eval(node.value))
+    raise SystemExit("generate: tests/test_book.py no longer defines PRODUCTS; teach the generator where it went.")
+
+
+def examples() -> list[dict]:
+    """The book's own models, for a reader to open and look around before starting their own.
+
+    The files as the book has them, with the chapter each belongs to. They are the book's models
+    with the book's numbers and sources; the builder shows them as that and never copies a number
+    from one into a reader's model.
+    """
+    import yaml
+
+    order = yaml.safe_load((CHECKOUT / "models" / "web_service" / "build-order.yaml").read_text())
+    chapter_of = {stage["stage"]: stage["chapter"] for stage in order["stages"]}
+    picks = [
+        ("demand", CHECKOUT / "models" / "web_service" / "stages" / "05-demand", chapter_of["demand"]),
+        ("web_service", CHECKOUT / "models" / "web_service", "the_sizing_model"),
+        ("observability", CHECKOUT / "models" / "observability", "regime_changes"),
     ]
+    out = []
+    for name, directory, chapter in picks:
+        files = read_case_files(directory)
+        raw = yaml.safe_load(files["model.yaml"])
+        out.append({"id": name, "title": " ".join(str(raw.get("title", raw["model"])).split()),
+                    "chapter": chapter, "files": files})
+    return out
 
 
 def probe_lines(name: str) -> list[str]:
@@ -754,7 +810,14 @@ def inside(out: Path) -> int:
     })
     write(out / "yaml.json", {"probes": yaml_probes(probe_lines("yaml.txt"))})
     write(out / "results.json", measured_catalogue())
+    write(out / "products.json", products())
     write(out / "outline.json", outline())
+    # What the site itself reads: the same three things, without the probes and cases.
+    write(out / "data" / "units.json", unit_table(units))
+    write(out / "data" / "results.json", measured_catalogue())
+    write(out / "data" / "outline.json", outline())
+    write(out / "data" / "examples.json", examples())
+
     write(out / "manifest.json", {
         "fixture_format": FIXTURE_FORMAT,
         "book": lock(),
