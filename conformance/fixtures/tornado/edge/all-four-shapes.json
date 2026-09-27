@@ -1,0 +1,98 @@
+{
+ "case": "edge/all-four-shapes",
+ "outputs": {
+  "product": [
+   {
+    "base": 73.74459810950653,
+    "high": 112.89499031628296,
+    "high_input": 3.904554884989668,
+    "kind": "input",
+    "label": "t in",
+    "low": 47.20027171066186,
+    "low_input": 1.632455532033676,
+    "node": "t_in",
+    "span": 65.69471860562109
+   },
+   {
+    "base": 73.74459810950653,
+    "high": 103.24243735330911,
+    "high_input": 2.8,
+    "kind": "input",
+    "label": "u in",
+    "low": 44.24675886570391,
+    "low_input": 1.2,
+    "node": "u_in",
+    "span": 58.995678487605204
+   },
+   {
+    "base": 73.74459810950653,
+    "high": 96.91938977423924,
+    "high_input": 1.9,
+    "kind": "input",
+    "label": "l in",
+    "low": 56.111225658770095,
+    "low_input": 1.1,
+    "node": "l_in",
+    "span": 40.80816411546914
+   },
+   {
+    "base": 73.74459810950653,
+    "high": 92.64609912033158,
+    "high_input": 12.563103128280313,
+    "kind": "input",
+    "label": "n in",
+    "low": 54.84309709868146,
+    "low_input": 7.4368968717196875,
+    "node": "n_in",
+    "span": 37.80300202165012
+   }
+  ],
+  "utilisation": [
+   {
+    "base": 0.25,
+    "high": 0.25,
+    "high_input": 1.9,
+    "kind": "input",
+    "label": "l in",
+    "low": 0.25,
+    "low_input": 1.1,
+    "node": "l_in",
+    "span": 0.0
+   },
+   {
+    "base": 0.25,
+    "high": 0.25,
+    "high_input": 12.563103128280313,
+    "kind": "input",
+    "label": "n in",
+    "low": 0.25,
+    "low_input": 7.4368968717196875,
+    "node": "n_in",
+    "span": 0.0
+   },
+   {
+    "base": 0.25,
+    "high": 0.25,
+    "high_input": 3.904554884989668,
+    "kind": "input",
+    "label": "t in",
+    "low": 0.25,
+    "low_input": 1.632455532033676,
+    "node": "t_in",
+    "span": 0.0
+   },
+   {
+    "base": 0.25,
+    "high": 0.25,
+    "high_input": 2.8,
+    "kind": "input",
+    "label": "u in",
+    "low": 0.25,
+    "low_input": 1.2,
+    "node": "u_in",
+    "span": 0.0
+   }
+  ]
+ },
+ "scenario": "reference"
+}

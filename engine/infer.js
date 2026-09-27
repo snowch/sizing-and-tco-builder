@@ -21,11 +21,40 @@ import { EvaluationError } from "./evaluate.js";
 
 const NONE = {};
 
+/*
+ * The shortest spelling of a unit the registry reads back as exactly that unit: TB for terabyte,
+ * s for second. Checked by parsing it back, so a symbol Pint would read as something else (Tb is
+ * a terabarn) is never chosen.
+ */
+function shortName(registry, canonical) {
+  if (!registry) return canonical;
+  const same = (text) => {
+    try {
+      const parsed = registry.parse(text);
+      const keys = Object.keys(parsed);
+      return keys.length === 1 && keys[0] === canonical && parsed[canonical] === 1;
+    } catch {
+      return false;
+    }
+  };
+  const candidates = [canonical];
+  for (const [key, name] of Object.entries(registry.keys)) if (name === canonical) candidates.push(key);
+  for (const [key, prefix] of registry.prefixes) {
+    if (!key || !prefix || !canonical.startsWith(prefix)) continue;
+    const rest = canonical.slice(prefix.length);
+    for (const [k, name] of Object.entries(registry.keys)) if (name === rest) candidates.push(key + k);
+  }
+  return candidates.filter((c) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(c) && same(c)).sort((a, b) => a.length - b.length || (a < b ? -1 : 1))[0] ?? canonical;
+}
+
 /* A units container as a unit string the registry reads back as the same container. */
-export function formatUnits(units) {
+export function formatUnits(units, registry = null) {
   const entries = Object.entries(units).filter(([, e]) => e !== 0).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
   if (!entries.length) return "dimensionless";
-  const part = ([name, e]) => (Math.abs(e) === 1 ? name : `${name}**${Math.abs(e)}`);
+  const part = ([canonical, e]) => {
+    const name = shortName(registry, canonical);
+    return Math.abs(e) === 1 ? name : `${name}**${Math.abs(e)}`;
+  };
   const top = entries.filter(([, e]) => e > 0).map(part);
   const bottom = entries.filter(([, e]) => e < 0).map(part);
   return `${top.length ? top.join("*") : "1"}${bottom.map((b) => `/${b}`).join("")}`;
@@ -68,7 +97,7 @@ function factors(tree, power = 1, out = []) {
  * Returns Map name -> { units, text } for each fresh name the formula pins down. `text` is a unit
  * string: the one a known node or the target was written in when the unit was copied from it.
  */
-export function inferUnits(tree, { known, fresh, target = null, targetText = null }) {
+export function inferUnits(tree, { known, fresh, target = null, targetText = null, registry = null }) {
   const inferred = new Map();
   const unitOf = (node) => {
     switch (node.op) {
@@ -118,7 +147,7 @@ export function inferUnits(tree, { known, fresh, target = null, targetText = nul
 
   const pin = (name, want) => {
     if (!fresh.has(name) || inferred.has(name) || !want) return false;
-    inferred.set(name, { units: want.units, text: want.text ?? formatUnits(want.units) });
+    inferred.set(name, { units: want.units, text: want.text ?? formatUnits(want.units, registry) });
     return true;
   };
 

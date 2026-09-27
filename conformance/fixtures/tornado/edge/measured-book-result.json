@@ -1,0 +1,32 @@
+{
+ "case": "edge/measured-book-result",
+ "outputs": {
+  "compressed_cores": [
+   {
+    "base": 1.116431591069808,
+    "high": 1.1160903681507477,
+    "high_input": 3.5839391810428465,
+    "kind": "measured",
+    "label": "compression",
+    "low": 1.1167730226972161,
+    "low_input": 3.58174841145361,
+    "node": "compression",
+    "span": 0.0006826545464684308
+   }
+  ],
+  "utilisation_ceiling": [
+   {
+    "base": 0.25,
+    "high": 0.25,
+    "high_input": 3.5839391810428465,
+    "kind": "measured",
+    "label": "compression",
+    "low": 0.25,
+    "low_input": 3.58174841145361,
+    "node": "compression",
+    "span": 0.0
+   }
+  ]
+ },
+ "scenario": "reference"
+}

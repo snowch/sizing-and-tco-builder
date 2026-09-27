@@ -30,6 +30,7 @@ const FILES = [
   "engine/model.js",
   "engine/python.js",
   "engine/quantity.js",
+  "engine/tornado.js",
   "engine/units.js",
   "engine/verify.js",
   "engine/write.js",

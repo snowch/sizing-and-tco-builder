@@ -720,6 +720,31 @@ def outline() -> dict:
     }
 
 
+def tornado_fixture(case_id: str, modules) -> dict:
+    """The book's tornado() for every output of a case, at its reference scenario."""
+    dsl, evaluate, *_ = modules
+    directory = next(d for i, d, _ in case_sources() if i == case_id)
+    in_book = case_id.startswith("reference/")
+    where = directory if in_book else CHECKOUT / STAGING / directory.name
+    if not in_book:
+        shutil.rmtree(where, ignore_errors=True)
+        where.mkdir(parents=True)
+        for name, text in read_case_files(directory).items():
+            (where / name).parent.mkdir(parents=True, exist_ok=True)
+            (where / name).write_text(text)
+    try:
+        model = dsl.load_model(where / "model.yaml")
+        scenario = next(s for s in dsl.scenarios_for(model) if s.name == "reference")
+        return {
+            "case": case_id,
+            "scenario": "reference",
+            "outputs": {output: evaluate.tornado(model, scenario, output) for output in model.outputs},
+        }
+    finally:
+        if not in_book:
+            shutil.rmtree(where, ignore_errors=True)
+
+
 def products() -> list[str]:
     """The book's list of product names, which no chapter, model or figure may use.
 
@@ -811,6 +836,8 @@ def inside(out: Path) -> int:
     write(out / "yaml.json", {"probes": yaml_probes(probe_lines("yaml.txt"))})
     write(out / "results.json", measured_catalogue())
     write(out / "products.json", products())
+    for case_id in ("reference/web_service", "reference/observability", "edge/all-four-shapes", "edge/measured-book-result"):
+        write(out / "tornado" / f"{case_id}.json", tornado_fixture(case_id, modules))
     write(out / "outline.json", outline())
     # What the site itself reads: the same three things, without the probes and cases.
     write(out / "data" / "units.json", unit_table(units))

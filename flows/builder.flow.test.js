@@ -249,7 +249,11 @@ test("a model whose formula does not fix its names' units asks for them", async 
     // No unit: once request_rate is defined, it is the one unknown left in busy_cores' product.
     service_demand: { kind: "input", decided: "outside", prov: "vendor_claim", source: "the framework's published figure", value: 0.02 },
   });
-  assert.equal(await r.page.evaluate(() => builder.state.doc.nodes.find((n) => n.name === "service_demand").unit), "core*second/request");
+  const inferred = await r.page.evaluate(() => {
+    const unit = builder.state.doc.nodes.find((n) => n.name === "service_demand").unit;
+    return builder.ctx.registry.parse(unit);
+  });
+  assert.deepEqual(inferred, { core: 1, second: 1, request: -1 });
   assert.equal(next.id, "refine");
   const verdict = book(await r.files());
   if (verdict) {
@@ -346,5 +350,127 @@ test("it works with no network once it has loaded", async () => {
   await r.answer({ name: "hosts", label: "hosts", unit: "host", decision: "Order machines." });
   assert.equal((await r.coach()).id, "horizon");
   assert.deepEqual(r.errors.filter((e) => !/Failed to load resource/.test(e)), []);
+  await r.context.close();
+});
+
+test("a host count, refined: the hosts question, a measurement, a ceiling, ranges, a pair, a scenario, measure first", async () => {
+  const r = await Reader.start();
+  const p = r.page;
+  await r.answer({ goal: "hosts", name: "hosts", label: "hosts to buy", unit: "host", decision: "The hardware order for the next refresh." });
+  // Nothing grows in this model, and a horizon nothing uses feeds no answer, which the book refuses.
+  await r.forToday();
+  // The hosts question: one kind of host, two resources that could bind.
+  assert.equal((await r.coach()).id, "hosts");
+  await p.click("#coach button.primary");
+  await p.click('[data-hosts="one"]');
+  await p.check('[data-chain="requests"]');
+  await p.check('[data-chain="storage"]');
+  await r.next();
+  assert.equal(await p.evaluate(() => builder.state.doc.nodes.find((n) => n.name === "hosts").formula), "max(hosts_for_requests, hosts_for_storage)");
+  await r.defineAll({
+    hosts_for_requests: { kind: "derived", formula: "ceil(busy_cores / (cores_per_host * (1 - queueing_margin)))" },
+    hosts_for_storage: { kind: "derived", formula: "ceil(stored_data * replication_factor / record_compression / disk_per_host)" },
+    busy_cores: { kind: "derived", unit: "core", formula: "request_rate * service_demand" },
+    cores_per_host: { kind: "input", unit: "core/host", decided: "you", prov: "vendor_claim", source: "the quoted specification", value: 32 },
+    queueing_margin: { kind: "input", decided: "you", prov: "assumption", source: "the margin kept below the knee", value: 0.3 },
+    stored_data: { kind: "input", unit: "TB", decided: "outside", prov: "assumption", source: "what is held today", value: 40 },
+    replication_factor: { kind: "input", unit: "dimensionless", decided: "you", prov: "assumption", source: "three copies", value: 3 },
+    record_compression: { kind: "measured", result: "records-compression" },
+    disk_per_host: { kind: "input", unit: "TB/host", decided: "you", prov: "vendor_claim", source: "the quoted specification", value: 8 },
+    request_rate: { kind: "input", unit: "request/second", decided: "outside", prov: "assumption", source: "triangular: the owners' least, likely and most for the busy hour", shape: "triangular", parameters: { minimum: 3000, likely: 8000, maximum: 20000 } },
+    service_demand: { kind: "input", decided: "outside", prov: "assumption", source: "lognormal: processor time per request cannot go negative", shape: "lognormal", parameters: { p10: 0.004, p90: 0.012 } },
+  });
+  // A measured constant and no ceiling: the book refuses it, so the builder says fix it first.
+  let next = await r.coach();
+  assert.equal(next.id, "fix");
+  assert.equal(next.check.code, "classification.measured-without-ceiling");
+  await p.click('[data-refine="ceiling"]');
+  await p.fill("#w-name", "queueing_headroom");
+  await p.fill("#w-label", "utilisation at the busy hour");
+  await r.next();
+  await p.fill("#w-of", "busy_cores / (hosts * cores_per_host)");
+  await p.fill("#w-limit", "1");
+  await p.fill("#w-headroom", "queueing_margin");
+  await r.next();
+  assert.match(await r.problem(), /why/);
+  await p.fill("#w-because", "Past the knee the queue grows faster than the load, and response time goes with it.");
+  await r.next();
+  await r.next();
+  next = await r.coach();
+  assert.equal(next.id, "refine", JSON.stringify(next));
+  // Sources, read.
+  assert.equal(next.refine.id, "sources");
+  await p.click("#coach button.primary");
+  assert.match(await p.textContent("#panel"), /Vendors' claims/);
+  // The ceiling is done; ranges: the stored data stays one number, and says so.
+  next = await r.coach();
+  assert.equal(next.refine.id, "ranges");
+  await p.click("#coach button.primary");
+  await p.click('[data-act="keep"]');
+  // Measure first: the page's bars are the book's tornado, in the same order.
+  next = await r.coach();
+  assert.equal(next.refine.id, "measure");
+  await p.click("#coach button.primary");
+  const bars = await p.evaluate(() => [...document.querySelectorAll("[data-bar]")].map((b) => b.dataset.bar));
+  assert.ok(bars.length >= 3, JSON.stringify(bars));
+  // Inputs that move together, with a reason.
+  await p.click('[data-tab="together"]');
+  await p.selectOption("#c-a", "request_rate");
+  await p.selectOption("#c-b", "service_demand");
+  await p.fill("#c-r", "0.4");
+  await p.click("#c-add");
+  assert.match(await p.textContent("#c-msg"), /why/);
+  await p.fill("#c-w", "A busier service is usually slower per request.");
+  await p.click("#c-add");
+  // A second case, as a scenario.
+  next = await r.coach();
+  assert.equal(next.refine.id, "scenario");
+  await p.click("#coach button.primary");
+  await p.fill("#s-name", "twice_the_disk");
+  await p.selectOption("#s-input", "disk_per_host");
+  await r.number("#s-value", 16);
+  await p.fill("#s-why", "The denser host on the second quote.");
+  await p.click("#s-add");
+  assert.equal((await r.coach()).id, "done");
+  if (process.env.SHOTS) {
+    await p.click('[data-tab="measure"]');
+    await p.screenshot({ path: `${process.env.SHOTS}/refined.png` });
+    await p.setViewportSize({ width: 390, height: 844 });
+    await p.screenshot({ path: `${process.env.SHOTS}/refined-phone.png`, fullPage: false });
+    await p.setViewportSize({ width: 1400, height: 950 });
+  }
+  assert.equal(await p.textContent("#klass"), "conditional model");
+  const verdict = book(await r.files());
+  if (verdict) {
+    assert.ok(verdict.ok, JSON.stringify(verdict.problems));
+    assert.equal(verdict.classification, "conditional");
+    assert.deepEqual(Object.keys(verdict.points).sort(), ["reference", "twice_the_disk"]);
+    assert.deepEqual(bars, verdict.tornado.hosts.map((b) => b.node));
+  }
+  assert.deepEqual(r.errors, []);
+  await r.context.close();
+});
+
+test("the hosts question, several roles: the pools add up", async () => {
+  const r = await Reader.start();
+  const p = r.page;
+  await r.answer({ goal: "hosts", name: "fleet", label: "machines in the fleet", unit: "host", decision: "The platform's machine count for the budget." });
+  await r.forToday();
+  await p.click("#coach button.primary");
+  await p.click('[data-hosts="roles"]');
+  await p.fill("#w-roles", "collectors, store");
+  await r.next();
+  assert.equal(await p.evaluate(() => builder.state.doc.nodes.find((n) => n.name === "fleet").formula), "collectors_hosts + store_hosts");
+  await r.defineAll({
+    collectors_hosts: { kind: "input", decided: "you", prov: "assumption", source: "the ingest tier as sized", value: 6 },
+    store_hosts: { kind: "input", decided: "you", prov: "assumption", source: "the retention tier as sized", value: 12 },
+  });
+  const verdict = book(await r.files());
+  if (verdict) {
+    assert.ok(verdict.ok, JSON.stringify(verdict.problems));
+    assert.equal(verdict.points.reference.fleet, 18);
+  }
+  if (process.env.SHOTS) await p.screenshot({ path: `${process.env.SHOTS}/roles.png` });
+  assert.deepEqual(r.errors, []);
   await r.context.close();
 });

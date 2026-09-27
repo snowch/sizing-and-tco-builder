@@ -53,7 +53,15 @@ def inside(directories: list[Path]) -> int:
                     points[scenario.name] = {o: evaluate.point(model, scenario).get(o) for o in model.outputs}
                 except Exception as exc:
                     points[scenario.name] = f"{type(exc).__name__}: {exc}"
-            entry.update(ok=not problems, problems=problems, classification=model.classification, points=points)
+            tornado = {}
+            reference = next((s for s in dsl.scenarios_for(model) if s.name == "reference"), None)
+            if reference is not None and not problems:
+                for output in model.outputs:
+                    tornado[output] = [
+                        {k: bar[k] for k in ("node", "low", "high", "span")}
+                        for bar in evaluate.tornado(model, reference, output)
+                    ]
+            entry.update(ok=not problems, problems=problems, classification=model.classification, points=points, tornado=tornado)
             failed += bool(problems)
             print(json.dumps(entry))
     finally:

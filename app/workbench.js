@@ -15,11 +15,12 @@
  */
 
 import { describe } from "../engine/describe.js";
-import { ceilingReport, checkUnits, oneShape, pointValueOfInput, ppf, real, walk, Z90 } from "../engine/evaluate.js";
+import { ceilingReport, checkUnits, pointValueOfInput, real, walk } from "../engine/evaluate.js";
+import { tornado } from "../engine/tornado.js";
 import { FormulaError, parse, refs } from "../engine/formula.js";
 import { formatUnits, inferUnits, producedUnits } from "../engine/infer.js";
 import { report } from "../engine/index.js";
-import { blocked, isConditional, measuredSd, order } from "../engine/model.js";
+import { blocked, isConditional, order } from "../engine/model.js";
 import { sorted } from "../engine/python.js";
 import { writeModel, writeScenario } from "../engine/write.js";
 import { PATTERNS, PROBLEM_WORDS, CAUSE_WORDS, REFINE } from "./words.js";
@@ -324,7 +325,7 @@ export function readFormula(state, { registry, previewed }, text, target, self) 
   } catch {
     targetUnits = null;
   }
-  const inferred = inferUnits(tree, { known: new Map([...known, ...pendingUnits]), fresh, target: targetUnits, targetText: target });
+  const inferred = inferUnits(tree, { known: new Map([...known, ...pendingUnits]), fresh, target: targetUnits, targetText: target, registry });
   const all = new Map([...known, ...pendingUnits]);
   for (const [k, v] of inferred) all.set(k, v);
   const newNames = names.filter((n) => !known.has(n));
@@ -343,7 +344,7 @@ export function readFormula(state, { registry, previewed }, text, target, self) 
       matches = sameDimensions(a, b);
     }
   }
-  return { tree, produced, producedText: produced ? formatUnits(produced) : null, matches, newNames, inferred, complete };
+  return { tree, produced, producedText: produced ? formatUnits(produced, registry) : null, matches, newNames, inferred, complete };
 }
 
 export function sameDimensions(a, b) {
@@ -437,52 +438,17 @@ export function refinementDone(state, id) {
   }
 }
 
-// -- measure first: one input at a time, from its low end to its high end ---------------------------
+// -- measure first ----------------------------------------------------------------------------------
 
-/*
- * The book's tornado (sizing/evaluate.py, tornado): each input with a shape is swung between the
- * 10th and 90th percentile of its own shape, and a measured constant by 1.28 standard errors either
- * side, with everything else at its point value; the bars are ranked by how far the output moves.
- */
+/* The book's tornado (engine/tornado.js, held to sizing/evaluate.py's), for one answer. */
 export function measureFirst(previewed, output) {
   const { model, factors, points } = previewed;
   if (!model?.order || !points?.has(output)) return null;
-  const stuck = blocked(model);
-  const bars = [];
-  const at = (name, setting) => {
-    const values = new Map();
-    for (const n of model.order) {
-      if (stuck.has(n)) continue;
-      const node = model.nodes.get(n);
-      if (n === name) values.set(n, setting);
-      else if (node.kind === "input") values.set(n, pointValueOfInput(node, null));
-      else if (node.kind === "measured") values.set(n, Number(node.measurement.summary.value));
-      else values.set(n, real(walk(node.kind === "derived" ? node.formula : node.of, values)) * factors.get(n));
-    }
-    return values.get(output);
-  };
-  for (const name of sorted(model.nodes.keys())) {
-    const node = model.nodes.get(name);
-    if (stuck.has(name)) continue;
-    let swing = null;
-    if (node.kind === "input" && node.distribution) {
-      const [shape, p] = oneShape(node.distribution);
-      swing = [ppf(shape, p, 0.1), ppf(shape, p, 0.9)];
-    } else if (node.kind === "measured" && node.measurement && measuredSd(node) > 0) {
-      const v = Number(node.measurement.summary.value);
-      swing = [v - Z90() * measuredSd(node), v + Z90() * measuredSd(node)];
-    }
-    if (!swing) continue;
-    try {
-      const low = at(name, swing[0]);
-      const high = at(name, swing[1]);
-      bars.push({ name, swing, low, high, span: Math.abs(high - low) });
-    } catch {
-      // An input whose swing breaks the arithmetic gets no bar rather than a wrong one.
-    }
+  try {
+    return { base: points.get(output), bars: tornado(model, { overrides: new Map() }, output, factors) };
+  } catch {
+    return { base: points.get(output), bars: [] };
   }
-  bars.sort((a, b) => b.span - a.span);
-  return { base: points.get(output), bars };
 }
 
 // -- small readings --------------------------------------------------------------------------------

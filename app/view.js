@@ -36,6 +36,8 @@ function valueText(v, unit = "") {
   }
 }
 
+const clip = (text, n) => (text.length > n ? `${text.slice(0, n - 1)}…` : text);
+
 const shown = (v) => v?.state === "to-define" || v?.state === "not-yet-measured";
 
 function kindClass(app, name, v) {
@@ -226,7 +228,7 @@ export function drawGraph(app) {
       + `<rect x="${p.x}" y="${p.y}" width="${W}" height="${H}" rx="4" fill="var(${fills[cls]})" stroke="${bad ? "var(--bad)" : `var(${edges[cls]})`}" stroke-width="1.5"${cls === "unknown" ? ' stroke-dasharray="4 3"' : ""}/>`
       + (entry.node?.decided === "you" ? `<rect x="${p.x}" y="${p.y}" width="5" height="${H}" rx="2" fill="var(--input-edge)"/>` : "")
       + `<text x="${p.x + 12}" y="${p.y + 18}">${esc(label.length > 30 ? `${label.slice(0, 29)}…` : label)}</text>`
-      + `<text class="v" x="${p.x + W - 10}" y="${p.y + 36}" text-anchor="end">${esc(valueText(v, entry.node?.unit).slice(0, 34))}${ceiling ? ` · ${esc(ceiling.verdict)}` : ""}</text></g>`;
+      + `<text class="v" x="${p.x + W - 10}" y="${p.y + 36}" text-anchor="end">${esc(clip(valueText(v, entry.node?.unit), 28))}${ceiling ? ` · ${esc(ceiling.verdict)}` : ""}</text></g>`;
   }
   svg.innerHTML = s;
   for (const g of svg.querySelectorAll(".node")) {
@@ -429,7 +431,7 @@ const PANELS = {
       const label = (n) => state.doc.nodes.find((x) => x.name === n)?.label || n;
       return `<h2>Which input to measure first</h2><p class="why">Each bar moves one input across the middle eight in ten of its own range (its 10th to its 90th percentile), with every other input at its point value, and shows how far the answer moves. The widest bar is the input the answer rests on most: measuring it narrows the answer most. ${chapters(["which_input_is_the_answer"])}</p>
         ${outputs.length > 1 ? `<div class="field"><label for="m-out">Answer</label><select id="m-out">${outputs.map((o) => `<option value="${esc(o)}"${o === output ? " selected" : ""}>${esc(label(o))}</option>`).join("")}</select></div>` : ""}
-        ${bars.length ? `<div class="bars">${bars.map((b) => `<div class="bar"><span>${esc(label(b.name))}</span><div class="track"><div class="fill" style="left:${X(Math.min(b.low, b.high))}%;width:${Math.max(1, X(Math.max(b.low, b.high)) - X(Math.min(b.low, b.high)))}%"></div><div class="mid" style="left:${X(t.base)}%"></div></div><div class="ends"><span>${fmt(b.low)}</span><span>${fmt(b.high)}</span></div></div>`).join("")}</div>` : `<p class="note">No input has a range yet, so nothing can be ranked.</p>`}
+        ${bars.length ? `<div class="bars">${bars.map((b) => `<div class="bar" data-bar="${esc(b.node)}"><span>${esc(label(b.node))}</span><div class="track"><div class="fill" style="left:${X(Math.min(b.low, b.high))}%;width:${Math.max(1, X(Math.max(b.low, b.high)) - X(Math.min(b.low, b.high)))}%"></div><div class="mid" style="left:${X(t.base)}%"></div></div><div class="ends"><span>${fmt(b.low)}</span><span>${fmt(b.high)}</span></div></div>`).join("")}</div>` : `<p class="note">No input has a range yet, so nothing can be ranked.</p>`}
         ${unshaped.length ? `<p class="note" style="margin-top:12px">Not ranked, because each is one number: ${unshaped.map((n) => `<code>${esc(n.name)}</code>`).join(", ")}.</p>` : ""}
         <p class="note">One input at a time cannot show two inputs that matter only together. ${chapters(["which_input_is_the_answer", "the_missing_node"])}</p>`;
     },

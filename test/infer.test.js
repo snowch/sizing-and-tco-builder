@@ -75,3 +75,9 @@ test("the words for a unit", () => {
   assert.equal(words("core/host"), "ratio");
   assert.match(describe(registry.describe(u("TB")).dimensionality, u("TB")).words, /pure number/);
 });
+
+test("a formatted unit uses the shortest spelling that reads back as itself", () => {
+  assert.equal(formatUnits(u("terabyte/host"), registry), "TB/host");
+  assert.equal(formatUnits(u("core*second/request"), registry), "core*s/req");
+  assert.equal(formatUnits(u("terabit"), registry), "Tbit");
+});
