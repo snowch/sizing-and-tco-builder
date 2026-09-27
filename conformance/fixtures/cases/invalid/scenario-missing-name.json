@@ -139,7 +139,7 @@
   "problems": [
    {
     "code": "scenario.does-not-load",
-    "message": "_builder_conformance/scenario-missing-name/model.yaml: a scenario file does not load — /home/user/sizing-and-tco-builder/.book/checkout/_builder_conformance/scenario-missing-name/scenarios/reference.yaml: missing required field 'scenario'",
+    "message": "_builder_conformance/scenario-missing-name/model.yaml: a scenario file does not load — _builder_conformance/scenario-missing-name/scenarios/reference.yaml: missing required field 'scenario'",
     "part": null,
     "rule": "scenarios"
    }

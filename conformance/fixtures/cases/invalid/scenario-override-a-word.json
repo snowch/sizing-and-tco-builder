@@ -154,7 +154,7 @@
   "problems": [
    {
     "code": "scenario.does-not-load",
-    "message": "_builder_conformance/scenario-override-a-word/model.yaml: a scenario file does not load — /home/user/sizing-and-tco-builder/.book/checkout/_builder_conformance/scenario-override-a-word/scenarios/busier.yaml: override 'request_rate' is True, which is not a number",
+    "message": "_builder_conformance/scenario-override-a-word/model.yaml: a scenario file does not load — _builder_conformance/scenario-override-a-word/scenarios/busier.yaml: override 'request_rate' is True, which is not a number",
     "part": null,
     "rule": "scenarios"
    }

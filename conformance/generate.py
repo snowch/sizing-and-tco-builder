@@ -131,15 +131,21 @@ def outside(check: bool) -> int:
 CHECK_RELATIVE = 1e-12
 
 
-def differences(want, have, path: str = "") -> list[str]:
-    """Where two fixtures differ, as paths into the JSON, numbers compared to CHECK_RELATIVE."""
+def differences(want, have, path: str = "", scale: float = 0.0) -> list[str]:
+    """Where two fixtures differ, as paths into the JSON, numbers compared to CHECK_RELATIVE.
+
+    A tornado bar's ``span`` is its high end minus its low end, so a last-bit difference in either
+    end is a larger part of the span than of the ends. It is compared at the ends' scale.
+    """
     if isinstance(want, dict) and isinstance(have, dict):
         out = []
+        ends = [abs(d[k]) for d in (want, have) for k in ("low", "high") if isinstance(d.get(k), (int, float))]
         for key in sorted(set(want) | set(have)):
             if key not in want or key not in have:
                 out.append(f"{path}.{key}: only in {'the committed' if key in have else 'the fresh'} fixture")
             else:
-                out += differences(want[key], have[key], f"{path}.{key}")
+                at = max(ends) if key == "span" and ends else 0.0
+                out += differences(want[key], have[key], f"{path}.{key}", at)
         return out
     if isinstance(want, list) and isinstance(have, list):
         if len(want) != len(have):
@@ -147,7 +153,7 @@ def differences(want, have, path: str = "") -> list[str]:
         return [d for i, (a, b) in enumerate(zip(want, have)) for d in differences(a, b, f"{path}[{i}]")]
     numbers = (int, float)
     if isinstance(want, numbers) and isinstance(have, numbers) and not isinstance(want, bool):
-        if abs(want - have) <= CHECK_RELATIVE * max(abs(want), abs(have)):
+        if abs(want - have) <= CHECK_RELATIVE * max(abs(want), abs(have), scale):
             return []
     elif want == have:
         return []
@@ -461,7 +467,7 @@ def run_case(case_id, directory, in_book, modules, results: LocalResults) -> dic
         crashed = {"exception": type(exc).__name__, "message": relative(str(exc))}
     out["verify"] = {
         "ok": not problems and crashed is None,
-        "problems": [classify_problem(p) for p in problems],
+        "problems": [classify_problem(relative(p)) for p in problems],
         "crashed": crashed,
     }
 

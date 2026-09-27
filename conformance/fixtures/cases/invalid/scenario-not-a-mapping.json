@@ -154,7 +154,7 @@
   "problems": [
    {
     "code": "scenario.does-not-load",
-    "message": "_builder_conformance/scenario-not-a-mapping/model.yaml: a scenario file does not load — /home/user/sizing-and-tco-builder/.book/checkout/_builder_conformance/scenario-not-a-mapping/scenarios/listed.yaml: is not a mapping",
+    "message": "_builder_conformance/scenario-not-a-mapping/model.yaml: a scenario file does not load — _builder_conformance/scenario-not-a-mapping/scenarios/listed.yaml: is not a mapping",
     "part": null,
     "rule": "scenarios"
    }
