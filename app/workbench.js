@@ -23,7 +23,7 @@ import { report } from "../engine/index.js";
 import { blocked, isConditional, order } from "../engine/model.js";
 import { sorted } from "../engine/python.js";
 import { writeModel, writeScenario } from "../engine/write.js";
-import { PATTERNS, PROBLEM_WORDS, CAUSE_WORDS, REFINE } from "./words.js";
+import { PATTERNS, PROBLEM_WORDS, CAUSE_WORDS, REFINE, money } from "./words.js";
 
 // -- the graph as it stands -----------------------------------------------------------------------
 
@@ -358,7 +358,10 @@ export function patternsFor(state, { registry }, name, unit) {
   }
   const base = name.replace(/_(?:at_horizon|to_buy|needed)$/, "");
   const out = [];
+  const mine = [];
   for (const pattern of PATTERNS) {
+    if (pattern.hosts && pattern.hosts !== state.hosts) continue;
+    if (pattern.routing && pattern.routing !== state.routing) continue;
     const formula = pattern.formula.replaceAll("{name}", base);
     if (formula.split(/[^\p{L}\p{N}_]+/u).includes(name)) continue;
     const units = new Map();
@@ -367,7 +370,7 @@ export function patternsFor(state, { registry }, name, unit) {
       const key = k.replaceAll("{name}", base);
       const existing = state.doc.nodes.find((n) => n.name === key);
       try {
-        units.set(key, registry.parse(existing ? existing.unit : v.replaceAll("{unit}", unit)));
+        units.set(key, registry.parse(existing ? existing.unit : money(v, state.doc.currency).replaceAll("{unit}", unit)));
       } catch {
         usable = false;
       }
@@ -376,9 +379,10 @@ export function patternsFor(state, { registry }, name, unit) {
     const produced = producedUnits(parse(formula), { registry, units });
     if (produced.error) continue;
     if (!sameDimensions(registry.describe(produced.units).dimensionality, registry.describe(target).dimensionality)) continue;
-    out.push({ ...pattern, formula });
+    (pattern.hosts ? mine : out).push({ ...pattern, formula });
   }
-  return out;
+  // The patterns for the structure the reader chose come first.
+  return [...mine, ...out];
 }
 
 // -- the next step --------------------------------------------------------------------------------

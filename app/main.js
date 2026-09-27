@@ -10,7 +10,7 @@ import { emptyState, forget, load, reference, save } from "./state.js";
 import { $, esc, useOutline } from "./ui.js";
 import { drawAnswers, drawCoach, drawGraph, drawHeader, drawPanel, drawRefine, drawTree } from "./view.js";
 import { openWizard, wireWizardButtons } from "./wizard.js";
-import { ANSWERS, PATTERNS } from "./words.js";
+import { ANSWERS, PATTERNS, money } from "./words.js";
 import { judge } from "./judge.js";
 import { checks, files, nextStep, preview, reinfer } from "./workbench.js";
 
@@ -112,7 +112,7 @@ async function boot() {
 
   function showStart() {
     $("start").hidden = false;
-    $("goals").innerHTML = Object.entries(ANSWERS).map(([k, a]) => `<button type="button" class="goal" data-goal="${k}"><strong>${esc(a.title)}</strong><span>${esc(a.blurb)}</span>${a.unit ? `<span><code>${esc(a.unit)}</code></span>` : "<span><code>your unit</code></span>"}</button>`).join("");
+    $("goals").innerHTML = Object.entries(ANSWERS).map(([k, a]) => `<button type="button" class="goal" data-goal="${k}"><strong>${esc(a.title)}</strong><span>${esc(a.blurb)}</span>${a.unit ? `<span><code>${esc(money(a.unit, app.state.doc.currency))}</code></span>` : "<span><code>your unit</code></span>"}</button>`).join("");
     $("examples").innerHTML = ctx.examples.map((e) => `<button type="button" data-example="${esc(e.id)}">${esc(e.title)}</button>`).join("");
     for (const b of $("goals").querySelectorAll("[data-goal]")) {
       b.addEventListener("click", () => {

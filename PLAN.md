@@ -57,13 +57,15 @@ a decision I have taken provisionally; say if you want it the other way.
    cannot be carried in the book's format today (BOOK-REQUESTS 12). The builder offers the book's
    four stamped constants with the implementation each was measured on, or a result name nobody
    has taken, which the book accepts and treats as not yet measured.
-7. **The builder writes USD.** The book's registry has had 21 currencies since 156e02b
-   (BOOK-REQUESTS 4), and the engine checks a model in any of them (`edge/currency-euro`), but the
-   builder does not yet ask which one a reader prices in.
-8. **Several generations in one pool is not offered yet.** The prompt leaves it out until the book
-   covers it. The book now does (`models/mixed_pool`, ch10), and `max(0, need - held)` passes its
-   rules (BOOK-REQUESTS 6). The builder opens the book's mixed-pool model as an example and holds
-   it to the book like the others; the hosts question still offers one kind or several roles.
+7. **The reader chooses the currency.** The book's registry has had 21 currencies since 156e02b
+   (BOOK-REQUESTS 4). The answer's screen asks which one the model prices in, preselects USD (a
+   unit, not a number), and every money unit the builder suggests follows the choice.
+8. **Several generations in one pool follows the book's model.** The prompt left it out until the
+   book covered it; the book now does (`models/mixed_pool`, ch10). The hosts question offers it
+   third. The answer becomes the new hosts to buy, the largest of the chains `new_for_*`, and a
+   second question asks how requests are spread (by capacity, or the same share to every host),
+   which decides the book's pattern for the requests chain. Every formula offered is the book's
+   own, from that model.
 
 ## Technology
 
@@ -228,8 +230,8 @@ no network. `test/neutrality.test.js` holds every file to the book's product lis
 Sources grouped by claim; ceilings with a margin and a reason; ranges in the four shapes, each
 named in its source; inputs that move together, with a reason (which the book's checks now
 require too); scenarios, each its own file; the hosts question, one kind of host
-(the answer is the largest of its chains) or several roles (the pools add up). Several
-generations is not offered yet; the screen says so and points at the book's mixed-pool example.
+(the answer is the largest of its chains), several roles (the pools add up), or several
+generations in one role (new hosts to buy, given the old, by the book's `models/mixed_pool`).
 
 Measure first is `engine/tornado.js`, held to the book's `tornado()` bar for bar and in the same
 order, for every output of both reference models and two edge cases (`test/tornado.test.js`).
@@ -278,6 +280,6 @@ never freezes it.
    misleads.
 4. **A reader's own measurements** (BOOK-REQUESTS 12, still open). Until the book has a place for
    them, the builder offers only the book's constants or *not yet measured*.
-5. **Licence.** This repository has none yet. The book's code is Apache-2.0; the same?
+5. **Licence.** Settled: MIT (`LICENSE`). The vendored YAML package keeps its own ISC licence.
 6. **The decision the answer feeds.** The format has no field for it, so it goes in the model's
    `description`. Would the book want a field of its own (design, *The flow*, step 2)?

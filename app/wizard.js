@@ -11,9 +11,9 @@ import { CITATION_MARKERS } from "../engine/verify.js";
 import { checkShape } from "../engine/evaluate.js";
 import { writeModel } from "../engine/write.js";
 import { addPending, exists, nodeNamed, pendingNamed, putNode } from "./state.js";
-import { $, chapterLink, chapters, esc, fmt, nameProblem } from "./ui.js";
+import { $, chapters, esc, fmt, nameProblem } from "./ui.js";
 import {
-  ANSWERS, DECIDED, KIND_CHOICES, PROVENANCE, QUANTITY, QUESTIONS, SHAPES, SURE,
+  ANSWERS, CURRENCY_WHY, DECIDED, KIND_CHOICES, PROVENANCE, QUANTITY, QUESTIONS, SHAPES, SURE, money,
 } from "./words.js";
 import { graph, patternsFor, readFormula, unitWords, upstream } from "./workbench.js";
 
@@ -61,7 +61,8 @@ export function openWizard(app, spec) {
   const draft = { kind: null };
   if (spec.type === "answer") {
     const goal = ANSWERS[state.goal] ?? ANSWERS.other;
-    Object.assign(draft, { name: state.answer ?? "", label: "", unit: goal.unit, decision: state.decision });
+    const unit = (nodeNamed(state, state.answer) ?? pendingNamed(state, state.answer))?.unit ?? money(goal.unit, state.doc.currency);
+    Object.assign(draft, { name: state.answer ?? "", label: "", unit, decision: state.decision, currency: state.doc.currency });
     if (!draft.name) draft.name = { hosts: "hosts", storage: "storage_to_buy", cost: "total_cost" }[state.goal] ?? "";
   } else if (spec.type === "output") {
     Object.assign(draft, { name: "", label: "", unit: "" });
@@ -120,7 +121,8 @@ const VIEWS = {
       ${field("w-name", "Name in formulas", d.name, { mono: true, placeholder: "hosts", hint: "Lower case, letters, digits and underscores. Formulas use it." })}
       ${field("w-label", "Label", d.label, { placeholder: goal.title === "Something else" ? "peak request rate at the horizon" : "hosts to buy", hint: "The words a table shows." })}
       ${field("w-unit", "Unit", d.unit, { mono: true, placeholder: "host", hint: unitHint(d.unit) })}
-      <div class="chips">${["host", "TB", "USD", "request/second", "MB/s"].map((c) => `<button type="button" data-unit="${c}">${c}</button>`).join("")}</div>`;
+      <div class="chips">${["host", "TB", d.currency, "request/second", "MB/s"].map((c) => `<button type="button" data-unit="${esc(c)}">${esc(c)}</button>`).join("")}</div>
+      <div class="field" style="margin-top:12px"><label for="w-currency">The currency the model prices in</label><select id="w-currency">${APP.ctx.registry.currencies.map((c) => `<option value="${esc(c)}"${c === d.currency ? " selected" : ""}>${esc(c)}</option>`).join("")}</select><span class="hint">${esc(CURRENCY_WHY)} ${chapters(["unit_economics"])}</span></div>`;
   },
   decision(d) {
     return `${question("decision")}${field("w-decision", "The decision", d.decision, { area: true, placeholder: QUESTIONS.decision.placeholder })}`;
@@ -148,7 +150,7 @@ const VIEWS = {
   unit(d) {
     const fixed = d.fixedUnit ? ` The formula that uses it fixes its unit: <code>${esc(d.fixedUnit)}</code>. Another unit of the same kind works; a different kind breaks that formula.` : "";
     const qkind = d.qkind ?? guessKind(d.unit);
-    const chips = QUANTITY.find((q) => q[0] === qkind)?.[3] ?? [];
+    const chips = (QUANTITY.find((q) => q[0] === qkind)?.[3] ?? []).map((c) => money(c, APP.state.doc.currency));
     return `${question("unit", fixed)}
       <div class="choices">${QUANTITY.map(([k, t, desc]) => choice("qkind", k, t, esc(desc), qkind === k)).join("")}</div>
       <div style="margin-top:12px">${field("w-unit", "Unit", d.unit, { mono: true, placeholder: "request/second", hint: unitHint(d.unit) })}</div>
@@ -224,12 +226,16 @@ const VIEWS = {
     return `${question("review", ` With it, the model is <strong>${conditional ? "conditional" : "definitional"}</strong>.`)}<pre class="yaml">${esc(block)}</pre>`;
   },
   hosts(d) {
+    const chains = d.hosts === "one" || d.hosts === "generations";
     return `${question("hosts")}
       <div class="choices">${choice("hosts", "one", "One kind of host, doing several jobs", "Each resource (processor, memory, storage) is a chain that ends in a count of hosts, and the fleet is the largest of them.", d.hosts === "one", "derived")}
-      ${choice("hosts", "roles", "Several roles", "Separate pools of machines, each sized by its own chains. The fleet is the sum of the pools.", d.hosts === "roles", "derived")}</div>
-      ${d.hosts === "one" ? `<fieldset style="margin-top:12px"><legend>Which resources could bind?</legend>${[["requests", "Processor time for the requests"], ["memory", "Memory for what must stay in it"], ["storage", "Disk for what is stored"]].map(([k, t]) => `<label class="row"><input type="checkbox" data-chain="${k}" ${d.chains?.includes(k) ? "checked" : ""} style="width:auto"> ${t}</label>`).join("")}</fieldset>` : ""}
-      ${d.hosts === "roles" ? field("w-roles", "The roles, separated by commas", d.roles ?? "", { placeholder: "collectors, store, query", hint: "Each becomes a pool to define, in hosts." }) : ""}
-      <p class="note">Several generations of hardware in one role is not offered here yet. The book covers it (${chapterLink("bandwidth_and_the_binding_constraint")}); its two-generation model is one of the examples on the start screen.</p>`;
+      ${choice("hosts", "roles", "Several roles", "Separate pools of machines, each sized by its own chains. The fleet is the sum of the pools.", d.hosts === "roles", "derived")}
+      ${choice("hosts", "generations", "Several generations in one role", "Hosts you already own stay in service beside the ones you buy. The answer is how many new hosts to buy: for each resource, what the load needs less what the old hosts give, and the largest of those.", d.hosts === "generations", "derived")}</div>
+      ${chains ? `<fieldset style="margin-top:12px"><legend>Which resources could bind?</legend>${[["requests", "Processor time for the requests"], ["memory", "Memory for what must stay in it"], ["storage", "Disk for what is stored"]].map(([k, t]) => `<label class="row"><input type="checkbox" data-chain="${k}" ${d.chains?.includes(k) ? "checked" : ""} style="width:auto"> ${t}</label>`).join("")}</fieldset>` : ""}
+      ${d.hosts === "generations" && d.chains?.includes("requests") ? `<p class="q" style="margin-top:16px">${esc(QUESTIONS.routing.q)}</p><p class="why">${esc(QUESTIONS.routing.why)} ${chapters(QUESTIONS.routing.chapters)}</p>
+        <div class="choices">${choice("routing", "capacity", "By capacity", "Each host gets requests in proportion to its cores. The generations' capacity adds.", d.routing === "capacity")}
+        ${choice("routing", "equal", "The same share to every host", "Every host gets as many requests as any other, so the smallest host sets the pace for the pool.", d.routing === "equal")}</div>` : ""}
+      ${d.hosts === "roles" ? field("w-roles", "The roles, separated by commas", d.roles ?? "", { placeholder: "collectors, store, query", hint: "Each becomes a pool to define, in hosts." }) : ""}`;
   },
 };
 
@@ -309,7 +315,8 @@ const CHECKS = {
   },
   hosts(d) {
     if (!d.hosts) return "Choose one.";
-    if (d.hosts === "one" && !(d.chains ?? []).length) return "Tick at least one resource.";
+    if ((d.hosts === "one" || d.hosts === "generations") && !(d.chains ?? []).length) return "Tick at least one resource.";
+    if (d.hosts === "generations" && d.chains.includes("requests") && !d.routing) return "Say how requests are spread across old and new hosts.";
     if (d.hosts === "roles") {
       const roles = splitRoles(d.roles);
       if (roles.length < 2) return "Name at least two roles.";
@@ -465,7 +472,12 @@ function addNewNames(text, target, self) {
 
 /* The unit the book's own pattern uses for a name, offered as a suggestion only. */
 function suggestedUnit(name) {
-  for (const p of APP.ctx.patterns) for (const [k, v] of Object.entries(p.units)) if (k === name && !v.includes("{")) return v;
+  for (const p of APP.ctx.patterns) {
+    for (const [k, v] of Object.entries(p.units)) {
+      const unit = money(v, APP.state.doc.currency);
+      if (k === name && !unit.includes("{")) return unit;
+    }
+  }
   return null;
 }
 
@@ -490,6 +502,7 @@ function finish() {
       if (!state.doc.outputs.includes(d.name)) state.doc.outputs.unshift(d.name);
       if (state.doc.model === "my_model") state.doc.model = d.name;
       state.doc.title = d.label.charAt(0).toUpperCase() + d.label.slice(1);
+      state.doc.currency = d.currency;
       state.decision = d.decision;
       break;
     }
@@ -536,9 +549,12 @@ function finish() {
 function finishHosts(d) {
   const { state } = APP;
   state.hosts = d.hosts;
+  state.routing = d.hosts === "generations" && d.chains.includes("requests") ? d.routing : null;
   const answer = state.answer;
-  if (d.hosts === "one") {
-    const chains = { requests: "hosts_for_requests", memory: "hosts_for_memory", storage: "hosts_for_storage" };
+  if (d.hosts === "one" || d.hosts === "generations") {
+    // models/web_service names its chains hosts_for_*; models/mixed_pool, new_for_*.
+    const prefix = d.hosts === "one" ? "hosts_for" : "new_for";
+    const chains = { requests: `${prefix}_requests`, memory: `${prefix}_memory`, storage: `${prefix}_storage` };
     const names = d.chains.map((c) => chains[c]);
     const formula = names.length === 1 ? names[0] : `max(${names.join(", ")})`;
     putNode(state, { name: answer, kind: "derived", unit: pendingNamed(state, answer)?.unit ?? "host", label: pendingNamed(state, answer)?.label ?? null, note: null, formula }, answer);
@@ -602,6 +618,7 @@ function wire(step) {
   click("[data-shape]", (el) => { d.distribution = { shape: el.dataset.shape, parameters: {} }; });
   click("[data-today]", (el) => { d.today = el.dataset.today === "yes"; });
   click("[data-hosts]", (el) => { d.hosts = el.dataset.hosts; });
+  click("[data-routing]", (el) => { d.routing = el.dataset.routing; });
   click("[data-result]", (el) => {
     const key = el.dataset.result;
     if (!key) {
@@ -619,6 +636,7 @@ function wire(step) {
   for (const el of B.querySelectorAll("[data-chain]")) {
     el.addEventListener("change", () => {
       d.chains = [...B.querySelectorAll("[data-chain]:checked")].map((x) => x.dataset.chain);
+      if (d.hosts === "generations") draw(); // the routing question follows the requests chain
     });
   }
 
@@ -631,6 +649,13 @@ function wire(step) {
   input("w-value", (v) => { d.value = num(v); });
   input("w-result", (v) => { d.result = v.trim(); });
   input("w-roles", (v) => { d.roles = v; });
+  $("w-currency")?.addEventListener("change", (e) => {
+    // An answer already in the old currency moves with it; any other unit is the reader's.
+    const was = new RegExp(`(?<![A-Za-z_])${d.currency}(?![A-Za-z_])`, "g");
+    d.unit = (d.unit ?? "").replace(was, e.target.value);
+    d.currency = e.target.value;
+    draw();
+  });
   const range = () => {
     const a = num($("w-r0")?.value ?? ""), b = num($("w-r1")?.value ?? "");
     d.range = a === null && b === null ? null : [a, b];

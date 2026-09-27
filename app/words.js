@@ -24,7 +24,7 @@ export const ANSWERS = {
   cost: {
     title: "What will it cost?",
     blurb: "The machines you need, priced over the life of the purchase: what you pay up front and what it costs to run them.",
-    unit: "USD",
+    unit: "{currency}",
   },
   other: {
     title: "Something else",
@@ -32,6 +32,11 @@ export const ANSWERS = {
     unit: "",
   },
 };
+
+/* A unit written with `{currency}` in it, in the model's currency. */
+export const money = (text, currency) => String(text ?? "").replaceAll("{currency}", currency);
+
+export const CURRENCY_WHY = "Every sum of money in a model is in one currency, so that dollars never add to euros. A price quoted in another is converted by an exchange rate that is a quantity of its own, with a source.";
 
 export const QUESTIONS = {
   answer: {
@@ -51,8 +56,13 @@ export const QUESTIONS = {
     chapters: ["what_a_workload_is", "peak_mean_and_growth"],
   },
   hosts: {
-    q: "One kind of host, or several roles?",
-    why: "One kind of host doing several jobs is sized by the resource that binds: the largest of its chains, not their sum, because the same machines do all three. Machines in different roles are different machines, so their pools add up.",
+    q: "One kind of host, several roles, or several generations?",
+    why: "One kind of host doing several jobs is sized by the resource that binds: the largest of its chains, not their sum, because the same machines do all three. Machines in different roles are different machines, so their pools add up. When last generation's hosts stay in service beside new ones, the question becomes how many new hosts to buy, given the old.",
+    chapters: ["bandwidth_and_the_binding_constraint"],
+  },
+  routing: {
+    q: "How are requests spread across old and new hosts?",
+    why: "This decides whether the two generations' capacity adds. Spread by capacity, each host gets work in proportion to what it can do, so the old hosts' cores count in full. Spread evenly, every host gets the same share, the smallest host reaches its limit first, and the pool behaves as if every host were the smallest.",
     chapters: ["bandwidth_and_the_binding_constraint"],
   },
   kind: {
@@ -119,9 +129,9 @@ export const KIND_CHOICES = [
 
 export const QUANTITY = [
   ["rate", "A rate", "Something per unit of time: requests a second, dollars a year.", ["request/second", "MB/s", "USD/year", "query/second"]],
-  ["level", "A level", "How much there is: terabytes held, hosts in the fleet, a sum of money.", ["TB", "GB", "host", "core", "USD"]],
+  ["level", "A level", "How much there is: terabytes held, hosts in the fleet, a sum of money.", ["TB", "GB", "host", "core", "{currency}"]],
   ["duration", "A length of time", "A horizon, a retention period, the time one request takes.", ["year", "month", "day", "second"]],
-  ["ratio", "A ratio, a pure number or a price", "A growth factor, a fraction kept free, a price per unit.", ["dimensionless", "USD/host", "core/host", "TB/host"]],
+  ["ratio", "A ratio, a pure number or a price", "A growth factor, a fraction kept free, a price per unit.", ["dimensionless", "{currency}/host", "core/host", "TB/host"]],
 ];
 
 export const DECIDED = [
@@ -170,7 +180,8 @@ export const SHAPES = {
 };
 
 /* The book's patterns, from its own models. Units are the book's, for filtering and for a
- * suggestion when a formula does not fix a new name's unit. Never a value. */
+ * suggestion when a formula does not fix a new name's unit. Never a value. `{currency}` is the
+ * model's own currency, wherever money appears. */
 export const PATTERNS = [
   {
     formula: "ceil(busy_cores / (cores_per_host * (1 - queueing_margin)))",
@@ -208,10 +219,70 @@ export const PATTERNS = [
     units: { stored_data: "TB", replication_factor: "dimensionless", record_compression: "dimensionless" },
     chapters: ["capacity"],
   },
+  // Several generations in one role (models/mixed_pool): how many new hosts, given the old.
+  {
+    formula: "ceil((max(busy_cores / (1 - queueing_margin), old_cores) - old_cores) / cores_per_new_host)",
+    words: "What the load needs, less what the old hosts already give, in new hosts: requests spread by capacity",
+    units: { busy_cores: "core", queueing_margin: "dimensionless", old_cores: "core", cores_per_new_host: "core/host" },
+    chapters: ["bandwidth_and_the_binding_constraint"],
+    hosts: "generations",
+    routing: "capacity",
+  },
+  {
+    formula: "max(ceil(busy_cores / (smallest_cores * (1 - queueing_margin))), old_hosts) - old_hosts",
+    words: "Every host gets the same share, so the smallest sets the pace: the hosts that needs, less the old ones",
+    units: { busy_cores: "core", smallest_cores: "core/host", queueing_margin: "dimensionless", old_hosts: "host" },
+    chapters: ["bandwidth_and_the_binding_constraint"],
+    hosts: "generations",
+    routing: "equal",
+  },
+  {
+    formula: "ceil((max(working_set / (1 - cache_margin), old_ram) - old_ram) / ram_for_service_new)",
+    words: "The memory the working set needs, less what the old hosts hold, in new hosts",
+    units: { working_set: "TB", cache_margin: "dimensionless", old_ram: "TB", ram_for_service_new: "TB/host" },
+    chapters: ["bandwidth_and_the_binding_constraint"],
+    hosts: "generations",
+  },
+  {
+    formula: "ceil((max(raw_data / (1 - disk_margin), old_disk) - old_disk) / disk_per_new_host)",
+    words: "The disk the data needs, less what the old hosts hold, in new hosts",
+    units: { raw_data: "TB", disk_margin: "dimensionless", old_disk: "TB", disk_per_new_host: "TB/host" },
+    chapters: ["bandwidth_and_the_binding_constraint"],
+    hosts: "generations",
+  },
+  {
+    formula: "old_hosts * cores_per_old_host",
+    words: "What the old hosts give: how many there are, times what each one gives",
+    units: { old_hosts: "host", cores_per_old_host: "core/host" },
+    chapters: ["bandwidth_and_the_binding_constraint"],
+    hosts: "generations",
+  },
+  {
+    formula: "old_hosts * ram_for_service_old",
+    words: "What the old hosts give: how many there are, times what each one gives",
+    units: { old_hosts: "host", ram_for_service_old: "TB/host" },
+    chapters: ["bandwidth_and_the_binding_constraint"],
+    hosts: "generations",
+  },
+  {
+    formula: "old_hosts * disk_per_old_host",
+    words: "What the old hosts give: how many there are, times what each one gives",
+    units: { old_hosts: "host", disk_per_old_host: "TB/host" },
+    chapters: ["bandwidth_and_the_binding_constraint"],
+    hosts: "generations",
+  },
+  {
+    formula: "min(cores_per_old_host, cores_per_new_host)",
+    words: "The smaller of the two generations, which sets the pace when every host gets the same share",
+    units: { cores_per_old_host: "core/host", cores_per_new_host: "core/host" },
+    chapters: ["bandwidth_and_the_binding_constraint"],
+    hosts: "generations",
+    routing: "equal",
+  },
   {
     formula: "hosts * host_price + hosts * running_cost_per_host_year * horizon",
     words: "What you pay up front, plus what it costs to run, over the horizon",
-    units: { hosts: "host", host_price: "USD/host", running_cost_per_host_year: "USD/host/year", horizon: "year" },
+    units: { hosts: "host", host_price: "{currency}/host", running_cost_per_host_year: "{currency}/host/year", horizon: "year" },
     chapters: ["capex_opex_and_lifecycle", "the_five_year_model"],
   },
 ];

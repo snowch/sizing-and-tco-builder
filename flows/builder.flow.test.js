@@ -487,6 +487,124 @@ test("the hosts question, several roles: the pools add up", async () => {
   await r.context.close();
 });
 
+/* The first pattern the formula screen offers for the next name to define, then back out. */
+async function firstPattern(r) {
+  const p = r.page;
+  await p.click("#coach button.primary");
+  await p.click('[data-kind="derived"]');
+  await r.next();
+  await r.next(); // name
+  const first = await p.locator(".sug[data-formula]").first().getAttribute("data-formula");
+  await p.click("#wcancel");
+  return first;
+}
+
+test("the hosts question, several generations: new hosts to buy, given the old, spread by capacity", async () => {
+  const r = await Reader.start();
+  const p = r.page;
+  await r.answer({ goal: "hosts", name: "new_hosts", label: "new hosts to buy", unit: "host", decision: "How many new hosts to order while last generation's stay in service." });
+  await r.forToday();
+  await p.click("#coach button.primary");
+  await p.click('[data-hosts="generations"]');
+  await p.check('[data-chain="requests"]');
+  await p.check('[data-chain="storage"]');
+  // The routing question arrives with the requests chain, and the builder will not go on without it.
+  await r.next();
+  assert.match(await r.problem(), /spread/);
+  await p.click('[data-routing="capacity"]');
+  await r.next();
+  assert.equal(await p.evaluate(() => builder.state.doc.nodes.find((n) => n.name === "new_hosts").formula), "max(new_for_requests, new_for_storage)");
+  // The book's own pattern for the chain comes first.
+  assert.equal(await firstPattern(r), "ceil((max(busy_cores / (1 - queueing_margin), old_cores) - old_cores) / cores_per_new_host)");
+  await r.defineAll({
+    new_for_requests: { kind: "derived", formula: "ceil((max(busy_cores / (1 - queueing_margin), old_cores) - old_cores) / cores_per_new_host)" },
+    new_for_storage: { kind: "derived", formula: "ceil((max(raw_data / (1 - disk_margin), old_disk) - old_disk) / disk_per_new_host)" },
+    busy_cores: { kind: "derived", unit: "core", formula: "request_rate * service_demand" },
+    request_rate: { kind: "input", unit: "request/second", decided: "outside", prov: "assumption", source: "the busy hour, as the owners estimate it", value: 8000 },
+    service_demand: { kind: "input", unit: "core*second/request", decided: "outside", prov: "assumption", source: "processor time per request, from the owners' profiling", value: 0.01 },
+    queueing_margin: { kind: "input", decided: "you", prov: "assumption", source: "the margin kept below the knee", value: 0.3 },
+    old_cores: { kind: "derived", formula: "old_hosts * cores_per_old_host" },
+    old_hosts: { kind: "input", decided: "outside", prov: "assumption", source: "the hosts still in service, from the asset list", value: 4 },
+    cores_per_old_host: { kind: "input", unit: "core/host", decided: "outside", prov: "assumption", source: "last generation's specification", value: 16 },
+    cores_per_new_host: { kind: "input", unit: "core/host", decided: "you", prov: "vendor_claim", source: "the quoted specification", value: 32 },
+    raw_data: { kind: "input", unit: "TB", decided: "outside", prov: "assumption", source: "what is held with its copies", value: 100 },
+    disk_margin: { kind: "input", decided: "you", prov: "assumption", source: "the margin kept below full", value: 0.2 },
+    old_disk: { kind: "derived", formula: "old_hosts * disk_per_old_host" },
+    disk_per_old_host: { kind: "input", unit: "TB/host", decided: "outside", prov: "assumption", source: "last generation's specification", value: 8 },
+    disk_per_new_host: { kind: "input", unit: "TB/host", decided: "you", prov: "vendor_claim", source: "the quoted specification", value: 16 },
+  });
+  // Requests: 80 cores / 0.7, less 64 old, in 32-core hosts, is 2. Disk: 100 TB / 0.8, less 32 old, in 16 TB hosts, is 6.
+  const verdict = book(await r.files());
+  if (verdict) {
+    assert.ok(verdict.ok, JSON.stringify(verdict.problems));
+    assert.equal(verdict.points.reference.new_hosts, 6);
+  }
+  assert.deepEqual(r.errors, []);
+  await r.context.close();
+});
+
+test("the hosts question, several generations spread evenly: the smallest host sets the pace", async () => {
+  const r = await Reader.start();
+  const p = r.page;
+  await r.answer({ goal: "hosts", name: "new_hosts", label: "new hosts to buy", unit: "host", decision: "How many new hosts to order." });
+  await r.forToday();
+  await p.click("#coach button.primary");
+  await p.click('[data-hosts="generations"]');
+  await p.check('[data-chain="requests"]');
+  await p.click('[data-routing="equal"]');
+  await r.next();
+  assert.equal(await p.evaluate(() => builder.state.doc.nodes.find((n) => n.name === "new_hosts").formula), "new_for_requests");
+  assert.equal(await firstPattern(r), "max(ceil(busy_cores / (smallest_cores * (1 - queueing_margin))), old_hosts) - old_hosts");
+  await r.defineAll({
+    new_for_requests: { kind: "derived", formula: "max(ceil(busy_cores / (smallest_cores * (1 - queueing_margin))), old_hosts) - old_hosts" },
+    busy_cores: { kind: "input", unit: "core", decided: "outside", prov: "assumption", source: "the busy hour's processor load, from the owners", value: 80 },
+    smallest_cores: { kind: "derived", formula: "min(cores_per_old_host, cores_per_new_host)" },
+    cores_per_old_host: { kind: "input", unit: "core/host", decided: "outside", prov: "assumption", source: "last generation's specification", value: 16 },
+    cores_per_new_host: { kind: "input", unit: "core/host", decided: "you", prov: "vendor_claim", source: "the quoted specification", value: 32 },
+    queueing_margin: { kind: "input", decided: "you", prov: "assumption", source: "the margin kept below the knee", value: 0.3 },
+    old_hosts: { kind: "input", decided: "outside", prov: "assumption", source: "the hosts still in service, from the asset list", value: 4 },
+  });
+  // Every host at 16 cores' pace: 80 / (16 * 0.7) needs 8 hosts, 4 of which are old.
+  const verdict = book(await r.files());
+  if (verdict) {
+    assert.ok(verdict.ok, JSON.stringify(verdict.problems));
+    assert.equal(verdict.points.reference.new_hosts, 4);
+  }
+  assert.deepEqual(r.errors, []);
+  await r.context.close();
+});
+
+test("a cost in euros: the currency is the reader's, and the book accepts it", async () => {
+  const r = await Reader.start();
+  const p = r.page;
+  await p.click('[data-goal="cost"]');
+  assert.equal(await p.inputValue("#w-unit"), "USD");
+  await p.selectOption("#w-currency", "EUR");
+  // The answer's unit moves with the currency; the unit chips offer the new one.
+  assert.equal(await p.inputValue("#w-unit"), "EUR");
+  assert.equal(await p.locator('[data-unit="EUR"]').count(), 1);
+  await p.fill("#w-name", "purchase");
+  await p.fill("#w-label", "the purchase");
+  await r.next();
+  await p.fill("#w-decision", "The budget line for the order.");
+  await r.next();
+  await r.forToday();
+  await r.defineAll({
+    purchase: { kind: "derived", formula: "hosts * host_price" },
+    hosts: { kind: "input", unit: "host", decided: "you", prov: "assumption", source: "the fleet as sized", value: 10 },
+    host_price: { kind: "input", unit: "EUR/host", decided: "outside", prov: "vendor_claim", source: "the supplier's quote", value: 7000 },
+  });
+  const files = await r.files();
+  assert.match(files["model.yaml"], /\ncurrency: EUR\n/);
+  const verdict = book(files);
+  if (verdict) {
+    assert.ok(verdict.ok, JSON.stringify(verdict.problems));
+    assert.equal(verdict.points.reference.purchase, 70000);
+  }
+  assert.deepEqual(r.errors, []);
+  await r.context.close();
+});
+
 test("a scenario whose draws alone go wrong is refused, as the book's sampler refuses it", async () => {
   const r = await Reader.start();
   await r.answer({ name: "rooted", label: "a square root of a range", unit: "dimensionless", decision: "A test of the sampler." });

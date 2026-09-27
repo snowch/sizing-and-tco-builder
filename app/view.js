@@ -157,7 +157,7 @@ export function drawCoach(app) {
     case "horizon":
       return set("", "Next step", "When is the answer for? Set the horizon.", esc(QUESTIONS.horizon.why), "what_a_workload_is", [["Set the horizon", () => openWizard(app, { type: "horizon" })]]);
     case "hosts":
-      return set("", "Next step", "One kind of host, or several roles?", "The answer is a count of machines. How they divide the work decides whether the needs add up or the largest wins.", "bandwidth_and_the_binding_constraint", [["Answer it", () => openWizard(app, { type: "hosts" })]]);
+      return set("", "Next step", "One kind of host, several roles, or several generations?", "The answer is a count of machines. How they divide the work decides whether the needs add up or the largest wins, and hosts you already own change what you buy.", "bandwidth_and_the_binding_constraint", [["Answer it", () => openWizard(app, { type: "hosts" })]]);
     case "define": {
       const nodes = graph(state);
       const p = state.pending.find((x) => x.name === next.name);

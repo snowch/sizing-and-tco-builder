@@ -20,7 +20,8 @@ export function emptyState() {
     answer: null,
     decision: "",
     horizon: null, // a node name, "none" when the answer is for today, or null when not yet asked
-    hosts: null, // "one" or "roles", once the hosts question is answered
+    hosts: null, // "one", "roles" or "generations", once the hosts question is answered
+    routing: null, // for generations: requests spread "capacity" (by what each host can do) or "equal"
     doc: { dsl: DSL_VERSION, model: "my_model", title: "", currency: "USD", description: "", nodes: [], outputs: [], correlations: [] },
     pending: [], // { name, unit, label, suggested } for each name a formula uses and nobody has defined
     scenarios: [reference()],

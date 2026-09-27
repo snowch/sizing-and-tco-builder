@@ -31,3 +31,8 @@ python3 conformance/roundtrip.py           # the book reads what the engine writ
 
 To run the site locally, serve the repository's root as static files (for example
 `python3 -m http.server`) and open `index.html`. There is no build step.
+
+## Licence
+
+MIT; see [LICENSE](LICENSE). The vendored YAML package keeps its own ISC licence
+([vendor/](vendor/README.md)).

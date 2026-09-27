@@ -1,6 +1,7 @@
 {
   "name": "sizing-and-tco-builder",
   "private": true,
+  "license": "MIT",
   "description": "A guided builder for the model files of the book Sizing and TCO, held to the book's own toolkit by a conformance suite.",
   "type": "module",
   "engines": {
