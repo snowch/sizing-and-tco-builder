@@ -493,27 +493,16 @@
    }
   },
   {
+   "code": "load.formula-arity",
    "formula": "min(a)",
-   "ok": true,
-   "tree": {
-    "args": [
-     {
-      "name": "a",
-      "op": "ref"
-     }
-    ],
-    "fn": "min",
-    "op": "call"
-   }
+   "message": "formula: 'min(a)' takes the min of fewer than two things, which is either a mistake or the thing itself",
+   "ok": false
   },
   {
+   "code": "load.formula-arity",
    "formula": "max()",
-   "ok": true,
-   "tree": {
-    "args": [],
-    "fn": "max",
-    "op": "call"
-   }
+   "message": "formula: 'max()' takes the max of fewer than two things, which is either a mistake or the thing itself",
+   "ok": false
   },
   {
    "formula": "ceil(a / b)",
@@ -941,15 +930,15 @@
    "ok": false
   },
   {
-   "code": "load.formula-construct",
+   "code": "load.formula-arity",
    "formula": "max(*a)",
-   "message": "formula: 'max(*a)' uses Starred, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "message": "formula: 'max(*a)' takes the max of fewer than two things, which is either a mistake or the thing itself",
    "ok": false
   },
   {
-   "code": "load.formula-construct",
+   "code": "load.formula-arity",
    "formula": "min(a for a in b)",
-   "message": "formula: 'min(a for a in b)' uses GeneratorExp, which this language does not have. Formulas are arithmetic over other nodes; anything that needs more than that is a node of its own, which is also how it acquires a unit and a name the graph can show.",
+   "message": "formula: 'min(a for a in b)' takes the min of fewer than two things, which is either a mistake or the thing itself",
    "ok": false
   },
   {
@@ -1203,18 +1192,10 @@
    "ok": false
   },
   {
+   "code": "load.formula-arity",
    "formula": "(max)(a)",
-   "ok": true,
-   "tree": {
-    "args": [
-     {
-      "name": "a",
-      "op": "ref"
-     }
-    ],
-    "fn": "max",
-    "op": "call"
-   }
+   "message": "formula: '(max)(a)' takes the max of fewer than two things, which is either a mistake or the thing itself",
+   "ok": false
   },
   {
    "code": "load.formula-keywords",
@@ -1223,18 +1204,10 @@
    "ok": false
   },
   {
+   "code": "load.formula-arity",
    "formula": "max(a,)",
-   "ok": true,
-   "tree": {
-    "args": [
-     {
-      "name": "a",
-      "op": "ref"
-     }
-    ],
-    "fn": "max",
-    "op": "call"
-   }
+   "message": "formula: 'max(a,)' takes the max of fewer than two things, which is either a mistake or the thing itself",
+   "ok": false
   },
   {
    "formula": "max(a, b,)",

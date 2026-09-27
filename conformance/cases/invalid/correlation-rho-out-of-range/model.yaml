@@ -1,0 +1,63 @@
+dsl: 1
+model: tiny
+title: Too strong
+currency: USD
+
+nodes:
+
+  request_rate:
+    kind: input
+    decided: outside
+    unit: request/second
+    value: 200
+    provenance: {kind: assumption, source: "the busy hour, as stated for this case"}
+
+  service_demand:
+    kind: input
+    decided: outside
+    unit: core*second/request
+    value: 0.02
+    provenance: {kind: assumption, source: "processor time per request, as stated for this case"}
+
+  cores:
+    kind: input
+    decided: you
+    unit: core
+    value: 16
+    provenance: {kind: assumption, source: "the fleet chosen for this case"}
+
+  busy_cores:
+    kind: derived
+    unit: core
+    formula: request_rate * service_demand
+
+  utilisation:
+    kind: derived
+    unit: dimensionless
+    formula: busy_cores / cores
+
+  a_rate:
+    kind: input
+    decided: outside
+    unit: request/second
+    distribution: {uniform: {minimum: 100.0, maximum: 300.0}}
+    provenance: {kind: assumption, source: "uniform: the bounds are all that is known"}
+
+  b_rate:
+    kind: input
+    decided: outside
+    unit: request/second
+    distribution: {uniform: {minimum: 100.0, maximum: 300.0}}
+    provenance: {kind: assumption, source: "uniform: the bounds are all that is known"}
+
+  all_rates:
+    kind: derived
+    unit: request/second
+    formula: a_rate + b_rate
+
+outputs:
+  - utilisation
+  - all_rates
+
+correlations:
+  - {a: a_rate, b: b_rate, rho: 1.5, because: "stated for this case"}

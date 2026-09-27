@@ -17,6 +17,8 @@
  * conformance/fixtures/units.json, and the unit probes there hold this file to Pint.
  */
 
+import { PyError } from "./python.js";
+
 export class UnitError extends Error {}
 
 /* Python's `\w`, near enough for unit strings: letters, digits and underscore in any script. */
@@ -283,6 +285,7 @@ export class Registry {
     this.prefixes = table.prefixes;
     this.suffixes = table.suffixes;
     this.units = table.units;
+    this.currencies = table.currencies ?? [];
     this.prefixFactor = Object.fromEntries(table.prefixes.map(([, name, factor]) => [name, factor]));
     this.cache = new Map();
   }
@@ -340,19 +343,40 @@ export class Registry {
    * Throws UnitError where Pint would refuse it.
    */
   parse(text) {
-    if (this.cache.has(text)) {
-      const hit = this.cache.get(text);
-      if (hit instanceof UnitError) throw hit;
-      return { ...hit };
+    if (!this.cache.has(text)) {
+      try {
+        this.cache.set(text, this.parseUncached(String(text)));
+      } catch (error) {
+        this.cache.set(text, error instanceof UnitError ? error : new UnitError(String(error?.message ?? error)));
+      }
     }
-    try {
-      const units = this.parseUncached(String(text));
-      this.cache.set(text, units);
-      return { ...units };
-    } catch (error) {
-      const refused = error instanceof UnitError ? error : new UnitError(String(error?.message ?? error));
-      this.cache.set(text, refused);
-      throw refused;
+    const hit = this.cache.get(text);
+    if (hit instanceof UnitError) throw hit;
+    this.ratioScale(text, hit);
+    return { ...hit };
+  }
+
+  /*
+   * sizing.units.parse refuses a unit that converts with an offset (degC) or a logarithm (dB): a
+   * node converts by one factor. A logarithmic unit among others becomes a delta unit Pint never
+   * defined, and the book falls over looking it up with a KeyError.
+   */
+  ratioScale(text, container) {
+    for (const name of Object.keys(container)) {
+      let unit;
+      try {
+        unit = this.base(name);
+      } catch (error) {
+        if (name.startsWith("delta_")) throw new PyError("KeyError", `'${name}'`);
+        throw error;
+      }
+      if (!unit.multiplicative) {
+        const refused = new UnitError(
+          `unit '${text}' is not a ratio scale: ${name} converts with an offset or a logarithm, and a node converts by one factor`,
+        );
+        refused.ratio = true;
+        throw refused;
+      }
     }
   }
 

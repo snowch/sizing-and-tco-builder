@@ -1,0 +1,4 @@
+about: >-
+  A scenario that overrides an input with yes. The scenario file does not load.
+expect:
+  - scenario.does-not-load

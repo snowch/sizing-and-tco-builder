@@ -18,7 +18,9 @@
    "canonical": {
     "terabyte": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 8000000000000.0,
    "multiplicative": true,
    "ok": true,
@@ -60,7 +62,9 @@
    "canonical": {
     "gigabyte": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 8000000000.0,
    "multiplicative": true,
    "ok": true,
@@ -138,7 +142,8 @@
     "host": -1.0
    },
    "dimensionality": {
-    "[host]": -1.0
+    "[host]": -1.0,
+    "[information]": 1.0
    },
    "factor": 8000000000.0,
    "multiplicative": true,
@@ -151,7 +156,8 @@
     "terabyte": 1.0
    },
    "dimensionality": {
-    "[host]": -1.0
+    "[host]": -1.0,
+    "[information]": 1.0
    },
    "factor": 8000000000000.0,
    "multiplicative": true,
@@ -163,7 +169,7 @@
     "USD": 1.0
    },
    "dimensionality": {
-    "[currency]": 1.0
+    "[currency_usd]": 1.0
    },
    "factor": 1.0,
    "multiplicative": true,
@@ -176,7 +182,7 @@
     "host": -1.0
    },
    "dimensionality": {
-    "[currency]": 1.0,
+    "[currency_usd]": 1.0,
     "[host]": -1.0
    },
    "factor": 1.0,
@@ -193,7 +199,7 @@
     "[mass]": 1.0,
     "[time]": -3.0
    },
-   "factor": 1.0,
+   "factor": 1000.0,
    "multiplicative": true,
    "ok": true,
    "unit": "W"
@@ -209,7 +215,7 @@
     "[mass]": 1.0,
     "[time]": -3.0
    },
-   "factor": 1.0,
+   "factor": 1000.0,
    "multiplicative": true,
    "ok": true,
    "unit": "W/host"
@@ -223,7 +229,7 @@
     "[mass]": 1.0,
     "[time]": -3.0
    },
-   "factor": 1000.0,
+   "factor": 1000000.0,
    "multiplicative": true,
    "ok": true,
    "unit": "kW"
@@ -249,7 +255,7 @@
     "[mass]": 1.0,
     "[time]": -3.0
    },
-   "factor": 0.11407711613050421,
+   "factor": 114.07711613050421,
    "multiplicative": true,
    "ok": true,
    "unit": "kWh/year"
@@ -260,12 +266,12 @@
     "kilowatt_hour": -1.0
    },
    "dimensionality": {
-    "[currency]": 1.0,
+    "[currency_usd]": 1.0,
     "[length]": -2.0,
     "[mass]": -1.0,
     "[time]": 2.0
    },
-   "factor": 2.7777777777777776e-07,
+   "factor": 2.7777777777777777e-10,
    "multiplicative": true,
    "ok": true,
    "unit": "USD/kWh"
@@ -276,7 +282,7 @@
     "year": -1.0
    },
    "dimensionality": {
-    "[currency]": 1.0,
+    "[currency_usd]": 1.0,
     "[time]": -1.0
    },
    "factor": 3.168808781402895e-08,
@@ -292,7 +298,7 @@
    },
    "dimensionality": {
     "[core]": -1.0,
-    "[currency]": 1.0,
+    "[currency_usd]": 1.0,
     "[time]": -1.0
    },
    "factor": 3.168808781402895e-08,
@@ -307,7 +313,7 @@
     "year": -1.0
    },
    "dimensionality": {
-    "[currency]": 1.0,
+    "[currency_usd]": 1.0,
     "[host]": -1.0,
     "[time]": -1.0
    },
@@ -333,7 +339,7 @@
     "megarequest": -1.0
    },
    "dimensionality": {
-    "[currency]": 1.0,
+    "[currency_usd]": 1.0,
     "[request]": -1.0
    },
    "factor": 1e-06,
@@ -348,7 +354,8 @@
     "terabyte": -1.0
    },
    "dimensionality": {
-    "[currency]": 1.0,
+    "[currency_usd]": 1.0,
+    "[information]": -1.0,
     "[time]": -1.0
    },
    "factor": 4.7532131721043425e-20,
@@ -418,6 +425,7 @@
     "sample": -1.0
    },
    "dimensionality": {
+    "[information]": 1.0,
     "[sample]": -1.0
    },
    "factor": 8.0,
@@ -431,6 +439,7 @@
     "second": -1.0
    },
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 8000000.0,
@@ -484,6 +493,7 @@
     "line": -1.0
    },
    "dimensionality": {
+    "[information]": 1.0,
     "[line]": -1.0
    },
    "factor": 8.0,
@@ -525,6 +535,7 @@
     "span": -1.0
    },
    "dimensionality": {
+    "[information]": 1.0,
     "[span]": -1.0
    },
    "factor": 8.0,
@@ -540,6 +551,7 @@
    },
    "dimensionality": {
     "[core]": -1.0,
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 8000000.0,
@@ -553,6 +565,7 @@
     "terabyte": 1.0
    },
    "dimensionality": {
+    "[information]": 1.0,
     "[node]": -1.0
    },
    "factor": 8000000000000.0,
@@ -637,7 +650,8 @@
     "terabyte": -1.0
    },
    "dimensionality": {
-    "[currency]": 1.0,
+    "[currency_usd]": 1.0,
+    "[information]": -1.0,
     "[time]": -1.0
    },
    "factor": 4.7532131721043425e-20,
@@ -651,7 +665,7 @@
     "month": -1.0
    },
    "dimensionality": {
-    "[currency]": 1.0,
+    "[currency_usd]": 1.0,
     "[time]": -1.0
    },
    "factor": 3.802570537683474e-07,
@@ -883,7 +897,9 @@
    "canonical": {
     "byte": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 8.0,
    "multiplicative": true,
    "ok": true,
@@ -905,7 +921,9 @@
    "canonical": {
     "byte": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 8.0,
    "multiplicative": true,
    "ok": true,
@@ -915,7 +933,9 @@
    "canonical": {
     "byte": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 8.0,
    "multiplicative": true,
    "ok": true,
@@ -925,7 +945,9 @@
    "canonical": {
     "bit": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 1.0,
    "multiplicative": true,
    "ok": true,
@@ -935,7 +957,9 @@
    "canonical": {
     "kilobyte": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 8000.0,
    "multiplicative": true,
    "ok": true,
@@ -950,7 +974,9 @@
    "canonical": {
     "mebibyte": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 8388608.0,
    "multiplicative": true,
    "ok": true,
@@ -960,7 +986,9 @@
    "canonical": {
     "gibibyte": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 8589934592.0,
    "multiplicative": true,
    "ok": true,
@@ -970,7 +998,9 @@
    "canonical": {
     "tebibyte": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 8796093022208.0,
    "multiplicative": true,
    "ok": true,
@@ -980,7 +1010,9 @@
    "canonical": {
     "petabyte": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 8000000000000000.0,
    "multiplicative": true,
    "ok": true,
@@ -1002,7 +1034,9 @@
    "canonical": {
     "kilobit": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 1000.0,
    "multiplicative": true,
    "ok": true,
@@ -1014,6 +1048,7 @@
     "second": -1.0
    },
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 1000000000.0,
@@ -1027,6 +1062,7 @@
     "megabyte": 1.0
    },
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 92.59259259259258,
@@ -1040,6 +1076,7 @@
     "year": -1.0
    },
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 253504.70251223157,
@@ -1056,7 +1093,7 @@
     "[mass]": 1.0,
     "[time]": -3.0
    },
-   "factor": 1000.0,
+   "factor": 1000000.0,
    "multiplicative": true,
    "ok": true,
    "unit": "kilowatt"
@@ -1070,7 +1107,7 @@
     "[mass]": 1.0,
     "[time]": -2.0
    },
-   "factor": 3600000.0,
+   "factor": 3600000000.0,
    "multiplicative": true,
    "ok": true,
    "unit": "kWh"
@@ -1084,7 +1121,7 @@
     "[mass]": 1.0,
     "[time]": -3.0
    },
-   "factor": 1.0,
+   "factor": 1000.0,
    "multiplicative": true,
    "ok": true,
    "unit": "watt"
@@ -1100,7 +1137,7 @@
     "[mass]": 1.0,
     "[time]": -3.0
    },
-   "factor": 1.0,
+   "factor": 1000.0,
    "multiplicative": true,
    "ok": true,
    "unit": "W/core"
@@ -1182,7 +1219,7 @@
     "USD": 1.0
    },
    "dimensionality": {
-    "[currency]": 1.0
+    "[currency_usd]": 1.0
    },
    "factor": 1.0,
    "multiplicative": true,
@@ -1194,7 +1231,7 @@
     "USD": 1.0
    },
    "dimensionality": {
-    "[currency]": 1.0
+    "[currency_usd]": 1.0
    },
    "factor": 1.0,
    "multiplicative": true,
@@ -1206,7 +1243,7 @@
     "USD": 1.0
    },
    "dimensionality": {
-    "[currency]": 1.0
+    "[currency_usd]": 1.0
    },
    "factor": 1.0,
    "multiplicative": true,
@@ -1366,7 +1403,8 @@
     "terabyte": -1.0
    },
    "dimensionality": {
-    "[currency]": 1.0,
+    "[currency_usd]": 1.0,
+    "[information]": -1.0,
     "[time]": -1.0
    },
    "factor": 4.7532131721043425e-20,
@@ -1378,7 +1416,9 @@
    "canonical": {
     "terabyte": 2.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 2.0
+   },
    "factor": 6.4e+25,
    "multiplicative": true,
    "ok": true,
@@ -1395,13 +1435,27 @@
    "unit": "count"
   },
   {
-   "error": "unknown unit 'EUR': 'EUR' is not defined in the unit registry",
-   "ok": false,
+   "canonical": {
+    "EUR": 1.0
+   },
+   "dimensionality": {
+    "[currency_eur]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true,
+   "ok": true,
    "unit": "EUR"
   },
   {
-   "error": "unknown unit 'GBP': 'GBP' is not defined in the unit registry",
-   "ok": false,
+   "canonical": {
+    "GBP": 1.0
+   },
+   "dimensionality": {
+    "[currency_gbp]": 1.0
+   },
+   "factor": 1.0,
+   "multiplicative": true,
+   "ok": true,
    "unit": "GBP"
   },
   {
@@ -1420,15 +1474,8 @@
    "unit": "host_hour"
   },
   {
-   "canonical": {
-    "degree_Celsius": 1.0
-   },
-   "dimensionality": {
-    "[temperature]": 1.0
-   },
-   "factor": 274.15,
-   "multiplicative": false,
-   "ok": true,
+   "error": "unit 'degC' is not a ratio scale: degree_Celsius converts with an offset or a logarithm, and a node converts by one factor",
+   "ok": false,
    "unit": "degC"
   },
   {
@@ -1444,23 +1491,13 @@
    "unit": "kelvin"
   },
   {
-   "canonical": {
-    "decibel": 1.0
-   },
-   "dimensionality": {},
-   "factor": 1.2589254117941673,
-   "multiplicative": false,
-   "ok": true,
+   "error": "unit 'dB' is not a ratio scale: decibel converts with an offset or a logarithm, and a node converts by one factor",
+   "ok": false,
    "unit": "dB"
   },
   {
-   "canonical": {
-    "decibel": 1.0
-   },
-   "dimensionality": {},
-   "factor": 1.2589254117941673,
-   "multiplicative": false,
-   "ok": true,
+   "error": "unit 'decibel' is not a ratio scale: decibel converts with an offset or a logarithm, and a node converts by one factor",
+   "ok": false,
    "unit": "decibel"
   },
   {
@@ -1544,7 +1581,7 @@
     "[mass]": 1.0,
     "[time]": -2.0
    },
-   "factor": 1.0,
+   "factor": 1000.0,
    "multiplicative": true,
    "ok": true,
    "unit": "kg m/s^2"
@@ -1558,7 +1595,7 @@
     "[length]": 1.0,
     "[mass]": 1.0
    },
-   "factor": 1.0,
+   "factor": 1000.0,
    "multiplicative": true,
    "ok": true,
    "unit": "kg·m"
@@ -1588,15 +1625,8 @@
    "unit": "s⁻¹"
   },
   {
-   "canonical": {
-    "degree_Celsius": 1.0
-   },
-   "dimensionality": {
-    "[temperature]": 1.0
-   },
-   "factor": 274.15,
-   "multiplicative": false,
-   "ok": true,
+   "error": "unit '°C' is not a ratio scale: degree_Celsius converts with an offset or a logarithm, and a node converts by one factor",
+   "ok": false,
    "unit": "°C"
   },
   {
@@ -1682,7 +1712,7 @@
     "[temperature]": -1.0,
     "[time]": -2.0
    },
-   "factor": 1.380649e-23,
+   "factor": 1.380649e-20,
    "multiplicative": true,
    "ok": true,
    "unit": "k"
@@ -1734,6 +1764,7 @@
     "second": -1.0
    },
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 8.0,
@@ -1757,7 +1788,9 @@
    "canonical": {
     "megabit": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 1000000.0,
    "multiplicative": true,
    "ok": true,
@@ -1772,7 +1805,7 @@
     "[mass]": 1.0,
     "[time]": -2.0
    },
-   "factor": 100.0,
+   "factor": 100000.0,
    "multiplicative": true,
    "ok": true,
    "unit": "mbar"
@@ -1781,7 +1814,9 @@
    "canonical": {
     "terabyte": 1.0
    },
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 8000000000000.0,
    "multiplicative": true,
    "ok": true,
@@ -1983,6 +2018,7 @@
     "terabyte": 1.0
    },
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": 1.0
    },
    "factor": 2.10384e+19,
@@ -1996,6 +2032,7 @@
     "terabyte": 1.0
    },
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": 1.0
    },
    "factor": 2.10384e+19,
@@ -2028,7 +2065,7 @@
     "USD": 1.0
    },
    "dimensionality": {
-    "[currency]": 1.0
+    "[currency_usd]": 1.0
    },
    "factor": 1.0,
    "multiplicative": true,
@@ -2153,7 +2190,7 @@
     "[mass]": 1.0,
     "[time]": -3.0
    },
-   "factor": 1.0,
+   "factor": 1000.0,
    "multiplicative": true,
    "ok": true,
    "unit": "ohm"
@@ -2168,17 +2205,41 @@
     "[mass]": 1.0,
     "[time]": -3.0
    },
-   "factor": 1.0,
+   "factor": 1000.0,
    "multiplicative": true,
    "ok": true,
    "unit": "Ω"
   }
  ],
  "registry": {
+  "currencies": [
+   "USD",
+   "EUR",
+   "GBP",
+   "JPY",
+   "CHF",
+   "CAD",
+   "AUD",
+   "NZD",
+   "CNY",
+   "HKD",
+   "SGD",
+   "INR",
+   "KRW",
+   "SEK",
+   "NOK",
+   "DKK",
+   "PLN",
+   "CZK",
+   "BRL",
+   "MXN",
+   "ZAR"
+  ],
   "keys": {
    "%": "percent",
    "A": "ampere",
    "AU": "absorbance_unit",
+   "AUD": "AUD",
    "A_90": "conventional_ampere_90",
    "A_US": "US_international_ampere",
    "A_it": "mean_international_ampere",
@@ -2187,6 +2248,7 @@
    "B": "byte",
    "BDFT": "board_foot",
    "BF": "board_foot",
+   "BRL": "BRL",
    "BTU": "british_thermal_unit",
    "Ba": "barye",
    "Bd": "baud",
@@ -2197,14 +2259,20 @@
    "Btu_it": "international_british_thermal_unit",
    "Btu_th": "thermochemical_british_thermal_unit",
    "C": "coulomb",
+   "CAD": "CAD",
+   "CHF": "CHF",
+   "CNY": "CNY",
+   "CZK": "CZK",
    "C_90": "conventional_coulomb_90",
    "Ci": "curie",
    "Cl": "clausius",
    "D": "debye",
+   "DKK": "DKK",
    "DPI": "pixels_per_inch",
    "Da": "dalton",
    "ECC": "number_english",
    "EC_therm": "therm",
+   "EUR": "EUR",
    "E_h": "hartree",
    "Eh": "hartree",
    "F": "farad",
@@ -2212,16 +2280,21 @@
    "F_90": "conventional_farad_90",
    "Fr": "franklin",
    "G": "gauss",
+   "GBP": "GBP",
    "G_0": "conductance_quantum",
    "Gal": "galileo",
    "Gb": "gilbert",
    "Gy": "gray",
    "H": "henry",
+   "HKD": "HKD",
    "H_90": "conventional_henry_90",
    "Hz": "hertz",
+   "INR": "INR",
    "J": "joule",
+   "JPY": "JPY",
    "K": "kelvin",
    "KPH": "kilometer_per_hour",
+   "KRW": "KRW",
    "K_J": "josephson_constant",
    "K_J90": "conventional_josephson_constant",
    "L": "liter",
@@ -2229,8 +2302,11 @@
    "Ly": "langley",
    "M": "molar",
    "MPH": "mile_per_hour",
+   "MXN": "MXN",
    "Mx": "maxwell",
    "N": "newton",
+   "NOK": "NOK",
+   "NZD": "NZD",
    "N_A": "avogadro_constant",
    "Ne": "number_english",
    "NeC": "number_english",
@@ -2238,6 +2314,7 @@
    "Np": "neper",
    "Oe": "oersted",
    "P": "poise",
+   "PLN": "PLN",
    "PPCM": "pixels_per_centimeter",
    "PPI": "pixels_per_inch",
    "PSH": "peak_sun_hour",
@@ -2253,6 +2330,8 @@
    "Rd": "rutherford",
    "Ry": "rydberg",
    "S": "siemens",
+   "SEK": "SEK",
+   "SGD": "SGD",
    "SPL": "sound_pressure_level",
    "St": "stokes",
    "Sv": "sievert",
@@ -2313,6 +2392,7 @@
    "Wh": "watt_hour",
    "Xu_Cu": "x_unit_Cu",
    "Xu_Mo": "x_unit_Mo",
+   "ZAR": "ZAR",
    "Z_0": "impedance_of_free_space",
    "a": "year",
    "a0": "bohr",
@@ -2455,7 +2535,6 @@
    "cd": "candela",
    "celsius": "degree_Celsius",
    "centimeter": "centimeter",
-   "centipoise": "centipoise",
    "centuries": "century",
    "century": "century",
    "chain": "chain",
@@ -2516,8 +2595,6 @@
    "decibelmicrowatt": "decibelmicrowatt",
    "decibelmilliwatt": "decibelmilliwatt",
    "decibelwatt": "decibelwatt",
-   "decimeter": "decimeter",
-   "decitex": "decitex",
    "deg": "degree",
    "degC": "degree_Celsius",
    "degF": "degree_Fahrenheit",
@@ -2613,7 +2690,6 @@
    "feet_Hg_0C": "foot_Hg_0C",
    "feet_Hg_32F": "foot_Hg_32F",
    "feet_Hg_60F": "foot_Hg_60F",
-   "femtometer": "femtometer",
    "fermi": "fermi",
    "fifteen_degree_calorie": "fifteen_degree_calorie",
    "fifth": "fifth",
@@ -2797,7 +2873,6 @@
    "kgf": "force_kilogram",
    "kilogram": "kilogram",
    "kilogram_force": "force_kilogram",
-   "kilometer": "kilometer",
    "kilometer_per_hour": "kilometer_per_hour",
    "kilometer_per_second": "kilometer_per_second",
    "kip": "kip",
@@ -2886,10 +2961,6 @@
    "metric_ton_force": "force_metric_ton",
    "mho": "siemens",
    "mi": "mile",
-   "microgram": "microgram",
-   "microliter": "microliter",
-   "micrometer": "micrometer",
-   "micromole": "micromole",
    "micron": "micron",
    "mil": "mil",
    "mil_length": "thou",
@@ -3608,12 +3679,131 @@
    ]
   ],
   "units": {
+   "AUD": {
+    "dimensionality": {
+     "[currency_aud]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "BRL": {
+    "dimensionality": {
+     "[currency_brl]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "CAD": {
+    "dimensionality": {
+     "[currency_cad]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "CHF": {
+    "dimensionality": {
+     "[currency_chf]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "CNY": {
+    "dimensionality": {
+     "[currency_cny]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "CZK": {
+    "dimensionality": {
+     "[currency_czk]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "DKK": {
+    "dimensionality": {
+     "[currency_dkk]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "EUR": {
+    "dimensionality": {
+     "[currency_eur]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "GBP": {
+    "dimensionality": {
+     "[currency_gbp]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "HKD": {
+    "dimensionality": {
+     "[currency_hkd]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "INR": {
+    "dimensionality": {
+     "[currency_inr]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "JPY": {
+    "dimensionality": {
+     "[currency_jpy]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "KRW": {
+    "dimensionality": {
+     "[currency_krw]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
    "LMH": {
     "dimensionality": {
      "[length]": 1.0,
      "[time]": -1.0
     },
     "factor": 2.7777777777777787e-07,
+    "multiplicative": true
+   },
+   "MXN": {
+    "dimensionality": {
+     "[currency_mxn]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "NOK": {
+    "dimensionality": {
+     "[currency_nok]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "NZD": {
+    "dimensionality": {
+     "[currency_nzd]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "PLN": {
+    "dimensionality": {
+     "[currency_pln]": 1.0
+    },
+    "factor": 1.0,
     "multiplicative": true
    },
    "RKM": {
@@ -3624,32 +3814,46 @@
     "factor": 9806.65,
     "multiplicative": true
    },
+   "SEK": {
+    "dimensionality": {
+     "[currency_sek]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
+   "SGD": {
+    "dimensionality": {
+     "[currency_sgd]": 1.0
+    },
+    "factor": 1.0,
+    "multiplicative": true
+   },
    "UK_force_ton": {
     "dimensionality": {
      "[length]": 1.0,
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 9964.01641818352,
+    "factor": 9964016.41818352,
     "multiplicative": true
    },
    "UK_hundredweight": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 50.80234544,
+    "factor": 50802.345440000005,
     "multiplicative": true
    },
    "UK_ton": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 1016.0469088000001,
+    "factor": 1016046.9088000001,
     "multiplicative": true
    },
    "USD": {
     "dimensionality": {
-     "[currency]": 1.0
+     "[currency_usd]": 1.0
     },
     "factor": 1.0,
     "multiplicative": true
@@ -3660,14 +3864,14 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 8896.443230521003,
+    "factor": 8896443.230521003,
     "multiplicative": true
    },
    "US_hundredweight": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 45.35923700000001,
+    "factor": 45359.23700000001,
     "multiplicative": true
    },
    "US_international_ampere": {
@@ -3684,7 +3888,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.000495,
+    "factor": 1000.4949999999999,
     "multiplicative": true
    },
    "US_international_volt": {
@@ -3694,7 +3898,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.00033,
+    "factor": 1000.3299999999999,
     "multiplicative": true
    },
    "US_therm": {
@@ -3703,14 +3907,21 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 105480400.0,
+    "factor": 105480400000.0,
     "multiplicative": true
    },
    "US_ton": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 907.1847400000001,
+    "factor": 907184.7400000001,
+    "multiplicative": true
+   },
+   "ZAR": {
+    "dimensionality": {
+     "[currency_zar]": 1.0
+    },
+    "factor": 1.0,
     "multiplicative": true
    },
    "abampere": {
@@ -3733,7 +3944,7 @@
      "[length]": -1.0,
      "[mass]": 1.0
     },
-    "factor": 3.444823943448042e-05,
+    "factor": 0.03444823943448042,
     "multiplicative": true
    },
    "abfarad": {
@@ -3743,7 +3954,7 @@
      "[mass]": -1.0,
      "[time]": 4.0
     },
-    "factor": 1000000000.0,
+    "factor": 1000000.0,
     "multiplicative": true
    },
    "abhenry": {
@@ -3753,7 +3964,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.0000000000000003e-09,
+    "factor": 1.0000000000000002e-06,
     "multiplicative": true
    },
    "abohm": {
@@ -3763,7 +3974,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.0000000000000003e-09,
+    "factor": 1.0000000000000002e-06,
     "multiplicative": true
    },
    "absiemens": {
@@ -3773,7 +3984,7 @@
      "[mass]": -1.0,
      "[time]": 3.0
     },
-    "factor": 1000000000.0,
+    "factor": 1000000.0,
     "multiplicative": true
    },
    "absorbance_unit": {
@@ -3788,7 +3999,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1e-08,
+    "factor": 1e-05,
     "multiplicative": true
    },
    "acre": {
@@ -3845,21 +4056,21 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 0.003887934600000001,
+    "factor": 3.887934600000001,
     "multiplicative": true
    },
    "apothecary_ounce": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 0.03110347680000001,
+    "factor": 31.103476800000006,
     "multiplicative": true
    },
    "apothecary_pound": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 0.3732417216000001,
+    "factor": 373.24172160000006,
     "multiplicative": true
    },
    "arcminute": {
@@ -3892,14 +4103,14 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 101.32500000000003,
+    "factor": 101325.00000000003,
     "multiplicative": true
    },
    "atomic_mass_constant": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 1.6605390689200003e-27,
+    "factor": 1.66053906892e-24,
     "multiplicative": true
    },
    "atomic_unit_of_current": {
@@ -3916,7 +4127,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 514220675112.0944,
+    "factor": 514220675112094.44,
     "multiplicative": true
    },
    "atomic_unit_of_electric_field_gradient": {
@@ -3925,7 +4136,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 9.717362442414777e+21,
+    "factor": 9.717362442414776e+24,
     "multiplicative": true
    },
    "atomic_unit_of_force": {
@@ -3934,7 +4145,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 8.238723503843028e-08,
+    "factor": 8.238723503843028e-05,
     "multiplicative": true
    },
    "atomic_unit_of_intensity": {
@@ -3942,7 +4153,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 3.509445527729845e+20,
+    "factor": 3.5094455277298447e+23,
     "multiplicative": true
    },
    "atomic_unit_of_temperature": {
@@ -3975,7 +4186,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 42.637682780000006,
+    "factor": 42637.68278,
     "multiplicative": true
    },
    "bar": {
@@ -3984,7 +4195,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 100000.0,
+    "factor": 100000000.0,
     "multiplicative": true
    },
    "barn": {
@@ -4007,11 +4218,12 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 0.1,
+    "factor": 100.0,
     "multiplicative": true
    },
    "baud": {
     "dimensionality": {
+     "[information]": 1.0,
      "[time]": -1.0
     },
     "factor": 1.0,
@@ -4046,12 +4258,15 @@
     "multiplicative": true
    },
    "bit": {
-    "dimensionality": {},
+    "dimensionality": {
+     "[information]": 1.0
+    },
     "factor": 1.0,
     "multiplicative": true
    },
    "bits_per_pixel": {
     "dimensionality": {
+     "[information]": 1.0,
      "[printing_unit]": -1.0
     },
     "factor": 1.0,
@@ -4085,7 +4300,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 9810.555444444444,
+    "factor": 9810555.444444444,
     "multiplicative": true
    },
    "boltzmann_constant": {
@@ -4095,7 +4310,7 @@
      "[temperature]": -1.0,
      "[time]": -2.0
     },
-    "factor": 1.380649e-23,
+    "factor": 1.380649e-20,
     "multiplicative": true
    },
    "british_thermal_unit": {
@@ -4104,7 +4319,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1055.056,
+    "factor": 1055056.0,
     "multiplicative": true
    },
    "buckingham": {
@@ -4124,7 +4339,9 @@
     "multiplicative": true
    },
    "byte": {
-    "dimensionality": {},
+    "dimensionality": {
+     "[information]": 1.0
+    },
     "factor": 8.0,
     "multiplicative": true
    },
@@ -4141,7 +4358,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 4.184,
+    "factor": 4184.0,
     "multiplicative": true
    },
    "candela": {
@@ -4155,7 +4372,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 0.0002,
+    "factor": 0.2,
     "multiplicative": true
    },
    "centimeter": {
@@ -4163,15 +4380,6 @@
      "[length]": 1.0
     },
     "factor": 0.01,
-    "multiplicative": true
-   },
-   "centipoise": {
-    "dimensionality": {
-     "[length]": -1.0,
-     "[mass]": 1.0,
-     "[time]": -1.0
-    },
-    "factor": 0.001,
     "multiplicative": true
    },
    "century": {
@@ -4216,7 +4424,7 @@
      "[temperature]": -1.0,
      "[time]": -2.0
     },
-    "factor": 4.184,
+    "factor": 4184.0,
     "multiplicative": true
    },
    "common_year": {
@@ -4233,7 +4441,7 @@
      "[mass]": -1.0,
      "[time]": 3.0
     },
-    "factor": 7.74809172986365e-05,
+    "factor": 7.74809172986365e-08,
     "multiplicative": true
    },
    "conventional_ampere_90": {
@@ -4258,7 +4466,7 @@
      "[mass]": -1.0,
      "[time]": 4.0
     },
-    "factor": 0.9999999822063327,
+    "factor": 0.0009999999822063327,
     "multiplicative": true
    },
    "conventional_henry_90": {
@@ -4268,7 +4476,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.0000000177936679,
+    "factor": 1000.0000177936678,
     "multiplicative": true
    },
    "conventional_josephson_constant": {
@@ -4278,7 +4486,7 @@
      "[mass]": -1.0,
      "[time]": 2.0
     },
-    "factor": 483597900000000.0,
+    "factor": 483597900000.0,
     "multiplicative": true
    },
    "conventional_mercury_density": {
@@ -4286,7 +4494,7 @@
      "[length]": -3.0,
      "[mass]": 1.0
     },
-    "factor": 13595.1,
+    "factor": 13595100.0,
     "multiplicative": true
    },
    "conventional_ohm_90": {
@@ -4296,7 +4504,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.0000000177936679,
+    "factor": 1000.0000177936678,
     "multiplicative": true
    },
    "conventional_volt_90": {
@@ -4306,7 +4514,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.0000001066651074,
+    "factor": 1000.0001066651073,
     "multiplicative": true
    },
    "conventional_von_klitzing_constant": {
@@ -4316,7 +4524,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 25812.807,
+    "factor": 25812807.0,
     "multiplicative": true
    },
    "conventional_water_density": {
@@ -4324,7 +4532,7 @@
      "[length]": -3.0,
      "[mass]": 1.0
     },
-    "factor": 1000.0,
+    "factor": 1000000.0,
     "multiplicative": true
    },
    "conventional_watt_90": {
@@ -4333,7 +4541,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.0000001955365547,
+    "factor": 1000.0001955365547,
     "multiplicative": true
    },
    "cooling_tower_ton": {
@@ -4342,7 +4550,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 4396.0666666666675,
+    "factor": 4396066.666666667,
     "multiplicative": true
    },
    "core": {
@@ -4367,7 +4575,7 @@
      "[mass]": 1.0,
      "[time]": -4.0
     },
-    "factor": 8987551786.178669,
+    "factor": 8987551786178.668,
     "multiplicative": true
    },
    "count": {
@@ -4435,7 +4643,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 1.6605390689200003e-27,
+    "factor": 1.66053906892e-24,
     "multiplicative": true
    },
    "darcy": {
@@ -4477,7 +4685,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1e-06,
+    "factor": 0.001,
     "multiplicative": false
    },
    "decibelmilliwatt": {
@@ -4486,7 +4694,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 0.001,
+    "factor": 1.0,
     "multiplicative": false
    },
    "decibelwatt": {
@@ -4495,23 +4703,8 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.0,
+    "factor": 1000.0,
     "multiplicative": false
-   },
-   "decimeter": {
-    "dimensionality": {
-     "[length]": 1.0
-    },
-    "factor": 0.1,
-    "multiplicative": true
-   },
-   "decitex": {
-    "dimensionality": {
-     "[length]": -1.0,
-     "[mass]": 1.0
-    },
-    "factor": 1.0000000000000001e-07,
-    "multiplicative": true
    },
    "degree": {
     "dimensionality": {},
@@ -4572,7 +4765,7 @@
      "[length]": -1.0,
      "[mass]": 1.0
     },
-    "factor": 1.1111111111111111e-07,
+    "factor": 0.0001111111111111111,
     "multiplicative": true
    },
    "didot": {
@@ -4588,14 +4781,14 @@
      "[mass]": 1.0,
      "[time]": -1.0
     },
-    "factor": 1.0545718176461565e-34,
+    "factor": 1.0545718176461565e-31,
     "multiplicative": true
    },
    "dram": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 0.0017718451953125003,
+    "factor": 1.7718451953125003,
     "multiplicative": true
    },
    "drive": {
@@ -4638,7 +4831,7 @@
      "[length]": -1.0,
      "[mass]": 1.0
     },
-    "factor": 1.0000000000000001e-07,
+    "factor": 0.0001,
     "multiplicative": true
    },
    "dyne": {
@@ -4647,7 +4840,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1e-05,
+    "factor": 0.01,
     "multiplicative": true
    },
    "electrical_horsepower": {
@@ -4656,7 +4849,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 746.0,
+    "factor": 746000.0,
     "multiplicative": true
    },
    "electron_g_factor": {
@@ -4668,7 +4861,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 9.1093837139e-31,
+    "factor": 9.1093837139e-28,
     "multiplicative": true
    },
    "electron_volt": {
@@ -4677,7 +4870,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.602176634e-19,
+    "factor": 1.602176634e-16,
     "multiplicative": true
    },
    "elementary_charge": {
@@ -4696,7 +4889,7 @@
      "[temperature]": -1.0,
      "[time]": -2.0
     },
-    "factor": 4.184,
+    "factor": 4184.0,
     "multiplicative": true
    },
    "enzyme_unit": {
@@ -4720,7 +4913,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.0000000000000001e-07,
+    "factor": 0.0001,
     "multiplicative": true
    },
    "eulers_number": {
@@ -4742,7 +4935,7 @@
      "[mass]": -1.0,
      "[time]": 4.0
     },
-    "factor": 1.0,
+    "factor": 0.001,
     "multiplicative": true
    },
    "faraday": {
@@ -4769,13 +4962,6 @@
     "factor": 1.828803657607315,
     "multiplicative": true
    },
-   "femtometer": {
-    "dimensionality": {
-     "[length]": 1.0
-    },
-    "factor": 1e-15,
-    "multiplicative": true
-   },
    "fermi": {
     "dimensionality": {
      "[length]": 1.0
@@ -4789,7 +4975,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 4.1855,
+    "factor": 4185.5,
     "multiplicative": true
    },
    "fifth": {
@@ -4810,7 +4996,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 3.7417718521927573e-16,
+    "factor": 3.741771852192757e-13,
     "multiplicative": true
    },
    "fluid_dram": {
@@ -4840,7 +5026,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 2989.0669199999993,
+    "factor": 2989066.9199999995,
     "multiplicative": true
    },
    "foot_H2O_4C": {
@@ -4849,7 +5035,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 2988.9832261262395,
+    "factor": 2988983.2261262396,
     "multiplicative": true
    },
    "foot_H2O_60F": {
@@ -4858,7 +5044,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 2986.080842146919,
+    "factor": 2986080.842146919,
     "multiplicative": true
    },
    "foot_Hg": {
@@ -4867,7 +5053,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 40636.663684092004,
+    "factor": 40636663.684092,
     "multiplicative": true
    },
    "foot_Hg_0C": {
@@ -4876,7 +5062,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 40636.663684092004,
+    "factor": 40636663.684092,
     "multiplicative": true
    },
    "foot_Hg_32F": {
@@ -4885,7 +5071,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 40636.663684092004,
+    "factor": 40636663.684092,
     "multiplicative": true
    },
    "foot_Hg_60F": {
@@ -4894,7 +5080,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 40522.182421055986,
+    "factor": 40522182.42105599,
     "multiplicative": true
    },
    "foot_per_second": {
@@ -4911,7 +5097,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.3558179483314001,
+    "factor": 1355.8179483314002,
     "multiplicative": true
    },
    "force_gram": {
@@ -4920,7 +5106,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 0.00980665,
+    "factor": 9.80665,
     "multiplicative": true
    },
    "force_kilogram": {
@@ -4929,7 +5115,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 9.80665,
+    "factor": 9806.65,
     "multiplicative": true
    },
    "force_long_ton": {
@@ -4938,7 +5124,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 9964.01641818352,
+    "factor": 9964016.41818352,
     "multiplicative": true
    },
    "force_metric_ton": {
@@ -4947,7 +5133,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 9806.65,
+    "factor": 9806650.0,
     "multiplicative": true
    },
    "force_ounce": {
@@ -4956,7 +5142,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 0.2780138509537813,
+    "factor": 278.0138509537813,
     "multiplicative": true
    },
    "force_pound": {
@@ -4965,7 +5151,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 4.4482216152605005,
+    "factor": 4448.221615260501,
     "multiplicative": true
    },
    "force_ton": {
@@ -4974,7 +5160,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 8896.443230521003,
+    "factor": 8896443.230521003,
     "multiplicative": true
    },
    "fortnight": {
@@ -4990,7 +5176,7 @@
      "[mass]": 0.5,
      "[time]": -1.0
     },
-    "factor": 3.1622776601683795e-05,
+    "factor": 0.001,
     "multiplicative": true
    },
    "furlong": {
@@ -5021,14 +5207,14 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.0000000000000003e-09,
+    "factor": 1.0000000000000002e-06,
     "multiplicative": true
    },
    "gamma_mass": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 1e-09,
+    "factor": 1e-06,
     "multiplicative": true
    },
    "gauss": {
@@ -5037,7 +5223,7 @@
      "[mass]": 0.5,
      "[time]": -1.0
     },
-    "factor": 0.3162277660168379,
+    "factor": 10.0,
     "multiplicative": true
    },
    "gilbert": {
@@ -5063,14 +5249,14 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 6.479891000000001e-05,
+    "factor": 0.06479891,
     "multiplicative": true
    },
    "gram": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 0.001,
+    "factor": 1.0,
     "multiplicative": true
    },
    "gray": {
@@ -5101,7 +5287,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 4.359744722205978e-18,
+    "factor": 4.3597447222059786e-15,
     "multiplicative": true
    },
    "hectare": {
@@ -5118,7 +5304,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.0,
+    "factor": 1000.0,
     "multiplicative": true
    },
    "hertz": {
@@ -5141,7 +5327,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 745.6998715822701,
+    "factor": 745699.8715822701,
     "multiplicative": true
    },
    "host": {
@@ -5162,7 +5348,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 45.35923700000001,
+    "factor": 45359.23700000001,
     "multiplicative": true
    },
    "impedance_of_free_space": {
@@ -5172,7 +5358,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 376.7303134119101,
+    "factor": 376730.3134119101,
     "multiplicative": true
    },
    "imperial_barrel": {
@@ -5272,7 +5458,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 249.08890999999997,
+    "factor": 249088.90999999997,
     "multiplicative": true
    },
    "inch_H2O_4C": {
@@ -5281,7 +5467,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 249.08193551052,
+    "factor": 249081.93551051998,
     "multiplicative": true
    },
    "inch_H2O_60F": {
@@ -5290,7 +5476,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 248.84007017891,
+    "factor": 248840.07017890998,
     "multiplicative": true
    },
    "inch_Hg": {
@@ -5299,7 +5485,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 3386.3886403409997,
+    "factor": 3386388.6403409997,
     "multiplicative": true
    },
    "inch_Hg_0C": {
@@ -5308,7 +5494,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 3386.3886403409997,
+    "factor": 3386388.6403409997,
     "multiplicative": true
    },
    "inch_Hg_32F": {
@@ -5317,7 +5503,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 3386.3886403409997,
+    "factor": 3386388.6403409997,
     "multiplicative": true
    },
    "inch_Hg_60F": {
@@ -5326,7 +5512,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 3376.8485350879996,
+    "factor": 3376848.5350879994,
     "multiplicative": true
    },
    "international_british_thermal_unit": {
@@ -5335,7 +5521,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1055.05585262,
+    "factor": 1055055.85262,
     "multiplicative": true
    },
    "international_calorie": {
@@ -5344,7 +5530,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 4.1868,
+    "factor": 4186.8,
     "multiplicative": true
    },
    "josephson_constant": {
@@ -5354,7 +5540,7 @@
      "[mass]": -1.0,
      "[time]": 2.0
     },
-    "factor": 483597848416983.56,
+    "factor": 483597848416.9836,
     "multiplicative": true
    },
    "joule": {
@@ -5363,7 +5549,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.0,
+    "factor": 1000.0,
     "multiplicative": true
    },
    "jute": {
@@ -5371,7 +5557,7 @@
      "[length]": -1.0,
      "[mass]": 1.0
     },
-    "factor": 3.444823943448042e-05,
+    "factor": 0.03444823943448042,
     "multiplicative": true
    },
    "katal": {
@@ -5392,13 +5578,6 @@
    "kilogram": {
     "dimensionality": {
      "[mass]": 1.0
-    },
-    "factor": 1.0,
-    "multiplicative": true
-   },
-   "kilometer": {
-    "dimensionality": {
-     "[length]": 1.0
     },
     "factor": 1000.0,
     "multiplicative": true
@@ -5425,7 +5604,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 4448.2216152605015,
+    "factor": 4448221.615260501,
     "multiplicative": true
    },
    "kip_per_square_inch": {
@@ -5434,7 +5613,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 6894757.293168365,
+    "factor": 6894757293.168365,
     "multiplicative": true
    },
    "knot": {
@@ -5472,7 +5651,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 41840.0,
+    "factor": 41840000.0,
     "multiplicative": true
    },
    "league": {
@@ -5526,14 +5705,14 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 50.80234544,
+    "factor": 50802.345440000005,
     "multiplicative": true
    },
    "long_ton": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 1016.0469088000001,
+    "factor": 1016046.9088000001,
     "multiplicative": true
    },
    "lumen": {
@@ -5558,7 +5737,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 2.0678338484619295e-15,
+    "factor": 2.0678338484619294e-12,
     "multiplicative": true
    },
    "maxwell": {
@@ -5567,7 +5746,7 @@
      "[mass]": 0.5,
      "[time]": -1.0
     },
-    "factor": 3.1622776601683795e-05,
+    "factor": 0.001,
     "multiplicative": true
    },
    "mean_international_ampere": {
@@ -5584,7 +5763,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.00049,
+    "factor": 1000.4900000000001,
     "multiplicative": true
    },
    "mean_international_volt": {
@@ -5594,7 +5773,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.00034,
+    "factor": 1000.34,
     "multiplicative": true
    },
    "mercury_density_0C": {
@@ -5602,7 +5781,7 @@
      "[length]": -3.0,
      "[mass]": 1.0
     },
-    "factor": 13595.1,
+    "factor": 13595100.0,
     "multiplicative": true
    },
    "mercury_density_32F": {
@@ -5610,7 +5789,7 @@
      "[length]": -3.0,
      "[mass]": 1.0
     },
-    "factor": 13595.1,
+    "factor": 13595100.0,
     "multiplicative": true
    },
    "mercury_density_60F": {
@@ -5618,7 +5797,7 @@
      "[length]": -3.0,
      "[mass]": 1.0
     },
-    "factor": 13556.800000000001,
+    "factor": 13556800.0,
     "multiplicative": true
    },
    "meter": {
@@ -5634,7 +5813,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 9806.65,
+    "factor": 9806650.0,
     "multiplicative": true
    },
    "meter_H2O_4C": {
@@ -5643,7 +5822,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 9806.3754138,
+    "factor": 9806375.4138,
     "multiplicative": true
    },
    "meter_H2O_60F": {
@@ -5652,7 +5831,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 9796.853156649999,
+    "factor": 9796853.15665,
     "multiplicative": true
    },
    "meter_Hg": {
@@ -5661,7 +5840,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 133322.387415,
+    "factor": 133322387.41499999,
     "multiplicative": true
    },
    "meter_Hg_0C": {
@@ -5670,7 +5849,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 133322.387415,
+    "factor": 133322387.41499999,
     "multiplicative": true
    },
    "meter_Hg_32F": {
@@ -5679,7 +5858,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 133322.387415,
+    "factor": 133322387.41499999,
     "multiplicative": true
    },
    "meter_Hg_60F": {
@@ -5688,7 +5867,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 132946.79272,
+    "factor": 132946792.72,
     "multiplicative": true
    },
    "meter_per_second": {
@@ -5713,42 +5892,14 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 735.49875,
+    "factor": 735498.75,
     "multiplicative": true
    },
    "metric_ton": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 1000.0,
-    "multiplicative": true
-   },
-   "microgram": {
-    "dimensionality": {
-     "[mass]": 1.0
-    },
-    "factor": 1e-09,
-    "multiplicative": true
-   },
-   "microliter": {
-    "dimensionality": {
-     "[length]": 3.0
-    },
-    "factor": 1.0000000000000003e-09,
-    "multiplicative": true
-   },
-   "micrometer": {
-    "dimensionality": {
-     "[length]": 1.0
-    },
-    "factor": 1e-06,
-    "multiplicative": true
-   },
-   "micromole": {
-    "dimensionality": {
-     "[substance]": 1.0
-    },
-    "factor": 1e-06,
+    "factor": 1000000.0,
     "multiplicative": true
    },
    "micron": {
@@ -5794,7 +5945,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 1e-06,
+    "factor": 0.001,
     "multiplicative": true
    },
    "minim": {
@@ -5827,7 +5978,7 @@
      "[temperature]": -1.0,
      "[time]": -2.0
     },
-    "factor": 8.314462618153241,
+    "factor": 8314.46261815324,
     "multiplicative": true
    },
    "mole": {
@@ -5860,7 +6011,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 1.6749275005600005e-27,
+    "factor": 1.6749275005600003e-24,
     "multiplicative": true
    },
    "newton": {
@@ -5869,7 +6020,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.0,
+    "factor": 1000.0,
     "multiplicative": true
    },
    "newtonian_constant_of_gravitation": {
@@ -5878,7 +6029,7 @@
      "[mass]": -1.0,
      "[time]": -2.0
     },
-    "factor": 6.6743e-11,
+    "factor": 6.674299999999999e-14,
     "multiplicative": true
    },
    "nit": {
@@ -5909,7 +6060,7 @@
      "[length]": 1.0,
      "[mass]": -1.0
     },
-    "factor": 1693.3618173515572,
+    "factor": 1.6933618173515572,
     "multiplicative": true
    },
    "number_meter": {
@@ -5917,7 +6068,7 @@
      "[length]": 1.0,
      "[mass]": -1.0
     },
-    "factor": 1000.0,
+    "factor": 1.0,
     "multiplicative": true
    },
    "octave": {
@@ -5931,7 +6082,7 @@
      "[mass]": 0.5,
      "[time]": -1.0
     },
-    "factor": 0.3162277660168379,
+    "factor": 10.0,
     "multiplicative": true
    },
    "ohm": {
@@ -5941,7 +6092,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.0,
+    "factor": 1000.0,
     "multiplicative": true
    },
    "oil_barrel": {
@@ -5955,7 +6106,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 0.028349523125000005,
+    "factor": 28.349523125000005,
     "multiplicative": true
    },
    "parsec": {
@@ -5978,7 +6129,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.0,
+    "factor": 1000.0,
     "multiplicative": true
    },
    "peak_sun_hour": {
@@ -5986,7 +6137,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 3600000.0,
+    "factor": 3600000000.0,
     "multiplicative": true
    },
    "peck": {
@@ -6000,7 +6151,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 0.00155517384,
+    "factor": 1.5551738400000001,
     "multiplicative": true
    },
    "percent": {
@@ -6061,7 +6212,7 @@
      "[mass]": 1.0,
      "[time]": -1.0
     },
-    "factor": 6.626070150000001e-34,
+    "factor": 6.62607015e-31,
     "multiplicative": true
    },
    "planck_current": {
@@ -6082,7 +6233,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 2.176434342717899e-08,
+    "factor": 2.176434342717899e-05,
     "multiplicative": true
    },
    "planck_temperature": {
@@ -6112,14 +6263,14 @@
      "[mass]": 1.0,
      "[time]": -1.0
     },
-    "factor": 0.1,
+    "factor": 100.0,
     "multiplicative": true
    },
    "pound": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 0.4535923700000001,
+    "factor": 453.5923700000001,
     "multiplicative": true
    },
    "pound_force_per_square_inch": {
@@ -6128,7 +6279,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 6894.7572931683635,
+    "factor": 6894757.293168363,
     "multiplicative": true
    },
    "poundal": {
@@ -6137,7 +6288,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 0.138254954376,
+    "factor": 138.254954376,
     "multiplicative": true
    },
    "ppm": {
@@ -6149,7 +6300,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 1.67262192595e-27,
+    "factor": 1.67262192595e-24,
     "multiplicative": true
    },
    "quadrillion_Btu": {
@@ -6158,7 +6309,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.055056e+18,
+    "factor": 1.055056e+21,
     "multiplicative": true
    },
    "quart": {
@@ -6172,7 +6323,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 12.70058636,
+    "factor": 12700.586360000001,
     "multiplicative": true
    },
    "query": {
@@ -6213,7 +6364,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 3516.8533333333335,
+    "factor": 3516853.3333333335,
     "multiplicative": true
    },
    "rem": {
@@ -6251,7 +6402,7 @@
      "[mass]": 1.0,
      "[time]": -1.0
     },
-    "factor": 6894.7572931683635,
+    "factor": 6894757.293168363,
     "multiplicative": true
    },
    "rhe": {
@@ -6260,7 +6411,7 @@
      "[mass]": -1.0,
      "[time]": 1.0
     },
-    "factor": 10.0,
+    "factor": 0.01,
     "multiplicative": true
    },
    "rod": {
@@ -6276,7 +6427,7 @@
      "[mass]": -1.0,
      "[time]": 1.0
     },
-    "factor": 0.000258,
+    "factor": 2.58e-07,
     "multiplicative": true
    },
    "rutherford": {
@@ -6292,7 +6443,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 2.179872361102989e-18,
+    "factor": 2.1798723611029893e-15,
     "multiplicative": true
    },
    "rydberg_constant": {
@@ -6320,7 +6471,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 0.0012959782,
+    "factor": 1.2959782,
     "multiplicative": true
    },
    "second": {
@@ -6387,7 +6538,7 @@
      "[mass]": -1.0,
      "[time]": 3.0
     },
-    "factor": 1.0,
+    "factor": 0.001,
     "multiplicative": true
    },
    "sievert": {
@@ -6402,14 +6553,14 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 175.12683524647645,
+    "factor": 175126.83524647643,
     "multiplicative": true
    },
    "slug": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 14.59390293720637,
+    "factor": 14593.902937206369,
     "multiplicative": true
    },
    "sound_pressure_level": {
@@ -6418,7 +6569,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 2e-05,
+    "factor": 0.02,
     "multiplicative": true
    },
    "span": {
@@ -6496,7 +6647,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 101325.0,
+    "factor": 101325000.0,
     "multiplicative": true
    },
    "standard_gravity": {
@@ -6513,7 +6664,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.6887500000000004,
+    "factor": 1688.7500000000005,
     "multiplicative": true
    },
    "statampere": {
@@ -6522,7 +6673,7 @@
      "[mass]": 0.5,
      "[time]": -2.0
     },
-    "factor": 3.1622776601683795e-05,
+    "factor": 0.001,
     "multiplicative": true
    },
    "statfarad": {
@@ -6561,7 +6712,7 @@
      "[length]": -1.5,
      "[mass]": 0.5
     },
-    "factor": 31.622776601683793,
+    "factor": 1000.0,
     "multiplicative": true
    },
    "statvolt": {
@@ -6570,7 +6721,7 @@
      "[mass]": 0.5,
      "[time]": -1.0
     },
-    "factor": 0.0031622776601683794,
+    "factor": 0.1,
     "multiplicative": true
    },
    "statweber": {
@@ -6578,7 +6729,7 @@
      "[length]": 0.5,
      "[mass]": 0.5
     },
-    "factor": 0.0031622776601683794,
+    "factor": 0.1,
     "multiplicative": true
    },
    "stefan_boltzmann_constant": {
@@ -6587,7 +6738,7 @@
      "[temperature]": -4.0,
      "[time]": -3.0
     },
-    "factor": 5.670374419184431e-08,
+    "factor": 5.670374419184431e-05,
     "multiplicative": true
    },
    "steradian": {
@@ -6622,7 +6773,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 6.35029318,
+    "factor": 6350.293180000001,
     "multiplicative": true
    },
    "strain": {
@@ -6691,7 +6842,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 98066.5,
+    "factor": 98066500.0,
     "multiplicative": true
    },
    "tesla": {
@@ -6700,7 +6851,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.0,
+    "factor": 1000.0,
     "multiplicative": true
    },
    "tex": {
@@ -6708,7 +6859,7 @@
      "[length]": -1.0,
      "[mass]": 1.0
     },
-    "factor": 1e-06,
+    "factor": 0.001,
     "multiplicative": true
    },
    "tex_cicero": {
@@ -6745,7 +6896,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 105505600.0,
+    "factor": 105505600000.0,
     "multiplicative": true
    },
    "thermochemical_british_thermal_unit": {
@@ -6754,7 +6905,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1054.3502644888893,
+    "factor": 1054350.2644888891,
     "multiplicative": true
    },
    "thomson_cross_section": {
@@ -6775,7 +6926,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 907.1847400000001,
+    "factor": 907184.7400000001,
     "multiplicative": true
    },
    "ton_TNT": {
@@ -6784,7 +6935,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 4184000000.0,
+    "factor": 4184000000000.0,
     "multiplicative": true
    },
    "tonne_of_oil_equivalent": {
@@ -6793,7 +6944,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 41868000000.0,
+    "factor": 41868000000000.0,
     "multiplicative": true
    },
    "torr": {
@@ -6802,7 +6953,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 133.32236842105263,
+    "factor": 133322.36842105264,
     "multiplicative": true
    },
    "townsend": {
@@ -6812,7 +6963,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1e-21,
+    "factor": 9.999999999999999e-19,
     "multiplicative": true
    },
    "tropical_month": {
@@ -6833,14 +6984,14 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 0.03110347680000001,
+    "factor": 31.103476800000006,
     "multiplicative": true
    },
    "troy_pound": {
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 0.3732417216000001,
+    "factor": 373.24172160000006,
     "multiplicative": true
    },
    "turn": {
@@ -6852,7 +7003,7 @@
     "dimensionality": {
      "[mass]": 1.0
     },
-    "factor": 1.6605390689200003e-27,
+    "factor": 1.66053906892e-24,
     "multiplicative": true
    },
    "unit_pole": {
@@ -6862,7 +7013,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.2566370612696005e-07,
+    "factor": 0.00012566370612696005,
     "multiplicative": true
    },
    "vacuum_permeability": {
@@ -6872,7 +7023,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.2566370612696005e-06,
+    "factor": 0.0012566370612696004,
     "multiplicative": true
    },
    "vacuum_permittivity": {
@@ -6882,7 +7033,7 @@
      "[mass]": -1.0,
      "[time]": 4.0
     },
-    "factor": 8.854187818792247e-12,
+    "factor": 8.854187818792248e-15,
     "multiplicative": true
    },
    "volt": {
@@ -6892,7 +7043,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.0,
+    "factor": 1000.0,
     "multiplicative": true
    },
    "volt_ampere": {
@@ -6901,7 +7052,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.0,
+    "factor": 1000.0,
     "multiplicative": true
    },
    "von_klitzing_constant": {
@@ -6911,7 +7062,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 25812.807459304513,
+    "factor": 25812807.45930451,
     "multiplicative": true
    },
    "water_density_4C": {
@@ -6919,7 +7070,7 @@
      "[length]": -3.0,
      "[mass]": 1.0
     },
-    "factor": 999.972,
+    "factor": 999972.0,
     "multiplicative": true
    },
    "water_density_60F": {
@@ -6927,7 +7078,7 @@
      "[length]": -3.0,
      "[mass]": 1.0
     },
-    "factor": 999.001,
+    "factor": 999001.0,
     "multiplicative": true
    },
    "watt": {
@@ -6936,7 +7087,7 @@
      "[mass]": 1.0,
      "[time]": -3.0
     },
-    "factor": 1.0,
+    "factor": 1000.0,
     "multiplicative": true
    },
    "watt_hour": {
@@ -6945,7 +7096,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 3600.0,
+    "factor": 3600000.0,
     "multiplicative": true
    },
    "weber": {
@@ -6955,7 +7106,7 @@
      "[mass]": 1.0,
      "[time]": -2.0
     },
-    "factor": 1.0,
+    "factor": 1000.0,
     "multiplicative": true
    },
    "week": {

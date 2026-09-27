@@ -1,0 +1,6 @@
+about: >-
+  A node declared in terabytes whose formula produces a pure number. Bytes are information in the
+  book's registry, so the unit pass refuses it.
+expect:
+  - units.declared-vs-produced
+  - scenario.does-not-evaluate

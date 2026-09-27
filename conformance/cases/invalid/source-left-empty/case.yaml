@@ -1,0 +1,5 @@
+about: >-
+  An input whose source is written with nothing after it. YAML reads that as nothing, and the
+  source is empty.
+expect:
+  - input.empty-source

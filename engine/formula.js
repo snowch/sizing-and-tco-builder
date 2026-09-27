@@ -653,6 +653,12 @@ function convert(node, text, where) {
       if (node.keywords.length) {
         throw new FormulaError("load.formula-keywords", `${where}: ${node.func.id}() takes positional arguments only`);
       }
+      if ((node.func.id === "min" || node.func.id === "max") && node.args.length < 2) {
+        throw new FormulaError(
+          "load.formula-arity",
+          `${where}: '${text}' takes the ${node.func.id} of fewer than two things, which is either a mistake or the thing itself`,
+        );
+      }
       return { op: "call", fn: node.func.id, args: node.args.map((arg) => convert(arg, text, where)) };
     }
     default:

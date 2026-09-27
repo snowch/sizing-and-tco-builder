@@ -1,0 +1,17 @@
+{
+ "about": "A formula that takes the min of one thing. The parser refuses fewer than two.",
+ "files": {
+  "model.yaml": "dsl: 1\nmodel: tiny\ntitle: Min of one\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  least:\n    kind: derived\n    unit: dimensionless\n    formula: min(utilisation)\n\noutputs:\n  - least\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "invalid/formula-min-of-one",
+ "load": {
+  "code": "load.formula-arity",
+  "exception": "FormulaError",
+  "message": "_builder_conformance/formula-min-of-one/model.yaml: node 'least': 'min(utilisation)' takes the min of fewer than two things, which is either a mistake or the thing itself",
+  "node": "least",
+  "ok": false
+ },
+ "path": "_builder_conformance/formula-min-of-one/model.yaml",
+ "results": {}
+}

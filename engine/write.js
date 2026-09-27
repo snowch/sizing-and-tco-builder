@@ -22,6 +22,7 @@
  */
 
 import { oneShape } from "./evaluate.js";
+import { DSL_VERSION } from "./model.js";
 import { floatRepr, isDict, isInt, str } from "./python.js";
 
 const WIDTH = 96;
@@ -126,7 +127,7 @@ function distribution(d) {
 /* The document as the book's model file. */
 export function writeModel(doc) {
   const out = [];
-  if (doc.dsl !== undefined && doc.dsl !== null) out.push(`dsl: ${scalar(doc.dsl)}`);
+  if (doc.dsl !== undefined && doc.dsl !== null) out.push(`dsl: ${number(doc.dsl)}`);
   out.push(`model: ${scalar(doc.model)}`);
   if (doc.title !== undefined && doc.title !== null) out.push(`title: ${prose(doc.title, 2)}`);
   out.push(`currency: ${scalar(doc.currency ?? "USD")}`);
@@ -226,7 +227,7 @@ export function documentFrom(model) {
     }
   }
   const correlations = model.correlations.map((pair) => {
-    if (!isDict(pair) || !["a", "b", "rho"].every((k) => pair.has(k)) || typeof numberOf(pair.get("rho")) !== "number") {
+    if (!isDict(pair) || !["a", "b", "rho"].every((k) => pair.has(k)) || typeof pair.get("rho") === "boolean" || typeof numberOf(pair.get("rho")) !== "number") {
       throw new Unwritable("a correlation needs a, b and a number rho");
     }
     const out = { a: str(pair.get("a")), b: str(pair.get("b")), rho: numberOf(pair.get("rho")) };
@@ -234,6 +235,8 @@ export function documentFrom(model) {
     return out;
   });
   return {
+    // The loader has already refused any version but this one; a file that did not say keeps not saying.
+    dsl: model.dsl === null || model.dsl === undefined ? null : DSL_VERSION,
     model: model.name,
     title: model.title,
     currency: model.currency,

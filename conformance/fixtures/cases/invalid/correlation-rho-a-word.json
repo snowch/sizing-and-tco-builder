@@ -1,0 +1,237 @@
+{
+ "about": "A correlation whose rho is written as yes, which YAML reads as true.",
+ "files": {
+  "model.yaml": "dsl: 1\nmodel: tiny\ntitle: A word\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  a_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    distribution: {uniform: {minimum: 100.0, maximum: 300.0}}\n    provenance: {kind: assumption, source: \"uniform: the bounds are all that is known\"}\n\n  b_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    distribution: {uniform: {minimum: 100.0, maximum: 300.0}}\n    provenance: {kind: assumption, source: \"uniform: the bounds are all that is known\"}\n\n  all_rates:\n    kind: derived\n    unit: request/second\n    formula: a_rate + b_rate\n\noutputs:\n  - utilisation\n  - all_rates\n\ncorrelations:\n  - {a: a_rate, b: b_rate, rho: yes, because: \"stated for this case\"}\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "invalid/correlation-rho-a-word",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "definitional",
+  "correlations": [
+   {
+    "a": "a_rate",
+    "b": "b_rate",
+    "because": "stated for this case",
+    "rho": true
+   }
+  ],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "a_rate",
+   "b_rate",
+   "all_rates",
+   "cores",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "utilisation"
+  ],
+  "outputs": [
+   "utilisation",
+   "all_rates"
+  ],
+  "title": "A word",
+  "unit_problems": 0,
+  "unmeasured": []
+ },
+ "nodes": {
+  "a_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": {
+    "uniform": {
+     "maximum": 300.0,
+     "minimum": 100.0
+    }
+   },
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "uniform: the bounds are all that is known"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": null
+  },
+  "all_rates": {
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "a_rate",
+      "op": "ref"
+     },
+     {
+      "name": "b_rate",
+      "op": "ref"
+     }
+    ],
+    "op": "+"
+   },
+   "kind": "derived",
+   "magnitude": 400.0,
+   "unit": "request/second"
+  },
+  "b_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": {
+    "uniform": {
+     "maximum": 300.0,
+     "minimum": 100.0
+    }
+   },
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "uniform: the bounds are all that is known"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": null
+  },
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.25,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/correlation-rho-a-word/model.yaml",
+ "results": {},
+ "scenarios": {
+  "reference": {
+   "ceilings": {},
+   "overrides": {},
+   "point": {
+    "a_rate": 200.0,
+    "all_rates": 400.0,
+    "b_rate": 200.0,
+    "busy_cores": 4.0,
+    "cores": 16.0,
+    "request_rate": 200.0,
+    "service_demand": 0.02,
+    "utilisation": 0.25
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": false,
+  "problems": [
+   {
+    "code": "correlation.rho",
+    "message": "_builder_conformance/correlation-rho-a-word/model.yaml: the correlation between 'a_rate' and 'b_rate' has rho True; it is a number between -1 and 1",
+    "part": null,
+    "rule": "2"
+   }
+  ]
+ }
+}

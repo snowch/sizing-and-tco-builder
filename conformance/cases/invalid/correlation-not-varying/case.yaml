@@ -1,0 +1,5 @@
+about: >-
+  A correlation between two inputs that have no shape. Only quantities that vary can move
+  together.
+expect:
+  - correlation.not-varying

@@ -1,4 +1,4 @@
 about: >-
-  A node with no unit.
+  A node with no unit. The book refuses a blank unit: a pure ratio is written dimensionless.
 expect:
-  - load.missing-field
+  - load.no-unit

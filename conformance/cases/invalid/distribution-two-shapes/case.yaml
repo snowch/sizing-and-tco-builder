@@ -1,5 +1,5 @@
 about: >-
-  An input declaring two shapes, whose source names neither. The verifier falls over building
-  its message.
+  An input that declares two shapes. The verifier reports it, and the scenario does not evaluate.
 expect:
-  - verifier.crashed
+  - input.no-one-shape
+  - scenario.does-not-evaluate

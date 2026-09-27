@@ -1,3 +1,4 @@
+dsl: 1
 model: tiny
 title: sqrt then divide by zero
 currency: USD

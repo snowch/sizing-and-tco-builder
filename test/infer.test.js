@@ -73,7 +73,11 @@ test("the words for a unit", () => {
   assert.equal(words("USD/TB/month"), "rate");
   assert.equal(words("USD/host"), "ratio");
   assert.equal(words("core/host"), "ratio");
-  assert.match(describe(registry.describe(u("TB")).dimensionality, u("TB")).words, /pure number/);
+  assert.equal(words("EUR/month"), "rate");
+  assert.equal(describe(registry.describe(u("TB")).dimensionality).words, "an amount of data.");
+  assert.equal(describe(registry.describe(u("EUR")).dimensionality).words, "an amount of money.");
+  assert.equal(describe(registry.describe(u("USD/TB/month")).dimensionality).words, "a rate: money per unit of data per unit of time.");
+  assert.equal(describe(registry.describe(u("core/host")).dimensionality).words, "a ratio: cores per host.");
 });
 
 test("a formatted unit uses the shortest spelling that reads back as itself", () => {

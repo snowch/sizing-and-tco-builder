@@ -292,7 +292,8 @@ function mixedOperands(tree, quantities, q) {
   if (tree.op === "const" || tree.op === "ref") return [];
   const args = tree.args ?? [];
   const problems = args.flatMap((arg) => mixedOperands(arg, quantities, q));
-  const produced = args.map((arg) => unitKey(unitWalk(arg, quantities, q)));
+  // A literal zero meets any unit: max(0, need - held) is what is left over, or nothing.
+  const produced = args.filter((arg) => !(arg.op === "const" && Number(arg.value?.value ?? arg.value) === 0)).map((arg) => unitKey(unitWalk(arg, quantities, q)));
   const meets = tree.op === "+" || tree.op === "-" || (tree.op === "call" && (tree.fn === "min" || tree.fn === "max"));
   if (meets && new Set(produced).size > 1) problems.push([...new Set(produced)].join(" and "));
   return problems;

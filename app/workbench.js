@@ -263,17 +263,11 @@ export function checks(state, judged) {
   for (const p of r.verify.problems) {
     const [template, chapter] = PROBLEM_WORDS[p.code] ?? [p.code, null];
     const part = p.part ? `'s ${p.part === "limit" ? "limit" : "margin"}` : "";
-    let text = template.replace("{node}", p.node ?? "").replace("{part}", part).replace("{scenario}", p.scenario ?? "");
+    let text = template.replace("{node}", p.node ?? "something").replace("{part}", part).replace("{scenario}", p.scenario ?? "");
     if (p.cause) text += `: ${CAUSE_WORDS[p.cause] ?? p.cause}`;
     out.push({ level: "fail", text, chapter, code: p.code, node: p.node, detail: p.detail });
   }
   if (r.verify.crashed) out.push({ level: "fail", text: "The book's checks cannot read this file through to the end", detail: r.verify.crashed.message });
-  // What the builder asks for and the book does not check (BOOK-REQUESTS 7). Said as that.
-  for (const pair of state.doc.correlations) {
-    if (!(pair.because ?? "").trim()) {
-      out.push({ level: "warn", text: `${pair.a} and ${pair.b} move together with no reason given. The book does not check this; the builder asks.`, chapter: "correlation_and_convergence" });
-    }
-  }
   if (!out.some((c) => c.level === "fail")) out.unshift({ level: "pass", text: "Every check the book's build makes passes." });
   return out;
 }

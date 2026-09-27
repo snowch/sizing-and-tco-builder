@@ -1,8 +1,8 @@
 {
  "about": "",
  "files": {
-  "model.yaml": "model: observability\ntitle: An observability platform — metrics, logs and traces\ncurrency: USD\n\ndescription: >-\n  The book's second model, and the counterweight to the web service. Three multiplicative\n  chains hang off the same few roots, so they are correlated whether or not anybody says so; label\n  cardinality is a product of uncertain counts and therefore dominates everything downstream of\n  it; the control knobs are sampling and retention rather than money; and there are three separate\n  outputs with three separate ceilings, which no single number can summarise.\n\n  It also has a hole in it. Spans per request is a property of somebody's instrumented\n  application, not of any corpus or any machine, so this repository cannot measure it — and the\n  whole traces chain is therefore shown as unmeasured rather than filled in with a plausible\n  number. That is not a gap waiting to be tidied up. It is what an honest sizing model looks like\n  before the measurement is taken, and it is on a published page for exactly that reason.\n\nnodes:\n\n  # -- shared roots ---------------------------------------------------------------------------\n  # Everything below flows from these five. That is what makes the three chains correlated by\n  # construction: they are not three models, they are one estate seen three ways.\n\n  hosts:\n    kind: input\n    decided: outside\n    unit: host\n    value: 1200\n    note: >-\n      No band: an estate is a thing you can count, and this one has been counted. What it does\n      next is growth_factor's business, not this node's.\n    provenance: {kind: assumption, source: \"stated estate size (ch02)\"}\n    range: [50, 3000]\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    distribution: {triangular: {minimum: 8000.0, likely: 25000.0, maximum: 90000.0}}\n    provenance:\n      kind: assumption\n      source: \"ch03 — the busy hour across the estate, not the daily mean. Triangular: a\n        minimum, a likely and a maximum is the whole of what a dashboard gives you, and the\n        maximum is the busiest hour anybody has looked at rather than the busiest one there\n        will be\"\n    range: [2000, 200000]\n\n  annual_growth:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {lognormal: {p10: 1.15, p90: 1.70}}\n    provenance:\n      kind: assumption\n      source: \"ch04 — telemetry grows faster than the traffic it describes, because teams add\n        instrumentation as well as load. Lognormal like any growth rate — it compounds and\n        cannot go negative — and wider than the web service's for the same reason its\n        median is higher\"\n\n  horizon:\n    kind: input\n    decided: you\n    unit: year\n    value: 3\n    provenance: {kind: assumption, source: \"the planning horizon for this platform\"}\n    range: [1, 5]\n\n  one_year:\n    kind: input\n    decided: definition\n    unit: year\n    value: 1\n    note: \"as in the web service model: an exponent has to be a pure number\"\n    provenance: {kind: fact, source: \"definition\"}\n\n  horizon_periods:\n    kind: derived\n    unit: dimensionless\n    formula: horizon / one_year\n\n  growth_factor:\n    kind: derived\n    unit: dimensionless\n    formula: annual_growth ** horizon_periods\n\n  # -- label cardinality: the combinatorial node ------------------------------------------------\n\n  label_values_endpoint:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {triangular: {minimum: 2.0, likely: 6.0, maximum: 20.0}}\n    provenance:\n      kind: assumption\n      source: \"distinct routes appearing as a label value. Triangular because somebody could\n        go and count them this afternoon; the maximum is the routes that exist today, and a\n        new service adds to it\"\n\n  label_values_status:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {triangular: {minimum: 2.0, likely: 3.0, maximum: 6.0}}\n    provenance:\n      kind: assumption\n      source: \"distinct status classes kept as a label. Triangular, and the one input in this\n        model whose bounds are genuinely hard: a request cannot carry a status the code does\n        not emit\"\n\n  label_values_accidental:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    label: accidental label values\n    note: >-\n      The label nobody planned. A pod name under a rolling deploy, a customer id added during an\n      incident, a version string. Lognormal and wide, because the failure mode is multiplicative:\n      whatever it is, it multiplies every series that carries it, and the distribution has to be\n      able to express \"usually nothing, occasionally catastrophic\".\n    distribution: {lognormal: {p10: 1.0, p90: 6.0}}\n    provenance:\n      kind: assumption\n      source: \"ch08 — the cardinality explosion, as a distribution rather than as a warning.\n        Lognormal because this one has no ceiling: a label carrying a user id multiplies the\n        series count by a number nobody chose, and a triangular would assert a maximum that\n        does not exist\"\n\n  label_cardinality:\n    kind: derived\n    unit: dimensionless\n    label: label cardinality\n    note: >-\n      A product of uncertain counts, which is why it is lognormal-ish whether or not anybody chose\n      that, and why it dominates the tornado for every metrics figure in this model. Multiplying\n      three quantities that are each uncertain by a factor of three gives one uncertain by a\n      factor of twenty-seven, and no amount of care about the other inputs recovers that.\n    formula: label_values_endpoint * label_values_status * label_values_accidental\n\n  # -- chain one: metrics ------------------------------------------------------------------------\n\n  base_metrics_per_host:\n    kind: input\n    decided: outside\n    unit: series/host\n    value: 60\n    label: metric names per host\n    note: >-\n      No band: scrape one host and list them. The uncertainty in this chain is what the labels\n      multiply that list by, and label_cardinality carries it.\n    provenance: {kind: assumption, source: \"distinct metric names exposed per host, before labels\"}\n    range: [10, 400]\n\n  active_series:\n    kind: derived\n    unit: series\n    formula: hosts * base_metrics_per_host * label_cardinality * growth_factor\n\n  scrape_interval:\n    kind: input\n    decided: you\n    unit: second\n    value: 30\n    provenance: {kind: assumption, source: \"a control knob (ch12): doubling it halves the metrics\n      chain and loses resolution that cannot be recovered afterwards\"}\n    range: [10, 120]\n\n  one_sample_per_series:\n    kind: input\n    decided: definition\n    unit: sample/series\n    value: 1\n    note: \"one scrape takes one sample from one series. A rate is a count over a duration, and the\n      count needs a unit before the division means anything\"\n    provenance: {kind: fact, source: \"definition\"}\n\n  sample_rate:\n    kind: derived\n    unit: sample/series/second\n    formula: one_sample_per_series / scrape_interval\n\n  metrics_sample_bytes:\n    kind: measured\n    unit: byte/sample\n    label: bytes per sample, compressed\n    result: metrics-sample-bytes\n\n  metrics_ingest:\n    kind: derived\n    unit: MB/s\n    label: metrics ingest\n    formula: active_series * sample_rate * metrics_sample_bytes\n\n  metrics_retention:\n    kind: input\n    decided: you\n    unit: day\n    value: 400\n    provenance: {kind: assumption, source: \"a control knob (ch12)\"}\n    range: [15, 800]\n\n  metrics_stored:\n    kind: derived\n    unit: TB\n    formula: metrics_ingest * metrics_retention\n\n  # -- chain two: logs ----------------------------------------------------------------------------\n\n  lines_per_request:\n    kind: input\n    decided: outside\n    unit: line/request\n    distribution: {triangular: {minimum: 3.0, likely: 9.0, maximum: 30.0}}\n    provenance:\n      kind: assumption\n      source: \"application log lines emitted per request served. Triangular, from reading a\n        sample of the logs — and the maximum is the part to distrust, because a debug flag\n        left on in production is outside it\"\n\n  log_keep_rate:\n    kind: input\n    decided: you\n    unit: dimensionless\n    value: 1.0\n    label: fraction of log lines kept\n    provenance: {kind: assumption, source: \"a control knob (ch12): drop and aggregation rules\"}\n    range: [0.05, 1.0]\n\n  log_line_rate:\n    kind: derived\n    unit: line/second\n    formula: request_rate * lines_per_request * log_keep_rate * growth_factor\n\n  logs_line_bytes:\n    kind: measured\n    unit: byte/line\n    label: bytes per log line, compressed\n    result: logs-line-bytes\n\n  logs_ingest:\n    kind: derived\n    unit: MB/s\n    label: logs ingest\n    formula: log_line_rate * logs_line_bytes\n\n  logs_retention:\n    kind: input\n    decided: you\n    unit: day\n    value: 30\n    provenance: {kind: assumption, source: \"a control knob (ch12)\"}\n    range: [3, 365]\n\n  logs_stored:\n    kind: derived\n    unit: TB\n    formula: logs_ingest * logs_retention\n\n  # -- chain three: traces, and the constant nobody has measured ------------------------------------\n\n  spans_per_request:\n    kind: measured\n    unit: span/request\n    label: spans per request\n    note: >-\n      Not measurable from anything in this repository. It is a property of one instrumented\n      application at one version, so it belongs to the `estate` target — an observation somebody\n      takes of a system they run, disclosed rather than verified (ch03). Until somebody takes it,\n      every figure below is absent rather than estimated.\n    result: traces-spans-per-request\n\n  trace_keep_rate:\n    kind: input\n    decided: you\n    unit: dimensionless\n    value: 0.05\n    label: trace sampling rate\n    provenance: {kind: assumption, source: \"a control knob (ch12), and the one with the widest\n      range: head sampling at 1% and at 100% are two different platforms\"}\n    range: [0.001, 1.0]\n\n  span_rate:\n    kind: derived\n    unit: span/second\n    formula: request_rate * spans_per_request * trace_keep_rate * growth_factor\n\n  traces_span_bytes:\n    kind: measured\n    unit: byte/span\n    label: bytes per span, compressed\n    result: traces-span-bytes\n\n  traces_ingest:\n    kind: derived\n    unit: MB/s\n    label: traces ingest\n    formula: span_rate * traces_span_bytes\n\n  traces_retention:\n    kind: input\n    decided: you\n    unit: day\n    value: 14\n    provenance: {kind: assumption, source: \"a control knob (ch12)\"}\n    range: [1, 90]\n\n  traces_stored:\n    kind: derived\n    unit: TB\n    formula: traces_ingest * traces_retention\n\n  # -- output one: the ingest pipeline ---------------------------------------------------------------\n\n  known_ingest:\n    kind: derived\n    unit: MB/s\n    label: ingest, metrics and logs only\n    note: >-\n      Metrics plus logs, and deliberately *not* the total. It is a lower bound with a whole chain\n      missing from it, and ch19 is about exactly this shape of error: a number that is correct\n      arithmetic over an incomplete structure looks identical to a number that is right.\n    formula: metrics_ingest + logs_ingest\n\n  total_ingest:\n    kind: derived\n    unit: MB/s\n    formula: metrics_ingest + logs_ingest + traces_ingest\n\n  collector_cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the sizing decision for the ingest tier\"}\n    range: [8, 512]\n\n  collector_throughput_quoted:\n    kind: input\n    decided: outside\n    unit: MB/s/core\n    value: 6\n    note: >-\n      No band, and giving a quote one would be inventing a range nobody quoted. A vendor states a\n      single number; the spread belongs to the measurement, and collector_throughput_measured\n      below carries it with a standard error.\n    provenance:\n      kind: vendor_claim\n      source: \"throughput per core as documented by the collector. Unverified here, and marked as\n        a claim in every figure it appears in\"\n\n  collector_throughput_measured:\n    kind: measured\n    unit: MB/s/core\n    label: collector throughput per core, measured\n    note: >-\n      The same quantity as the node above, taken rather than quoted. It needs the reference\n      machine (`rig`) and nobody has run it, so the ceiling built on it is absent while the\n      ceiling built on the vendor's claim is not. Reading those two rows next to each other is\n      most of ch03.\n    result: collector-throughput-per-core\n\n  quoted_pipeline_capacity:\n    kind: derived\n    unit: MB/s\n    formula: collector_cores * collector_throughput_quoted\n\n  measured_pipeline_capacity:\n    kind: derived\n    unit: MB/s\n    formula: collector_cores * collector_throughput_measured\n\n  quoted_pipeline_utilisation:\n    kind: ceiling\n    unit: dimensionless\n    label: ingest utilisation, quoted\n    of: known_ingest / quoted_pipeline_capacity\n    limit: 1\n    headroom: 0.4\n    because: >-\n      A queueing ceiling, not a capacity one (ch06), so the margin is large: a pipeline at 80% of\n      quoted throughput has a queue in front of it, and a queue in front of an ingest pipeline is\n      dropped telemetry exactly when something is going wrong. Understated twice over — the\n      numerator excludes traces and the denominator is a vendor's claim.\n\n  pipeline_utilisation:\n    kind: ceiling\n    unit: dimensionless\n    label: ingest utilisation, measured\n    of: total_ingest / measured_pipeline_capacity\n    limit: 1\n    headroom: 0.4\n    because: >-\n      The honest version of the row above, and it cannot be computed. Both halves are missing a\n      measurement, which is the correct output of this model today.\n\n  # -- output two: the retention store -----------------------------------------------------------\n\n  usable_tb_per_node:\n    kind: input\n    decided: you\n    unit: TB/node\n    value: 40\n    provenance: {kind: assumption, source: \"usable capacity per storage node after replication\"}\n    range: [20, 400]\n\n  store_nodes:\n    kind: input\n    decided: you\n    unit: node\n    value: 12\n    provenance: {kind: assumption, source: \"the sizing decision for the retention tier\"}\n    range: [5, 400]\n\n  installed_usable:\n    kind: derived\n    unit: TB\n    formula: store_nodes * usable_tb_per_node\n\n  known_stored:\n    kind: derived\n    unit: TB\n    label: stored, metrics and logs only\n    formula: metrics_stored + logs_stored\n\n  store_fill:\n    kind: ceiling\n    unit: dimensionless\n    label: retention store fill\n    of: known_stored / installed_usable\n    limit: 1\n    headroom: 0.3\n    because: >-\n      Capacity, with a rebuild reserve (ch11) — and again a lower bound, because the traces chain\n      is not in the numerator. A verdict of `ok` here means \"ok, ignoring traces\", which is a\n      different claim and one the reader should be made to notice.\n\n  # -- output three: the query path -----------------------------------------------------------------\n\n  queries_per_second:\n    kind: input\n    decided: outside\n    unit: query/second\n    distribution: {triangular: {minimum: 2.0, likely: 12.0, maximum: 60.0}}\n    provenance:\n      kind: assumption\n      source: \"dashboards, alert rules and people, at the busy hour. Triangular because two of\n        those three are countable and the third is not\"\n\n  series_per_query_base:\n    kind: input\n    decided: outside\n    unit: series/query\n    label: series per query, before labels\n    distribution: {triangular: {minimum: 40.0, likely: 300.0, maximum: 2000.0}}\n    provenance:\n      kind: assumption\n      source: \"how many distinct metric-name-and-host combinations one dashboard panel or alert\n        rule covers, before any label expansion. Triangular, and wide: dashboards differ from\n        each other more than anything else in this model does\"\n\n  series_per_query:\n    kind: derived\n    unit: series/query\n    note: >-\n      The same cardinality node that drives the metrics ingest chain drives this one too, by a\n      different route: a label that multiplies the series a scrape produces also multiplies the\n      series a query has to walk past to ignore. That is why one accidental label breaks two\n      ceilings at once, and why turning down scrape interval and retention — which fix the first\n      — does nothing at all for the second (ch12).\n    formula: series_per_query_base * label_cardinality\n\n  query_series_rate:\n    kind: derived\n    unit: series/second\n    formula: queries_per_second * series_per_query\n\n  query_nodes:\n    kind: input\n    decided: you\n    unit: node\n    value: 24\n    provenance: {kind: assumption, source: \"the sizing decision for the query tier\"}\n    range: [2, 120]\n\n  query_scan_rate_quoted:\n    kind: input\n    decided: outside\n    unit: series/second/node\n    value: 90000\n    note: >-\n      No band, for the same reason as the collector's quoted throughput: a quote is one number,\n      and widening it here would put a range in the vendor's mouth. Nobody has measured this one,\n      so nothing in this model disputes it yet.\n    provenance: {kind: vendor_claim, source: \"series scanned per second per query node, quoted\"}\n\n  query_capacity:\n    kind: derived\n    unit: series/second\n    formula: query_nodes * query_scan_rate_quoted\n\n  query_utilisation:\n    kind: ceiling\n    unit: dimensionless\n    label: query path utilisation\n    of: query_series_rate / query_capacity\n    limit: 1\n    headroom: 0.4\n    because: >-\n      Queueing again, and the tier where a breach is most visible: a dashboard that times out\n      during an incident is the failure people remember. Cardinality feeds this and the ingest\n      ceiling by different routes, so a single accidental label breaks both at once.\n\n  # -- a small cost tail ----------------------------------------------------------------------------\n\n  storage_price:\n    kind: input\n    decided: outside\n    unit: USD/TB/month\n    distribution: {lognormal: {p10: 9.0, p90: 24.0}}\n    provenance:\n      kind: assumption\n      source: \"all-in cost of a usable TB-month on this tier. Lognormal because it is a price —\n        and carried across by hand from whichever storage tier's unit economics somebody had to\n        hand, rather than by sampling, which is the seam ch18 is about\"\n\n  known_storage_cost:\n    kind: derived\n    unit: USD/month\n    label: retention cost, metrics and logs only\n    formula: known_stored * storage_price\n\noutputs:\n  - metrics_ingest\n  - logs_ingest\n  - traces_ingest\n  - traces_stored\n  - known_ingest\n  - known_stored\n  - active_series\n  - label_cardinality\n  - known_storage_cost\n  - store_fill\n  - quoted_pipeline_utilisation\n  - query_utilisation\n  - pipeline_utilisation\n\ncorrelations:\n  - a: annual_growth\n    b: label_values_accidental\n    rho: 0.5\n    because: >-\n      A platform that is growing is a platform that is being changed, and labels arrive with\n      changes. Treating the two as independent makes the metrics interval narrower than the\n      estate warrants — ch14 measures by how much.\n\n  - a: request_rate\n    b: lines_per_request\n    rho: 0.3\n    because: >-\n      Weak and positive: busier services tend to be the chattier ones. Small enough to be worth\n      including as an example of a correlation that barely matters, which is a useful thing for a\n      reader to see beside one that does.\n\n  - a: request_rate\n    b: queries_per_second\n    rho: 0.4\n    because: >-\n      A busier platform is one more people are watching. Moderate rather than strong: most query\n      load comes from alert rules and dashboards on timers, which do not care how busy anything\n      is — right up until an incident, when they all fire at once and nobody is looking at the\n      model.\n",
-  "scenarios/knobs_turned_down.yaml": "scenario: knobs_turned_down\ntitle: The four knobs, turned down\nbecause: >-\n  The same estate with every control knob moved: 60-second scrapes, 90-day metric retention, a\n  tenth of the log lines kept, and 1% trace sampling. Here so that ch12 can put a number on what\n  each knob buys — and so the reader can see that the knobs do not touch cardinality at all,\n  which is the input that dominates everything.\nsamples: 100000\nseed: 20260916\noverrides:\n  scrape_interval: 60\n  metrics_retention: 90\n  log_keep_rate: 0.1\n  trace_keep_rate: 0.01\n",
+  "model.yaml": "dsl: 1\nmodel: observability\ntitle: An observability platform — metrics, logs and traces\ncurrency: USD\n\ndescription: >-\n  The book's second model, and the counterweight to the web service. Three chains of\n  multiplications, metrics, logs and traces, share their roots, so they move together whether or not\n  the model says so. Label cardinality is a product of uncertain counts, and it drives the active\n  series count and the query path. The control knobs are sampling and retention, not money. Three\n  tiers—ingest, retention store and query path—carry four ceilings between them, and no single\n  number summarises them.\n\n  It has a gap in it: two measured constants have no measurement yet. Spans per request is an\n  `estate` observation: only a running system with instrumented applications can give it, not a body\n  of data or a machine. The traces chain needs it. Collector throughput per core is a `rig`\n  measurement, taken on the reference machine, and the measured ingest ceiling needs it. The figures\n  that depend on them are shown as not yet measured rather than filled in with a plausible number,\n  because a plausible number would print the same as a measured one.\n\nnodes:\n\n  # -- shared roots ---------------------------------------------------------------------------\n  # Everything below flows from these five. That is what makes the three chains correlated by\n  # construction: they are not three models, they are one estate seen three ways.\n\n  hosts:\n    kind: input\n    decided: outside\n    unit: host\n    value: 1200\n    note: >-\n      No band: an estate is a thing you can count, and this one has been counted. What it does\n      next is growth_factor's business, not this node's.\n    provenance: {kind: assumption, source: \"the estate's host count as stated by its operators\"}\n    range: [50, 3000]\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    distribution: {triangular: {minimum: 8000.0, likely: 25000.0, maximum: 90000.0}}\n    provenance:\n      kind: assumption\n      source: >-\n        ch04 — the busy hour across the estate, not the daily mean. Triangular, because a dashboard\n        gives a lowest, a typical and a highest value and nothing more. The maximum is the busiest\n        hour on record, not the busiest there will be\n    range: [2000, 200000]\n\n  annual_growth:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {lognormal: {p10: 1.15, p90: 1.70}}\n    provenance:\n      kind: assumption\n      source: \"ch04 — telemetry grows faster than the traffic it describes, because teams add\n        instrumentation as well as load. Lognormal like any growth rate — it compounds and\n        cannot go negative — and wider than the web service's for the same reason its\n        median is higher\"\n\n  horizon:\n    kind: input\n    decided: you\n    unit: year\n    value: 3\n    provenance: {kind: assumption, source: \"the planning horizon for this platform\"}\n    range: [1, 5]\n\n  one_year:\n    kind: input\n    decided: definition\n    unit: year\n    value: 1\n    note: \"as in the web service model: an exponent has to be a pure number\"\n    provenance: {kind: fact, source: \"definition\"}\n\n  horizon_periods:\n    kind: derived\n    unit: dimensionless\n    formula: horizon / one_year\n\n  growth_factor:\n    kind: derived\n    unit: dimensionless\n    formula: annual_growth ** horizon_periods\n\n  # -- label cardinality: the combinatorial node ------------------------------------------------\n\n  label_values_endpoint:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {triangular: {minimum: 2.0, likely: 6.0, maximum: 20.0}}\n    provenance:\n      kind: assumption\n      source: >-\n        distinct routes appearing as a label value. Triangular because the routes can be counted, so\n        the range is known; the maximum is the routes that exist today, and a new service adds to it\n\n  label_values_status:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {triangular: {minimum: 2.0, likely: 3.0, maximum: 6.0}}\n    provenance:\n      kind: assumption\n      source: >-\n        distinct status classes kept as a label. Triangular, and its bounds are firm unlike those of\n        any other input in the model, because a request cannot carry a status the code does not emit\n\n  label_values_accidental_extra:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    label: extra accidental label values\n    note: >-\n      The label nobody planned: a pod name under a rolling deploy, a customer id added during an\n      incident, a version string. Counted from the second value, because a label with one value\n      multiplies the series count by one, so this input can only add series, never take any away.\n      Lognormal and wide, because the failure mode is multiplicative: whatever the label is, it\n      multiplies every series that carries it, and the band has to span from usually a little to\n      occasionally catastrophic.\n    distribution: {lognormal: {p10: 0.42, p90: 5.0}}\n    provenance:\n      kind: assumption\n      source: >-\n        ch08 — the cardinality explosion, as a band rather than as a warning. Lognormal because this\n        one has no ceiling: a label carrying a user id multiplies the series count by a number\n        nobody chose, and a triangular would assert a maximum that does not exist. Counted from the\n        second value, so the factor it feeds is never below one.\n\n  label_values_accidental:\n    kind: derived\n    unit: dimensionless\n    label: accidental label values\n    note: >-\n      One plus the extra values: the number of values the accidental label takes. That is the factor\n      it multiplies the series count by, and it is never below one.\n    formula: 1 + label_values_accidental_extra\n\n  label_cardinality:\n    kind: derived\n    unit: dimensionless\n    label: label cardinality\n    note: >-\n      It is the product of three uncertain counts: the endpoint label's values, the status label's\n      values, and the accidental label's values. Its lognormal-ish shape comes from the multiplying,\n      not from anyone choosing it. The accidental label leads the tornado for the active series\n      count, metrics ingest and query path utilisation, and the product's band is wider than any one\n      count's but much narrower than the counts' bands multiplied together, because the model draws\n      them independently, so a high one usually meets middling or low ones. Appendix F sets each\n      factor's range beside the product's.\n    formula: label_values_endpoint * label_values_status * label_values_accidental\n\n  # -- chain one: metrics ------------------------------------------------------------------------\n\n  base_metrics_per_host:\n    kind: input\n    decided: outside\n    unit: series/host\n    value: 60\n    label: metric names per host\n    note: >-\n      No band: scrape one host and list them. The uncertainty in this chain is what the labels\n      multiply that list by, and label_cardinality carries it.\n    provenance: {kind: assumption, source: \"distinct metric names exposed per host, before labels\"}\n    range: [10, 400]\n\n  active_series:\n    kind: derived\n    unit: series\n    formula: hosts * base_metrics_per_host * label_cardinality * growth_factor\n\n  scrape_interval:\n    kind: input\n    decided: you\n    unit: second\n    value: 30\n    provenance: {kind: assumption, source: \"a control knob: doubling it halves the metrics\n      chain and loses resolution that cannot be recovered afterwards\"}\n    range: [10, 120]\n\n  one_sample_per_series:\n    kind: input\n    decided: definition\n    unit: sample/series\n    value: 1\n    note: \"one scrape takes one sample from one series. A rate is a count over a duration, and the\n      count needs a unit before the division means anything\"\n    provenance: {kind: fact, source: \"definition\"}\n\n  sample_rate:\n    kind: derived\n    unit: sample/series/second\n    formula: one_sample_per_series / scrape_interval\n\n  metrics_sample_bytes:\n    kind: measured\n    unit: byte/sample\n    label: bytes per sample, compressed\n    result: metrics-sample-bytes\n\n  metrics_ingest:\n    kind: derived\n    unit: MB/s\n    label: metrics ingest\n    formula: active_series * sample_rate * metrics_sample_bytes\n\n  metrics_retention:\n    kind: input\n    decided: you\n    unit: day\n    value: 400\n    provenance: {kind: assumption, source: \"a control knob\"}\n    range: [15, 800]\n\n  metrics_stored:\n    kind: derived\n    unit: TB\n    formula: metrics_ingest * metrics_retention\n\n  # -- chain two: logs ----------------------------------------------------------------------------\n\n  lines_per_request:\n    kind: input\n    decided: outside\n    unit: line/request\n    distribution: {triangular: {minimum: 3.0, likely: 9.0, maximum: 30.0}}\n    provenance:\n      kind: assumption\n      source: \"application log lines emitted per request served. Triangular, from reading a\n        sample of the logs — and the maximum is the part to distrust, because a debug flag\n        left on in production is outside it\"\n\n  log_keep_rate:\n    kind: input\n    decided: you\n    unit: dimensionless\n    value: 1.0\n    label: fraction of log lines kept\n    provenance: {kind: assumption, source: \"a control knob: drop and aggregation rules\"}\n    range: [0.05, 1.0]\n\n  log_line_rate:\n    kind: derived\n    unit: line/second\n    formula: request_rate * lines_per_request * log_keep_rate * growth_factor\n\n  logs_line_bytes:\n    kind: measured\n    unit: byte/line\n    label: bytes per log line, compressed\n    result: logs-line-bytes\n\n  logs_ingest:\n    kind: derived\n    unit: MB/s\n    label: logs ingest\n    formula: log_line_rate * logs_line_bytes\n\n  logs_retention:\n    kind: input\n    decided: you\n    unit: day\n    value: 30\n    provenance: {kind: assumption, source: \"a control knob\"}\n    range: [3, 365]\n\n  logs_stored:\n    kind: derived\n    unit: TB\n    formula: logs_ingest * logs_retention\n\n  # -- chain three: traces, and the constant nobody has measured ------------------------------------\n\n  spans_per_request:\n    kind: measured\n    unit: span/request\n    label: spans per request\n    note: >-\n      Not measurable from anything in this repository. It is a property of one instrumented\n      application at one version, so it belongs to the `estate` target — an observation somebody\n      takes of a system they run, disclosed rather than verified (ch03). Until somebody takes it,\n      every figure below is absent rather than estimated.\n    result: traces-spans-per-request\n\n  trace_keep_rate:\n    kind: input\n    decided: you\n    unit: dimensionless\n    value: 0.05\n    label: trace sampling rate\n    provenance: {kind: assumption, source: \"a control knob, and the one with the widest\n      range: head sampling at 1% and at 100% are two different platforms\"}\n    range: [0.001, 1.0]\n\n  span_rate:\n    kind: derived\n    unit: span/second\n    formula: request_rate * spans_per_request * trace_keep_rate * growth_factor\n\n  traces_span_bytes:\n    kind: measured\n    unit: byte/span\n    label: bytes per span, compressed\n    result: traces-span-bytes\n\n  traces_ingest:\n    kind: derived\n    unit: MB/s\n    label: traces ingest\n    formula: span_rate * traces_span_bytes\n\n  traces_retention:\n    kind: input\n    decided: you\n    unit: day\n    value: 14\n    provenance: {kind: assumption, source: \"a control knob\"}\n    range: [1, 90]\n\n  traces_stored:\n    kind: derived\n    unit: TB\n    formula: traces_ingest * traces_retention\n\n  # -- output one: the ingest pipeline ---------------------------------------------------------------\n\n  known_ingest:\n    kind: derived\n    unit: MB/s\n    label: ingest, metrics and logs only\n    note: >-\n      Metrics plus logs, and deliberately not the total. The traces chain is missing because spans\n      per request is not measured yet, so it is too low and serves as a lower bound. ch20 is about\n      this shape of error: correct arithmetic over an incomplete structure looks identical to a\n      number that is right.\n    formula: metrics_ingest + logs_ingest\n\n  total_ingest:\n    kind: derived\n    unit: MB/s\n    formula: metrics_ingest + logs_ingest + traces_ingest\n\n  collector_cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the sizing decision for the ingest tier\"}\n    range: [8, 512]\n\n  collector_throughput_quoted:\n    kind: input\n    decided: outside\n    unit: MB/s/core\n    value: 6\n    note: >-\n      No band, and giving a quote one would be inventing a range nobody quoted. A vendor states a\n      single number; the spread belongs to the measurement, and collector_throughput_measured\n      below carries it with a standard error.\n    provenance:\n      kind: vendor_claim\n      source: \"throughput per core as documented by the collector. Unverified here, and marked as\n        a claim in every figure it appears in\"\n\n  collector_throughput_measured:\n    kind: measured\n    unit: MB/s/core\n    label: collector throughput per core, measured\n    note: >-\n      The same quantity as the node above, taken rather than quoted. It needs the reference\n      machine (`rig`) and nobody has run it, so the ceiling built on it is absent while the\n      ceiling built on the vendor's claim is not. This node sits beside\n      `collector_throughput_quoted` in ch03, so the pipeline capacity each gives can be compared.\n    result: collector-throughput-per-core\n\n  quoted_pipeline_capacity:\n    kind: derived\n    unit: MB/s\n    formula: collector_cores * collector_throughput_quoted\n\n  measured_pipeline_capacity:\n    kind: derived\n    unit: MB/s\n    formula: collector_cores * collector_throughput_measured\n\n  quoted_pipeline_utilisation:\n    kind: ceiling\n    unit: dimensionless\n    label: ingest utilisation, quoted\n    of: known_ingest / quoted_pipeline_capacity\n    limit: 1\n    headroom: 0.4\n    because: >-\n      A queueing ceiling, not a capacity one (ch06), so the margin is large: a pipeline at 80% of\n      quoted throughput has a queue in front of it, and a queue in front of an ingest pipeline is\n      dropped telemetry exactly when something is going wrong. Understated twice over — the\n      numerator excludes traces and the denominator is a vendor's claim.\n\n  pipeline_utilisation:\n    kind: ceiling\n    unit: dimensionless\n    label: ingest utilisation, measured\n    of: total_ingest / measured_pipeline_capacity\n    limit: 1\n    headroom: 0.4\n    because: >-\n      The honest version of the row above, and it cannot be computed. Both halves are missing a\n      measurement, which is the correct output of this model today.\n\n  # -- output two: the retention store -----------------------------------------------------------\n\n  usable_tb_per_node:\n    kind: input\n    decided: you\n    unit: TB/node\n    value: 40\n    provenance: {kind: assumption, source: \"usable capacity per storage node after replication\"}\n    range: [20, 400]\n\n  store_nodes:\n    kind: input\n    decided: you\n    unit: node\n    value: 12\n    provenance: {kind: assumption, source: \"the sizing decision for the retention tier\"}\n    range: [5, 400]\n\n  installed_usable:\n    kind: derived\n    unit: TB\n    formula: store_nodes * usable_tb_per_node\n\n  known_stored:\n    kind: derived\n    unit: TB\n    label: stored, metrics and logs only\n    formula: metrics_stored + logs_stored\n\n  store_fill:\n    kind: ceiling\n    unit: dimensionless\n    label: retention store fill\n    of: known_stored / installed_usable\n    limit: 1\n    headroom: 0.3\n    because: >-\n      Capacity, with a rebuild reserve (ch11) — and again a lower bound, because the traces chain\n      is not in the numerator. A verdict of `ok` here means \"ok, ignoring traces\", which is a\n      different claim and one the reader should be made to notice.\n\n  # -- output three: the query path -----------------------------------------------------------------\n\n  queries_per_second:\n    kind: input\n    decided: outside\n    unit: query/second\n    distribution: {triangular: {minimum: 2.0, likely: 12.0, maximum: 60.0}}\n    provenance:\n      kind: assumption\n      source: \"dashboards, alert rules and people, at the busy hour. Triangular because two of\n        those three are countable and the third is not\"\n\n  series_per_query_base:\n    kind: input\n    decided: outside\n    unit: series/query\n    label: series per query, before labels\n    distribution: {triangular: {minimum: 40.0, likely: 300.0, maximum: 2000.0}}\n    provenance:\n      kind: assumption\n      source: \"how many distinct metric-name-and-host combinations one dashboard panel or alert\n        rule covers, before any label expansion. Triangular, and wide: dashboards differ from\n        each other more than anything else in this model does\"\n\n  series_per_query:\n    kind: derived\n    unit: series/query\n    note: >-\n      The same cardinality node that drives the metrics ingest chain drives this one too, by a\n      different route: a label that multiplies the series a scrape produces also multiplies the\n      series a query has to walk past to ignore. That is why one accidental label breaks two\n      ceilings at once, and why turning down scrape interval and retention — which fix the first\n      — does nothing at all for the second.\n    formula: series_per_query_base * label_cardinality\n\n  query_series_rate:\n    kind: derived\n    unit: series/second\n    formula: queries_per_second * series_per_query\n\n  query_nodes:\n    kind: input\n    decided: you\n    unit: node\n    value: 24\n    provenance: {kind: assumption, source: \"the sizing decision for the query tier\"}\n    range: [2, 120]\n\n  query_scan_rate_quoted:\n    kind: input\n    decided: outside\n    unit: series/second/node\n    value: 90000\n    note: >-\n      No band, for the same reason as the collector's quoted throughput: a quote is one number,\n      and widening it here would put a range in the vendor's mouth. Nobody has measured this one,\n      so nothing in this model disputes it yet.\n    provenance: {kind: vendor_claim, source: \"series scanned per second per query node, quoted\"}\n\n  query_capacity:\n    kind: derived\n    unit: series/second\n    formula: query_nodes * query_scan_rate_quoted\n\n  query_utilisation:\n    kind: ceiling\n    unit: dimensionless\n    label: query path utilisation\n    of: query_series_rate / query_capacity\n    limit: 1\n    headroom: 0.4\n    because: >-\n      Queueing again, and the tier where a breach is most visible: a dashboard that times out\n      during an incident is the failure people remember. Cardinality feeds this and the ingest\n      ceiling by different routes, so a single accidental label breaks both at once.\n\n  # -- a small cost tail ----------------------------------------------------------------------------\n\n  storage_price:\n    kind: input\n    decided: outside\n    unit: USD/TB/month\n    distribution: {lognormal: {p10: 9.0, p90: 24.0}}\n    provenance:\n      kind: assumption\n      source: >-\n        all-in cost of a usable TB-month on this tier. Lognormal because it is a price, and a price\n        cannot go below zero. It was copied by hand from another model's unit economics, as a range,\n        rather than passed across with that model's own spread. That seam between two models is\n        ch18's subject\n\n  known_storage_cost:\n    kind: derived\n    unit: USD/month\n    label: retention cost, metrics and logs only\n    formula: known_stored * storage_price\n\noutputs:\n  - metrics_ingest\n  - logs_ingest\n  - traces_ingest\n  - traces_stored\n  - known_ingest\n  - known_stored\n  - active_series\n  - label_cardinality\n  - known_storage_cost\n  - store_fill\n  - quoted_pipeline_utilisation\n  - query_utilisation\n  - pipeline_utilisation\n\ncorrelations:\n  - a: annual_growth\n    b: label_values_accidental_extra\n    rho: 0.5\n    because: >-\n      A platform that is growing is a platform that is being changed, and labels arrive with\n      changes. Treating the two as independent makes the metrics interval narrower than the\n      estate warrants — ch14 measures by how much.\n\n  - a: request_rate\n    b: lines_per_request\n    rho: 0.3\n    because: >-\n      Weak and positive: busier services tend to be the chattier ones. Small enough to be worth\n      including as an example of a correlation that barely matters, which is a useful thing for a\n      reader to see beside one that does.\n\n  - a: request_rate\n    b: queries_per_second\n    rho: 0.4\n    because: >-\n      A busier platform is one more people are watching. Moderate rather than strong: most query\n      load comes from alert rules and dashboards on timers, which do not care how busy anything\n      is — right up until an incident, when they all fire at once and nobody is looking at the\n      model.\n",
+  "scenarios/knobs_turned_down.yaml": "scenario: knobs_turned_down\ntitle: The four knobs, turned down\nbecause: >-\n  The same estate with one knob of each kind turned down: the scrape interval, metrics retention,\n  the share of log lines kept, and the trace sampling rate. Appendix F sets this scenario beside the\n  reference scenario to show what the knobs buy. None of the four knobs touches label cardinality,\n  so the active series count and the query path do not move.\nsamples: 100000\nseed: 20260916\noverrides:\n  scrape_interval: 60\n  metrics_retention: 90\n  log_keep_rate: 0.1\n  trace_keep_rate: 0.01\n",
   "scenarios/reference.yaml": "scenario: reference\ntitle: Reference scenario\nbecause: >-\n  The platform as declared: 30-second scrapes, 400-day metric retention, 30-day logs, 5% trace\n  sampling. Every figure the book quotes for this model comes from here unless it says otherwise.\nsamples: 100000\nseed: 20260916\noverrides: {}\n"
  },
  "id": "reference/observability",
@@ -14,7 +14,7 @@
   "correlations": [
    {
     "a": "annual_growth",
-    "b": "label_values_accidental",
+    "b": "label_values_accidental_extra",
     "because": "A platform that is growing is a platform that is being changed, and labels arrive with changes. Treating the two as independent makes the metrics interval narrower than the estate warrants — ch14 measures by how much.",
     "rho": 0.5
    },
@@ -32,7 +32,7 @@
    }
   ],
   "currency": "USD",
-  "description": "The book's second model, and the counterweight to the web service. Three multiplicative chains hang off the same few roots, so they are correlated whether or not anybody says so; label cardinality is a product of uncertain counts and therefore dominates everything downstream of it; the control knobs are sampling and retention rather than money; and there are three separate outputs with three separate ceilings, which no single number can summarise.\nIt also has a hole in it. Spans per request is a property of somebody's instrumented application, not of any corpus or any machine, so this repository cannot measure it — and the whole traces chain is therefore shown as unmeasured rather than filled in with a plausible number. That is not a gap waiting to be tidied up. It is what an honest sizing model looks like before the measurement is taken, and it is on a published page for exactly that reason.",
+  "description": "The book's second model, and the counterweight to the web service. Three chains of multiplications, metrics, logs and traces, share their roots, so they move together whether or not the model says so. Label cardinality is a product of uncertain counts, and it drives the active series count and the query path. The control knobs are sampling and retention, not money. Three tiers—ingest, retention store and query path—carry four ceilings between them, and no single number summarises them.\nIt has a gap in it: two measured constants have no measurement yet. Spans per request is an `estate` observation: only a running system with instrumented applications can give it, not a body of data or a machine. The traces chain needs it. Collector throughput per core is a `rig` measurement, taken on the reference machine, and the measured ingest ceiling needs it. The figures that depend on them are shown as not yet measured rather than filled in with a plausible number, because a plausible number would print the same as a measured one.",
   "name": "observability",
   "order": [
    "annual_growth",
@@ -42,6 +42,7 @@
    "collector_throughput_quoted",
    "horizon",
    "hosts",
+   "label_values_accidental_extra",
    "label_values_accidental",
    "label_values_endpoint",
    "label_values_status",
@@ -154,7 +155,7 @@
     "op": "*"
    },
    "kind": "derived",
-   "magnitude": 15019917.210191535,
+   "magnitude": 15017758.379073862,
    "unit": "series"
   },
   "annual_growth": {
@@ -221,6 +222,7 @@
    ],
    "dimensionality": {
     "[core]": -1.0,
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "kind": "measured",
@@ -233,6 +235,7 @@
    "decided": "outside",
    "dimensionality": {
     "[core]": -1.0,
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "distribution": null,
@@ -315,7 +318,7 @@
    "magnitude": 1200.0,
    "provenance": {
     "kind": "assumption",
-    "source": "stated estate size (ch02)"
+    "source": "the estate's host count as stated by its operators"
    },
    "range": [
     50.0,
@@ -325,7 +328,9 @@
    "value": 1200.0
   },
   "installed_usable": {
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 1.0,
    "formula": {
     "args": [
@@ -346,6 +351,7 @@
   },
   "known_ingest": {
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 1.0,
@@ -363,12 +369,12 @@
     "op": "+"
    },
    "kind": "derived",
-   "magnitude": 49367024.56057811,
+   "magnitude": 49366350.2886574,
    "unit": "MB/s"
   },
   "known_storage_cost": {
    "dimensionality": {
-    "[currency]": 1.0,
+    "[currency_usd]": 1.0,
     "[time]": -1.0
    },
    "factor": 1.0,
@@ -386,11 +392,13 @@
     "op": "*"
    },
    "kind": "derived",
-   "magnitude": 47276446112.64746,
+   "magnitude": 47272482219.47877,
    "unit": "USD/month"
   },
   "known_stored": {
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 1.0,
    "formula": {
     "args": [
@@ -406,7 +414,7 @@
     "op": "+"
    },
    "kind": "derived",
-   "magnitude": 3216754717.449211,
+   "magnitude": 3216485008.6809273,
    "unit": "TB"
   },
   "label_cardinality": {
@@ -435,23 +443,43 @@
     "op": "*"
    },
    "kind": "derived",
-   "magnitude": 76.31587707750207,
+   "magnitude": 76.30490810291307,
    "unit": "dimensionless"
   },
   "label_values_accidental": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "op": "const",
+      "value": 1.0
+     },
+     {
+      "name": "label_values_accidental_extra",
+      "op": "ref"
+     }
+    ],
+    "op": "+"
+   },
+   "kind": "derived",
+   "magnitude": 2.4491376746189437,
+   "unit": "dimensionless"
+  },
+  "label_values_accidental_extra": {
    "decided": "outside",
    "dimensionality": {},
    "distribution": {
     "lognormal": {
-     "p10": 1.0,
-     "p90": 6.0
+     "p10": 0.42,
+     "p90": 5.0
     }
    },
    "kind": "input",
-   "magnitude": 2.449489742783178,
+   "magnitude": 1.4491376746189437,
    "provenance": {
     "kind": "assumption",
-    "source": "ch08 — the cardinality explosion, as a distribution rather than as a warning. Lognormal because this one has no ceiling: a label carrying a user id multiplies the series count by a number nobody chose, and a triangular would assert a maximum that does not exist"
+    "source": "ch08 — the cardinality explosion, as a band rather than as a warning. Lognormal because this one has no ceiling: a label carrying a user id multiplies the series count by a number nobody chose, and a triangular would assert a maximum that does not exist. Counted from the second value, so the factor it feeds is never below one."
    },
    "range": null,
    "unit": "dimensionless",
@@ -471,7 +499,7 @@
    "magnitude": 8.775027839678176,
    "provenance": {
     "kind": "assumption",
-    "source": "distinct routes appearing as a label value. Triangular because somebody could go and count them this afternoon; the maximum is the routes that exist today, and a new service adds to it"
+    "source": "distinct routes appearing as a label value. Triangular because the routes can be counted, so the range is known; the maximum is the routes that exist today, and a new service adds to it"
    },
    "range": null,
    "unit": "dimensionless",
@@ -491,7 +519,7 @@
    "magnitude": 3.550510257216822,
    "provenance": {
     "kind": "assumption",
-    "source": "distinct status classes kept as a label. Triangular, and the one input in this model whose bounds are genuinely hard: a request cannot carry a status the code does not emit"
+    "source": "distinct status classes kept as a label. Triangular, and its bounds are firm unlike those of any other input in the model, because a request cannot carry a status the code does not emit"
    },
    "range": null,
    "unit": "dimensionless",
@@ -528,7 +556,7 @@
    "magnitude": 1.0,
    "provenance": {
     "kind": "assumption",
-    "source": "a control knob (ch12): drop and aggregation rules"
+    "source": "a control knob: drop and aggregation rules"
    },
    "range": [
     0.05,
@@ -580,6 +608,7 @@
   },
   "logs_ingest": {
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 1e-06,
@@ -602,6 +631,7 @@
   },
   "logs_line_bytes": {
    "dimensionality": {
+    "[information]": 1.0,
     "[line]": -1.0
    },
    "kind": "measured",
@@ -623,7 +653,7 @@
    "magnitude": 30.0,
    "provenance": {
     "kind": "assumption",
-    "source": "a control knob (ch12)"
+    "source": "a control knob"
    },
    "range": [
     3.0,
@@ -633,7 +663,9 @@
    "value": 30.0
   },
   "logs_stored": {
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 0.0864,
    "formula": {
     "args": [
@@ -657,6 +689,7 @@
     "collector_throughput_measured"
    ],
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 1.0,
@@ -679,6 +712,7 @@
   },
   "metrics_ingest": {
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 1e-06,
@@ -705,7 +739,7 @@
     "op": "*"
    },
    "kind": "derived",
-   "magnitude": 4691199.947653698,
+   "magnitude": 4690525.675732987,
    "unit": "MB/s"
   },
   "metrics_retention": {
@@ -718,7 +752,7 @@
    "magnitude": 400.0,
    "provenance": {
     "kind": "assumption",
-    "source": "a control knob (ch12)"
+    "source": "a control knob"
    },
    "range": [
     15.0,
@@ -729,6 +763,7 @@
   },
   "metrics_sample_bytes": {
    "dimensionality": {
+    "[information]": 1.0,
     "[sample]": -1.0
    },
    "kind": "measured",
@@ -741,7 +776,9 @@
    "unit": "byte/sample"
   },
   "metrics_stored": {
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 0.0864,
    "formula": {
     "args": [
@@ -757,7 +794,7 @@
     "op": "*"
    },
    "kind": "derived",
-   "magnitude": 1876479979.061479,
+   "magnitude": 1876210270.2931948,
    "unit": "TB"
   },
   "one_sample_per_series": {
@@ -813,7 +850,7 @@
     "op": "const",
     "value": 1.0
    },
-   "magnitude": 3109578.5221350025,
+   "magnitude": 3109536.380139958,
    "of": {
     "args": [
      {
@@ -932,7 +969,7 @@
     "op": "*"
    },
    "kind": "derived",
-   "magnitude": 1228192.4837775943,
+   "magnitude": 1228015.9541659215,
    "unit": "series/second"
   },
   "query_utilisation": {
@@ -951,7 +988,7 @@
     "op": "const",
     "value": 1.0
    },
-   "magnitude": 0.5686076313785159,
+   "magnitude": 0.5685259047064452,
    "of": {
     "args": [
      {
@@ -969,6 +1006,7 @@
   },
   "quoted_pipeline_capacity": {
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 1.0,
@@ -1005,7 +1043,7 @@
     "op": "const",
     "value": 1.0
    },
-   "magnitude": 514239.8391726886,
+   "magnitude": 514232.81550684787,
    "of": {
     "args": [
      {
@@ -1038,7 +1076,7 @@
    "magnitude": 38376.36200343877,
    "provenance": {
     "kind": "assumption",
-    "source": "ch03 — the busy hour across the estate, not the daily mean. Triangular: a minimum, a likely and a maximum is the whole of what a dashboard gives you, and the maximum is the busiest hour anybody has looked at rather than the busiest one there will be"
+    "source": "ch04 — the busy hour across the estate, not the daily mean. Triangular, because a dashboard gives a lowest, a typical and a highest value and nothing more. The maximum is the busiest hour on record, not the busiest there will be"
    },
    "range": [
     2000.0,
@@ -1081,7 +1119,7 @@
    "magnitude": 30.0,
    "provenance": {
     "kind": "assumption",
-    "source": "a control knob (ch12): doubling it halves the metrics chain and loses resolution that cannot be recovered afterwards"
+    "source": "a control knob: doubling it halves the metrics chain and loses resolution that cannot be recovered afterwards"
    },
    "range": [
     10.0,
@@ -1110,7 +1148,7 @@
     "op": "*"
    },
    "kind": "derived",
-   "magnitude": 54128.087143138,
+   "magnitude": 54120.30724680239,
    "unit": "series/query"
   },
   "series_per_query_base": {
@@ -1197,7 +1235,8 @@
   "storage_price": {
    "decided": "outside",
    "dimensionality": {
-    "[currency]": 1.0,
+    "[currency_usd]": 1.0,
+    "[information]": -1.0,
     "[time]": -1.0
    },
    "distribution": {
@@ -1210,7 +1249,7 @@
    "magnitude": 14.69693845669907,
    "provenance": {
     "kind": "assumption",
-    "source": "all-in cost of a usable TB-month on this tier. Lognormal because it is a price — and carried across by hand from whichever storage tier's unit economics somebody had to hand, rather than by sampling, which is the seam ch18 is about"
+    "source": "all-in cost of a usable TB-month on this tier. Lognormal because it is a price, and a price cannot go below zero. It was copied by hand from another model's unit economics, as a range, rather than passed across with that model's own spread. That seam between two models is ch18's subject"
    },
    "range": null,
    "unit": "USD/TB/month",
@@ -1232,7 +1271,7 @@
     "op": "const",
     "value": 1.0
    },
-   "magnitude": 6701572.32801919,
+   "magnitude": 6701010.434751932,
    "of": {
     "args": [
      {
@@ -1272,6 +1311,7 @@
     "spans_per_request"
    ],
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 1.0,
@@ -1298,7 +1338,7 @@
     "op": "+"
    },
    "kind": "derived",
-   "magnitude": 49753256.35416004,
+   "magnitude": 49752582.08223933,
    "unit": "MB/s"
   },
   "trace_keep_rate": {
@@ -1309,7 +1349,7 @@
    "magnitude": 0.05,
    "provenance": {
     "kind": "assumption",
-    "source": "a control knob (ch12), and the one with the widest range: head sampling at 1% and at 100% are two different platforms"
+    "source": "a control knob, and the one with the widest range: head sampling at 1% and at 100% are two different platforms"
    },
    "range": [
     0.001,
@@ -1323,6 +1363,7 @@
     "spans_per_request"
    ],
    "dimensionality": {
+    "[information]": 1.0,
     "[time]": -1.0
    },
    "factor": 1e-06,
@@ -1353,7 +1394,7 @@
    "magnitude": 14.0,
    "provenance": {
     "kind": "assumption",
-    "source": "a control knob (ch12)"
+    "source": "a control knob"
    },
    "range": [
     1.0,
@@ -1364,6 +1405,7 @@
   },
   "traces_span_bytes": {
    "dimensionality": {
+    "[information]": 1.0,
     "[span]": -1.0
    },
    "kind": "measured",
@@ -1379,7 +1421,9 @@
    "blocked_by": [
     "spans_per_request"
    ],
-   "dimensionality": {},
+   "dimensionality": {
+    "[information]": 1.0
+   },
    "factor": 0.0864,
    "formula": {
     "args": [
@@ -1401,6 +1445,7 @@
   "usable_tb_per_node": {
    "decided": "you",
    "dimensionality": {
+    "[information]": 1.0,
     "[node]": -1.0
    },
    "distribution": null,
@@ -1430,7 +1475,7 @@
      "headroom_text": "0.4",
      "limit": 1.0,
      "limit_text": "1",
-     "value": 0.5686076313785159,
+     "value": 0.5685259047064452,
      "verdict": "ok"
     },
     "quoted_pipeline_utilisation": {
@@ -1440,7 +1485,7 @@
      "headroom_text": "0.4",
      "limit": 1.0,
      "limit_text": "1",
-     "value": 0.07097065036582594,
+     "value": 0.07096713853290557,
      "verdict": "ok"
     },
     "store_fill": {
@@ -1450,7 +1495,7 @@
      "headroom_text": "0.3",
      "limit": 1.0,
      "limit_text": "1",
-     "value": 0.06212366486697415,
+     "value": 0.06211820326441638,
      "verdict": "ok"
     }
    },
@@ -1461,7 +1506,7 @@
     "trace_keep_rate": 0.01
    },
    "point": {
-    "active_series": 15019917.210191535,
+    "active_series": 15017758.379073862,
     "annual_growth": 1.398213145410956,
     "base_metrics_per_host": 60.0,
     "collector_cores": 16.0,
@@ -1471,11 +1516,12 @@
     "horizon_periods": 3.0,
     "hosts": 1200.0,
     "installed_usable": 480.0,
-    "known_ingest": 6.813182435119289,
-    "known_storage_cost": 438.25328604216827,
-    "known_stored": 29.81935913614759,
-    "label_cardinality": 76.31587707750207,
-    "label_values_accidental": 2.449489742783178,
+    "known_ingest": 6.812845299158934,
+    "known_storage_cost": 438.2147570005684,
+    "known_stored": 29.816737566919862,
+    "label_cardinality": 76.30490810291307,
+    "label_values_accidental": 2.4491376746189437,
+    "label_values_accidental_extra": 1.4491376746189437,
     "label_values_endpoint": 8.775027839678176,
     "label_values_status": 3.550510257216822,
     "lines_per_request": 13.162541759517264,
@@ -1485,27 +1531,27 @@
     "logs_line_bytes": 32.35555625,
     "logs_retention": 30.0,
     "logs_stored": 11.579973739670008,
-    "metrics_ingest": 2.345599973826849,
+    "metrics_ingest": 2.3452628378664935,
     "metrics_retention": 90.0,
     "metrics_sample_bytes": 9.369958333333333,
-    "metrics_stored": 18.23938539647758,
+    "metrics_stored": 18.236763827249852,
     "one_sample_per_series": 1.0,
     "one_year": 1.0,
     "queries_per_second": 22.690483787644737,
     "query_capacity": 2160000.0,
     "query_nodes": 24.0,
     "query_scan_rate_quoted": 90000.0,
-    "query_series_rate": 1228192.4837775943,
-    "query_utilisation": 0.5686076313785159,
+    "query_series_rate": 1228015.9541659215,
+    "query_utilisation": 0.5685259047064452,
     "quoted_pipeline_capacity": 96.0,
-    "quoted_pipeline_utilisation": 0.07097065036582594,
+    "quoted_pipeline_utilisation": 0.07096713853290557,
     "request_rate": 38376.36200343877,
     "sample_rate": 0.016666666666666666,
     "scrape_interval": 60.0,
-    "series_per_query": 54128.087143138,
+    "series_per_query": 54120.30724680239,
     "series_per_query_base": 709.2637759789957,
     "storage_price": 14.69693845669907,
-    "store_fill": 0.06212366486697415,
+    "store_fill": 0.06211820326441638,
     "store_nodes": 12.0,
     "trace_keep_rate": 0.01,
     "traces_retention": 14.0,
@@ -1525,7 +1571,7 @@
      "headroom_text": "0.4",
      "limit": 1.0,
      "limit_text": "1",
-     "value": 0.5686076313785159,
+     "value": 0.5685259047064452,
      "verdict": "ok"
     },
     "quoted_pipeline_utilisation": {
@@ -1535,7 +1581,7 @@
      "headroom_text": "0.4",
      "limit": 1.0,
      "limit_text": "1",
-     "value": 0.5142398391726887,
+     "value": 0.5142328155068479,
      "verdict": "ok"
     },
     "store_fill": {
@@ -1545,13 +1591,13 @@
      "headroom_text": "0.3",
      "limit": 1.0,
      "limit_text": "1",
-     "value": 0.579015849140858,
+     "value": 0.5789673015625669,
      "verdict": "ok"
     }
    },
    "overrides": {},
    "point": {
-    "active_series": 15019917.210191535,
+    "active_series": 15017758.379073862,
     "annual_growth": 1.398213145410956,
     "base_metrics_per_host": 60.0,
     "collector_cores": 16.0,
@@ -1561,11 +1607,12 @@
     "horizon_periods": 3.0,
     "hosts": 1200.0,
     "installed_usable": 480.0,
-    "known_ingest": 49.36702456057811,
-    "known_storage_cost": 4084.6849441327413,
-    "known_stored": 277.9276075876119,
-    "label_cardinality": 76.31587707750207,
-    "label_values_accidental": 2.449489742783178,
+    "known_ingest": 49.366350288657394,
+    "known_storage_cost": 4084.342463762965,
+    "known_stored": 277.9043047500321,
+    "label_cardinality": 76.30490810291307,
+    "label_values_accidental": 2.4491376746189437,
+    "label_values_accidental_extra": 1.4491376746189437,
     "label_values_endpoint": 8.775027839678176,
     "label_values_status": 3.550510257216822,
     "lines_per_request": 13.162541759517264,
@@ -1575,27 +1622,27 @@
     "logs_line_bytes": 32.35555625,
     "logs_retention": 30.0,
     "logs_stored": 115.79973739670007,
-    "metrics_ingest": 4.691199947653698,
+    "metrics_ingest": 4.690525675732987,
     "metrics_retention": 400.0,
     "metrics_sample_bytes": 9.369958333333333,
-    "metrics_stored": 162.1278701909118,
+    "metrics_stored": 162.10456735333204,
     "one_sample_per_series": 1.0,
     "one_year": 1.0,
     "queries_per_second": 22.690483787644737,
     "query_capacity": 2160000.0,
     "query_nodes": 24.0,
     "query_scan_rate_quoted": 90000.0,
-    "query_series_rate": 1228192.4837775943,
-    "query_utilisation": 0.5686076313785159,
+    "query_series_rate": 1228015.9541659215,
+    "query_utilisation": 0.5685259047064452,
     "quoted_pipeline_capacity": 96.0,
-    "quoted_pipeline_utilisation": 0.5142398391726887,
+    "quoted_pipeline_utilisation": 0.5142328155068479,
     "request_rate": 38376.36200343877,
     "sample_rate": 0.03333333333333333,
     "scrape_interval": 30.0,
-    "series_per_query": 54128.087143138,
+    "series_per_query": 54120.30724680239,
     "series_per_query_base": 709.2637759789957,
     "storage_price": 14.69693845669907,
-    "store_fill": 0.579015849140858,
+    "store_fill": 0.5789673015625669,
     "store_nodes": 12.0,
     "trace_keep_rate": 0.05,
     "traces_retention": 14.0,

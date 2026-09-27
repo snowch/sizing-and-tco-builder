@@ -1,0 +1,200 @@
+{
+ "about": "A ceiling whose because is written with nothing after it.",
+ "files": {
+  "model.yaml": "dsl: 1\nmodel: tiny\ntitle: Empty reason\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  knee:\n    kind: ceiling\n    unit: dimensionless\n    of: utilisation\n    limit: 0.9\n    headroom: 0.1\n    because:\n\noutputs:\n  - utilisation\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "invalid/ceiling-reason-left-empty",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "conditional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "cores",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "utilisation",
+   "knee"
+  ],
+  "outputs": [
+   "utilisation"
+  ],
+  "title": "Empty reason",
+  "unit_problems": 0,
+  "unmeasured": []
+ },
+ "nodes": {
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "knee": {
+   "because": "",
+   "declares_headroom": true,
+   "dimensionality": {},
+   "factor": 1.0,
+   "factor_headroom": 1.0,
+   "factor_limit": 1.0,
+   "headroom": {
+    "op": "const",
+    "value": 0.1
+   },
+   "kind": "ceiling",
+   "limit": {
+    "op": "const",
+    "value": 0.9
+   },
+   "magnitude": 0.25,
+   "of": {
+    "name": "utilisation",
+    "op": "ref"
+   },
+   "unit": "dimensionless"
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.25,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/ceiling-reason-left-empty/model.yaml",
+ "results": {},
+ "scenarios": {
+  "reference": {
+   "ceilings": {
+    "knee": {
+     "allowed": 0.81,
+     "because": "",
+     "headroom": 0.1,
+     "headroom_text": "0.1",
+     "limit": 0.9,
+     "limit_text": "0.9",
+     "value": 0.25,
+     "verdict": "ok"
+    }
+   },
+   "overrides": {},
+   "point": {
+    "busy_cores": 4.0,
+    "cores": 16.0,
+    "knee": 0.25,
+    "request_rate": 200.0,
+    "service_demand": 0.02,
+    "utilisation": 0.25
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": false,
+  "problems": [
+   {
+    "code": "ceiling.no-reason",
+    "message": "_builder_conformance/ceiling-reason-left-empty/model.yaml: ceiling 'knee' gives no reason. A margin nobody can argue with gets copied into the next model by somebody who does not know what it was for.",
+    "node": "knee",
+    "part": null,
+    "rule": "6"
+   },
+   {
+    "code": "shape.feeds-no-output",
+    "message": "_builder_conformance/ceiling-reason-left-empty/model.yaml: node 'knee' feeds no output. Either it is a leftover, or an output is missing from the model's `outputs:` list.",
+    "node": "knee",
+    "part": null,
+    "rule": "7"
+   }
+  ]
+ }
+}

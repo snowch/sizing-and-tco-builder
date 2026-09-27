@@ -11,13 +11,14 @@ import { FormulaError, parse as parseFormula, refs } from "./formula.js";
 import {
   PyError,
   codePointCompare,
-  contains,
   float,
   get,
   int,
   isDict,
+  isInt,
   iterate,
   pyInt,
+  repr,
   sorted,
   str,
   strip,
@@ -25,9 +26,12 @@ import {
   typeName,
 } from "./python.js";
 import { UnitError } from "./units.js";
-import { YamlError, safeLoad } from "./yaml.js";
+import { DuplicateKey, YamlError, readYaml } from "./yaml.js";
 
 export const KINDS = ["input", "derived", "measured", "ceiling"];
+
+/* The rules this engine reads, as sizing.dsl.DSL_VERSION; a model file says it on its first line. */
+export const DSL_VERSION = 1;
 export const PROVENANCE_KINDS = ["fact", "vendor_claim", "assumption"];
 export const DECIDED_BY = ["you", "outside", "definition"];
 
@@ -39,6 +43,33 @@ export class LoadError extends Error {
     Object.assign(this, detail);
   }
 }
+
+/* dsl.read_yaml: a model or scenario file's text as data, refusing a key written twice. */
+export function readModelYaml(text, where) {
+  try {
+    return readYaml(text);
+  } catch (error) {
+    if (error instanceof DuplicateKey) throw new LoadError("load.duplicate-key", `${where}: ${error.message}`);
+    throw error;
+  }
+}
+
+/* dsl._text: a field as text, where one left empty (YAML's None) is the default. */
+function textOf(mapping, key, fallback = "") {
+  const value = get(mapping, key, null);
+  return value === null ? fallback : str(value);
+}
+
+/* dsl._number: a number from the file, refusing a YAML boolean and anything that is not a number. */
+function number(value, what, field, node = undefined) {
+  if (typeof value === "boolean" || !(typeof value === "number" || isInt(value))) {
+    throw new LoadError("load.not-a-number", `${what} is ${repr(value)}, which is not a number`, node === undefined ? { field } : { field, node });
+  }
+  return float(value);
+}
+
+/* Python's `value == 1`, for the version: 1, 1.0 and True all equal one. */
+const isVersion = (value) => value === true || value === DSL_VERSION || (isInt(value) && value.value === BigInt(DSL_VERSION));
 
 function require(mapping, key, where, node = undefined) {
   if (!mapping.has(key)) {
@@ -68,12 +99,19 @@ function nodeFrom(name, spec, where, registry, results) {
   if (!KINDS.includes(kind)) {
     throw new LoadError("load.unknown-kind", `${at} has kind ${str(kind)}; expected one of ${KINDS.join(", ")}`, { node: name });
   }
-  const unit = str(require(spec, "unit", at, name));
+  const unit = strip(textOf(spec, "unit"));
+  if (!unit) {
+    throw new LoadError(
+      "load.no-unit",
+      `${at} declares no unit. A pure ratio is written \`dimensionless\`. A blank is refused because it could mean a pure ratio, or it could mean the unit was never decided (ch02).`,
+      { node: name },
+    );
+  }
   try {
     registry.parse(unit);
   } catch (error) {
     if (error instanceof UnitError) {
-      throw new LoadError("load.unknown-unit", `${at} declares an unknown unit — ${error.message}`, { node: name });
+      throw new LoadError(error.ratio ? "load.not-ratio-scale" : "load.unknown-unit", `${at} declares an unknown unit — ${error.message}`, { node: name });
     }
     throw error;
   }
@@ -81,18 +119,26 @@ function nodeFrom(name, spec, where, registry, results) {
 
   if (kind === "input") {
     const provenance = truthy(get(spec, "provenance", null)) ? spec.get("provenance") : new Map();
+    const distribution = get(spec, "distribution", null);
+    if (isDict(distribution)) {
+      for (const [shape, parameters] of distribution) {
+        const given = truthy(parameters) ? parameters : new Map();
+        if (!isDict(given)) throw new PyError("AttributeError", `'${typeName(given)}' object has no attribute 'items'`);
+        for (const [parameter, value] of given) number(value, `${at}: ${str(shape)} ${str(parameter)}`, `${str(shape)} ${str(parameter)}`, name);
+      }
+    }
     const value = get(spec, "value", null);
+    const numeric = value === null ? null : number(value, `${at}: value`, "value", name);
+    const kindText = textOf(provenance, "kind");
+    const source = textOf(provenance, "source");
     const range = get(spec, "range", null);
     return {
       ...common,
-      value: value === null ? null : float(value),
-      distribution: get(spec, "distribution", null),
-      provenance: {
-        kind: str(get(provenance, "kind", "")),
-        source: str(get(provenance, "source", "")),
-      },
-      slider: truthy(range) ? iterate(range).map(float) : null,
-      decided: str(get(spec, "decided", "")),
+      value: numeric,
+      distribution,
+      provenance: { kind: kindText, source },
+      slider: truthy(range) ? iterate(range).map((v) => number(v, `${at}: range`, "range", name)) : null,
+      decided: textOf(spec, "decided"),
       depends: new Set(),
     };
   }
@@ -124,7 +170,7 @@ function nodeFrom(name, spec, where, registry, results) {
     limitText,
     headroom: margin,
     headroomText,
-    because: str(get(spec, "because", "")),
+    because: textOf(spec, "because"),
     depends: new Set([...refs(of), ...refs(limit), ...refs(margin)]),
   };
 }
@@ -135,8 +181,11 @@ function nodeFrom(name, spec, where, registry, results) {
  * where the book falls over without a worded refusal).
  */
 export function loadModel(text, { registry, results = {}, where = "model.yaml" } = {}) {
-  const raw = safeLoad(text);
+  const raw = readModelYaml(text, where);
   if (!isDict(raw)) throw new LoadError("load.not-a-mapping", `${where}: is not a mapping`);
+  if (raw.has("dsl") && !isVersion(raw.get("dsl"))) {
+    throw new LoadError("load.dsl-version", `${where}: is written for dsl ${repr(raw.get("dsl"))}, and this toolkit reads dsl ${DSL_VERSION}`);
+  }
 
   const nodesSpec = require(raw, "nodes", where);
   if (!isDict(nodesSpec)) throw new PyError("AttributeError", `'${typeof nodesSpec}' object has no attribute 'items'`);
@@ -169,11 +218,12 @@ export function loadModel(text, { registry, results = {}, where = "model.yaml" }
   const model = {
     name: modelName,
     title: str(get(raw, "title", raw.get("model"))),
-    currency: str(get(raw, "currency", "USD")),
+    currency: textOf(raw, "currency", "USD"),
+    dsl: get(raw, "dsl", null),
     nodes,
     outputs,
     correlations: iterate(get(raw, "correlations", [])),
-    description: strip(str(get(raw, "description", ""))),
+    description: strip(textOf(raw, "description")),
     raw,
   };
   model.order = order(model, where);
@@ -269,26 +319,23 @@ export function measuredSd(node) {
 }
 
 /* A scenario file, as dsl.load_scenario reads it. */
-export function loadScenario(text, where = "scenario.yaml") {
-  const raw = safeLoad(text);
-  if (raw === null) throw new PyError("TypeError", "argument of type 'NoneType' is not iterable");
-  if (!contains(raw, "scenario")) {
-    throw new LoadError("load.missing-field", `${where}: missing required field 'scenario'`, { field: "scenario" });
-  }
-  if (!isDict(raw)) throw new PyError("TypeError", "indices must be integers");
+export function loadScenario(source, where = "scenario.yaml") {
+  const raw = readModelYaml(source, where);
+  if (!isDict(raw)) throw new LoadError("load.not-a-mapping", `${where}: is not a mapping`);
+  const name = str(require(raw, "scenario", where));
   const given = get(raw, "overrides", null);
   const overrides = new Map();
   if (truthy(given)) {
     if (!isDict(given)) throw new PyError("AttributeError", `'${typeName(given)}' object has no attribute 'items'`);
-    for (const [k, v] of given) overrides.set(str(k), float(v));
+    for (const [k, v] of given) overrides.set(str(k), number(v, `${where}: override ${repr(k)}`, `override ${repr(k)}`));
   }
   return {
-    name: str(raw.get("scenario")),
-    title: str(get(raw, "title", raw.get("scenario"))),
+    name,
+    title: textOf(raw, "title", name),
     overrides,
-    because: strip(str(get(raw, "because", ""))),
-    samples: int(get(raw, "samples", pyInt(100000n))),
-    seed: int(get(raw, "seed", pyInt(20260916n))),
+    because: strip(textOf(raw, "because")),
+    samples: int(number(get(raw, "samples", pyInt(100000n)), `${where}: samples`, "samples")),
+    seed: int(number(get(raw, "seed", pyInt(20260916n)), `${where}: seed`, "seed")),
   };
 }
 

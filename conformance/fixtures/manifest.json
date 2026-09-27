@@ -1,6 +1,6 @@
 {
  "book": {
-  "commit": "888ac509f2e923a50f6ac6b51153e2c1b6119172",
+  "commit": "156e02b4137e757fc040540123be741140fcfd1f",
   "python": "3.11",
   "repository": "https://github.com/snowch/sizing-and-tco",
   "site": "https://snowch.github.io/sizing-and-tco/"
@@ -8,6 +8,7 @@
  "cases": [
   "reference/web_service",
   "reference/observability",
+  "reference/mixed_pool",
   "stages/01-demand_inputs_single",
   "stages/02-demand_inputs_initial",
   "stages/03-demand_inputs_all",
@@ -23,15 +24,27 @@
   "stages/13-binding",
   "stages/14-headroom",
   "stages/15-sizing",
+  "invalid/bytes-are-information",
   "invalid/ceiling-headroom-syntax",
   "invalid/ceiling-missing-limit",
   "invalid/ceiling-no-headroom",
   "invalid/ceiling-no-reason",
+  "invalid/ceiling-reason-left-empty",
+  "invalid/correlation-no-reason",
+  "invalid/correlation-not-varying",
+  "invalid/correlation-rho-a-word",
+  "invalid/correlation-rho-out-of-range",
+  "invalid/correlation-unchecked",
   "invalid/correlations-inconsistent",
+  "invalid/currency-another",
+  "invalid/currency-unknown",
   "invalid/cycle",
   "invalid/decided-invalid",
   "invalid/decided-missing",
   "invalid/distribution-two-shapes",
+  "invalid/dsl-missing",
+  "invalid/dsl-other-version",
+  "invalid/duplicate-node-key",
   "invalid/fact-cites-nothing",
   "invalid/feeds-no-output",
   "invalid/formula-boolean",
@@ -39,6 +52,7 @@
   "invalid/formula-construct",
   "invalid/formula-function",
   "invalid/formula-keywords",
+  "invalid/formula-min-of-one",
   "invalid/formula-syntax",
   "invalid/input-no-value",
   "invalid/measured-missing-result",
@@ -58,24 +72,35 @@
   "invalid/nodes-not-a-mapping",
   "invalid/not-a-mapping",
   "invalid/overflow",
+  "invalid/plus-two-with-units",
   "invalid/provenance-kind-invalid",
   "invalid/provenance-missing",
+  "invalid/range-a-word",
   "invalid/range-not-a-list",
   "invalid/sampling-goes-non-finite",
   "invalid/scenario-bad-triangular",
   "invalid/scenario-division-by-zero",
   "invalid/scenario-missing-name",
+  "invalid/scenario-not-a-mapping",
+  "invalid/scenario-override-a-word",
   "invalid/scenario-overrides-derived",
   "invalid/scenario-unknown-node",
+  "invalid/shape-inside-another-word",
+  "invalid/shape-named-loosely",
   "invalid/shape-not-named",
+  "invalid/shape-parameter-not-a-number",
   "invalid/source-empty",
+  "invalid/source-left-empty",
+  "invalid/unit-blank",
   "invalid/unit-ceiling-headroom",
   "invalid/unit-ceiling-limit",
   "invalid/unit-declared-vs-produced",
   "invalid/unit-does-not-typecheck",
   "invalid/unit-fractional-power",
   "invalid/unit-log-of-a-rate",
+  "invalid/unit-logarithmic",
   "invalid/unit-mixed-operands",
+  "invalid/unit-offset",
   "invalid/unit-rounds-in-wrong-unit",
   "invalid/unknown-kind",
   "invalid/unknown-output",
@@ -83,13 +108,12 @@
   "invalid/unknown-unit",
   "invalid/value-not-a-number",
   "invalid/yaml-syntax",
+  "invalid/yaml-yes-is-one",
   "edge/all-four-shapes",
-  "edge/bytes-are-dimensionless",
   "edge/ceiling-verdicts",
   "edge/correlation-missing-rho",
   "edge/correlation-pinned",
-  "edge/correlation-unchecked",
-  "edge/duplicate-node-key",
+  "edge/currency-euro",
   "edge/functions-at-the-edges",
   "edge/limit-divides-by-zero",
   "edge/max-picks-its-unit",
@@ -102,20 +126,18 @@
   "edge/outputs-as-text",
   "edge/percent-plus-one",
   "edge/percent-unit",
-  "edge/plus-two-with-units",
   "edge/plus-zero-keeps-units",
   "edge/scenario-edges",
   "edge/scenario-overrides-measured",
-  "edge/shape-named-loosely",
+  "edge/shape-in-a-longer-word",
   "edge/sqrt-then-divide-by-zero",
   "edge/strong-correlation",
   "edge/three-way-max",
   "edge/types-in-the-yaml",
   "edge/unit-conversions",
-  "edge/value-and-shape",
-  "edge/yaml-yes-is-one"
+  "edge/value-and-shape"
  ],
- "dsl": null,
+ "dsl": 1,
  "fixture_format": 1,
  "rules": {
   "causes": [
@@ -136,12 +158,47 @@
    "@",
    "http"
   ],
+  "currencies": [
+   "USD",
+   "EUR",
+   "GBP",
+   "JPY",
+   "CHF",
+   "CAD",
+   "AUD",
+   "NZD",
+   "CNY",
+   "HKD",
+   "SGD",
+   "INR",
+   "KRW",
+   "SEK",
+   "NOK",
+   "DKK",
+   "PLN",
+   "CZK",
+   "BRL",
+   "MXN",
+   "ZAR"
+  ],
   "decided_by": [
    "you",
    "outside",
    "definition"
   ],
   "problems": [
+   {
+    "code": "dsl.not-declared",
+    "rule": "0"
+   },
+   {
+    "code": "currency.unknown",
+    "rule": "0"
+   },
+   {
+    "code": "currency.another",
+    "rule": "0"
+   },
    {
     "code": "units.does-not-typecheck",
     "rule": "1"
@@ -175,6 +232,10 @@
     "rule": "2"
    },
    {
+    "code": "input.no-one-shape",
+    "rule": "2"
+   },
+   {
     "code": "input.fact-cites-nothing",
     "rule": "3"
    },
@@ -203,6 +264,18 @@
     "rule": "6"
    },
    {
+    "code": "correlation.not-varying",
+    "rule": "2"
+   },
+   {
+    "code": "correlation.rho",
+    "rule": "2"
+   },
+   {
+    "code": "correlation.no-reason",
+    "rule": "2"
+   },
+   {
     "code": "shape.feeds-no-output",
     "rule": "7"
    },
@@ -217,6 +290,10 @@
    {
     "code": "classification.definitional-with-ceilings",
     "rule": "8"
+   },
+   {
+    "code": "scenario.does-not-load",
+    "rule": "scenarios"
    },
    {
     "code": "scenario.unknown-node",
@@ -239,6 +316,12 @@
   "refusals": [
    "load.yaml",
    "load.not-a-mapping",
+   "load.dsl-version",
+   "load.duplicate-key",
+   "load.not-a-number",
+   "load.no-unit",
+   "load.not-ratio-scale",
+   "load.formula-arity",
    "load.missing-field",
    "load.node-not-a-mapping",
    "load.unknown-kind",

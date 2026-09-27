@@ -1,0 +1,4 @@
+about: >-
+  A node whose unit is written as an empty string. A pure ratio is written dimensionless.
+expect:
+  - load.no-unit

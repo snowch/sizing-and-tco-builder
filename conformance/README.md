@@ -50,19 +50,21 @@ changes.
 
 ## The fixtures
 
-`manifest.json` names the book commit, the toolkit's versions (Python, numpy, Pint, PyYAML), every
-code the generator knows, and the case list. It has a `dsl` slot for the format version the book
-has planned; it is `null` until the book declares one.
+`manifest.json` names the book commit, the format version the book reads (`dsl`), the toolkit's
+versions (Python, numpy, Pint, PyYAML), every code the generator knows, the currencies a model may
+price in, and the case list.
 
 `units.json` is Pint's registry reduced to a table (every unit's symbol, aliases, factor to base
-units and dimensions; every prefix), with the verdict on each probe. The engine reads this table;
+units and dimensions; every prefix; the currencies), with the verdict on each probe. The engine reads this table;
 it does not carry a copy of Pint's definitions.
 
 `formulas.json` is the list of allowed functions and the verdict on each formula probe.
 
 `yaml.json` is each YAML probe's value as PyYAML builds it, with every Python type kept (`3` and
-`3.0` differ, and so do `True` and `1`), because the book calls `str()` and `float()` on them. A
-probe line starting `json:` is a JSON string, so a probe can hold a newline.
+`3.0` differ, and so do `True` and `1`), because the book calls `str()` and `float()` on them. Each
+probe is also read by the book's model reader (`dsl.read_yaml`), which refuses a key written twice
+in one mapping and so takes no merge key either; that verdict is under `read`. A probe line
+starting `json:` is a JSON string, so a probe can hold a newline.
 
 `results.json` is every stamped measurement a `measured` node can name, with the implementation
 it was measured on. The builder offers these and no others.
@@ -97,14 +99,17 @@ A message is classified by pattern into a code, so the engine is compared on *wh
 than on the wording. A message that matches no pattern, or more than one, stops the generator: a
 rule the book adds must arrive as a failure here, not be filed under "other".
 
-Loader refusals: `load.yaml`, `load.not-a-mapping`, `load.missing-field`, `load.node-not-a-mapping`,
-`load.unknown-kind`, `load.unknown-unit`, `load.formula-syntax`, `load.formula-function`,
-`load.formula-keywords`, `load.formula-constant`, `load.formula-construct`, `load.unknown-reference`,
-`load.unknown-output`, `load.cycle`, and `load.malformed` for a file the loader falls over on
-without a worded refusal (a value that is not a number, a list where a mapping belongs).
+Loader refusals: `load.yaml`, `load.not-a-mapping`, `load.dsl-version`, `load.duplicate-key`,
+`load.not-a-number`, `load.no-unit`, `load.not-ratio-scale`, `load.formula-arity`,
+`load.missing-field`, `load.node-not-a-mapping`, `load.unknown-kind`, `load.unknown-unit`,
+`load.formula-syntax`, `load.formula-function`, `load.formula-keywords`, `load.formula-constant`,
+`load.formula-construct`, `load.unknown-reference`, `load.unknown-output`, `load.cycle`, and
+`load.malformed` for a file the loader falls over on without a worded refusal (a list where a
+mapping belongs, a key that is a list).
 
-`verify-models.py`, by its own rule numbers: `units.*` (1), `input.*` (2, 3), `measured.*` (4, 5),
-`ceiling.*` (6), `shape.*` (7), `classification.*` (8), `scenario.*` (`check_scenarios`). A
+`verify-models.py`, by its own rule numbers: `dsl.*` and `currency.*` (0), `units.*` (1),
+`input.*` and `correlation.*` (2, 3), `measured.*` (4, 5), `ceiling.*` (6), `shape.*` (7),
+`classification.*` (8), `scenario.*` (`check_scenarios`). A
 scenario that does not evaluate also carries a `cause`: `typecheck`, `no-value`,
 `no-measured-value`, `distribution`, `correlation` or `arithmetic`.
 

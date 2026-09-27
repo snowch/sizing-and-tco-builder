@@ -15,9 +15,8 @@
  *   - sqrt goes through numpy, so it and everything computed from it stop raising on a division
  *     by zero and return inf or nan instead.
  *
- * Offset and logarithmic units (degC, dB) are not supported here: the builder does not offer
- * them, and the book is asked to refuse them (BOOK-REQUESTS 5). A file that uses one is refused
- * by the engine rather than checked differently from the book.
+ * Offset and logarithmic units (degC, dB) never reach here: the book refuses them as a node's
+ * unit, and so does the engine's registry (units.js, ratioScale).
  *
  * A value is { units, m, np, cx }: units is a container (null for a plain number), m the
  * magnitude, np whether it is a numpy float64, cx whether Python has made it complex.

@@ -1,0 +1,5 @@
+about: >-
+  A value written as yes, which YAML reads as true. The book refuses a boolean where a number
+  belongs.
+expect:
+  - load.not-a-number

@@ -1,0 +1,4 @@
+about: >-
+  A model that declares a currency code the registry does not define.
+expect:
+  - currency.unknown

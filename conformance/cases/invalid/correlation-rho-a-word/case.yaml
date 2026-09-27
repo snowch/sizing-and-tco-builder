@@ -1,0 +1,4 @@
+about: >-
+  A correlation whose rho is written as yes, which YAML reads as true.
+expect:
+  - correlation.rho

@@ -3,7 +3,7 @@
  * on every change. Static files only; nothing leaves the browser.
  */
 
-import { loadModel, loadScenario } from "../engine/model.js";
+import { DSL_VERSION, loadModel, loadScenario } from "../engine/model.js";
 import { Registry } from "../engine/units.js";
 import { documentFrom, scenarioDocumentFrom } from "../engine/write.js";
 import { emptyState, forget, load, reference, save } from "./state.js";
@@ -157,7 +157,8 @@ async function boot() {
       return { error: `The builder cannot hold ${modelPath}: ${error.message}` };
     }
     const state = emptyState();
-    state.doc = { ...doc, nodes: doc.nodes.map((n) => (n.kind === "input" ? { ...n, sure: n.distribution ? "shape" : n.value === null ? "none" : "one" } : n)) };
+    // The builder writes the book's format, which says its version on its first line.
+    state.doc = { ...doc, dsl: DSL_VERSION, nodes: doc.nodes.map((n) => (n.kind === "input" ? { ...n, sure: n.distribution ? "shape" : n.value === null ? "none" : "one" } : n)) };
     state.goal = "other";
     state.answer = doc.outputs[0] ?? null;
     state.decision = doc.description;

@@ -1,0 +1,4 @@
+about: >-
+  A scenario file that is a list, not a mapping.
+expect:
+  - scenario.does-not-load

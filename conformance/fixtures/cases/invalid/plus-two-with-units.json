@@ -1,0 +1,238 @@
+{
+ "about": "Terabytes plus a plain two. Bytes are information in the book's registry, so a pure number cannot be added to them.",
+ "files": {
+  "model.yaml": "dsl: 1\nmodel: tiny\ntitle: plus two with units\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  stored:\n    kind: input\n    decided: outside\n    unit: TB\n    value: 15\n    provenance: {kind: assumption, source: \"what is held, as stated for this case\"}\n\n  index:\n    kind: input\n    decided: outside\n    unit: GB\n    value: 500\n    provenance: {kind: assumption, source: \"the index, as stated for this case\"}\n\n  disk_per_host:\n    kind: input\n    decided: outside\n    unit: TB/host\n    value: 2\n    provenance: {kind: assumption, source: \"the disk each host has, as stated for this case\"}\n\n  bumped:\n    kind: derived\n    unit: TB\n    formula: stored + 2\n\noutputs:\n  - utilisation\n  - bumped\n  - index\n  - disk_per_host\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "invalid/plus-two-with-units",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "definitional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "cores",
+   "disk_per_host",
+   "index",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "stored",
+   "bumped",
+   "utilisation"
+  ],
+  "outputs": [
+   "utilisation",
+   "bumped",
+   "index",
+   "disk_per_host"
+  ],
+  "title": "plus two with units",
+  "unit_problems": 1,
+  "unmeasured": []
+ },
+ "nodes": {
+  "bumped": {
+   "dimensionality": {
+    "[information]": 1.0
+   },
+   "formula": {
+    "args": [
+     {
+      "name": "stored",
+      "op": "ref"
+     },
+     {
+      "op": "const",
+      "value": 2.0
+     }
+    ],
+    "op": "+"
+   },
+   "kind": "derived",
+   "magnitude": 17.0,
+   "unit": "TB"
+  },
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "disk_per_host": {
+   "decided": "outside",
+   "dimensionality": {
+    "[host]": -1.0,
+    "[information]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 2.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the disk each host has, as stated for this case"
+   },
+   "range": null,
+   "unit": "TB/host",
+   "value": 2.0
+  },
+  "index": {
+   "decided": "outside",
+   "dimensionality": {
+    "[information]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 500.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the index, as stated for this case"
+   },
+   "range": null,
+   "unit": "GB",
+   "value": 500.0
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "stored": {
+   "decided": "outside",
+   "dimensionality": {
+    "[information]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 15.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "what is held, as stated for this case"
+   },
+   "range": null,
+   "unit": "TB",
+   "value": 15.0
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.25,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/plus-two-with-units/model.yaml",
+ "results": {},
+ "scenarios": {
+  "reference": {
+   "overrides": {},
+   "point_error": {
+    "exception": "EvaluationError",
+    "message": "tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'bumped' does not typecheck. `stored + 2` — Cannot convert from 'terabyte' to 'dimensionless'"
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": false,
+  "problems": [
+   {
+    "code": "units.does-not-typecheck",
+    "message": "_builder_conformance/plus-two-with-units/model.yaml: tiny: node 'bumped' does not typecheck. `stored + 2` — Cannot convert from 'terabyte' to 'dimensionless'",
+    "node": "bumped",
+    "part": null,
+    "rule": "1"
+   },
+   {
+    "cause": "typecheck",
+    "code": "scenario.does-not-evaluate",
+    "message": "_builder_conformance/plus-two-with-units/model.yaml: scenario 'reference' does not evaluate — tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'bumped' does not typecheck. `stored + 2` — Cannot convert from 'terabyte' to 'dimensionless'",
+    "part": null,
+    "rule": "scenarios",
+    "scenario": "reference"
+   }
+  ]
+ }
+}

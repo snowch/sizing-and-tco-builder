@@ -1,0 +1,5 @@
+about: >-
+  A node in degrees Celsius. A unit that converts with an offset is not a ratio scale, and a
+  node converts by one factor.
+expect:
+  - load.not-ratio-scale

@@ -204,14 +204,18 @@ def book_modules():
 #: script's own numbering; ``scenarios`` is ``check_scenarios``. A message that matches none of
 #: these, or more than one, stops the generator.
 PROBLEMS: tuple[tuple[str, str, str], ...] = (
+    ("dsl.not-declared", "0", r"does not say which rules it is written against\. "),
+    ("currency.unknown", "0", r"declares currency .*; expected an ISO code the registry defines: "),
+    ("currency.another", "0", r"node '(?P<node>[^']+)' counts money in "),
     ("units.does-not-typecheck", "1", r"node '(?P<node>[^']+)'(?P<part> limit| headroom)? does not typecheck\. `"),
-    ("units.declared-vs-produced", "1", r"node '(?P<node>[^']+)'(?P<part> limit| headroom)? declares '[^']*' \[.*\] but `"),
+    ("units.declared-vs-produced", "1", r"node '(?P<node>[^']+)'(?P<part> limit| headroom)? declares '[^']*', an? [a-z ]+, but `"),
     ("units.mixed-operands", "1", r"node '(?P<node>[^']+)'(?P<part> limit| headroom)? (?:adds|subtracts|takes the (?:min|max) of) quantities in "),
     ("units.rounds-in-wrong-unit", "1", r"node '(?P<node>[^']+)'(?P<part> limit| headroom)? rounds a number in "),
     ("input.decided", "2", r"input '(?P<node>[^']+)' declares decided "),
     ("input.provenance-kind", "2", r"input '(?P<node>[^']+)' declares provenance kind "),
     ("input.empty-source", "2", r"input '(?P<node>[^']+)' has an empty provenance source\."),
     ("input.shape-not-named", "2", r"input '(?P<node>[^']+)' is sampled as a \w+ and its provenance never says so\."),
+    ("input.no-one-shape", "2", r"input '(?P<node>[^']+)' — "),
     ("input.fact-cites-nothing", "3", r"input '(?P<node>[^']+)' is declared a `fact` but its source cites nothing"),
     ("measured.no-result", "4", r"measured node '(?P<node>[^']+)' names no result file$"),
     ("measured.no-summary-value", "4", r"\S+\.json has no `summary\.value`, so node '(?P<node>[^']+)' has nothing to read$"),
@@ -219,10 +223,14 @@ PROBLEMS: tuple[tuple[str, str, str], ...] = (
     ("measured.no-uncertainty", "5", r"measured node '(?P<node>[^']+)' reports a standard error of "),
     ("ceiling.no-headroom", "6", r"ceiling '(?P<node>[^']+)' declares no headroom\."),
     ("ceiling.no-reason", "6", r"ceiling '(?P<node>[^']+)' gives no reason\."),
+    ("correlation.not-varying", "2", r"a correlation names (?:'(?P<node>[^']*)'|\S+), which is neither an input with a shape nor a measured constant\."),
+    ("correlation.rho", "2", r"the correlation between .* has rho .*; it is a number between -1 and 1$"),
+    ("correlation.no-reason", "2", r"the correlation between .* gives no reason\. "),
     ("shape.feeds-no-output", "7", r"node '(?P<node>[^']+)' feeds no output\."),
     ("shape.no-outputs", "7", r"declares no outputs, so nothing in it can be checked$"),
     ("classification.measured-without-ceiling", "8", r"has measured constants but no ceiling\."),
     ("classification.definitional-with-ceilings", "8", r"classified as a definitional model but declares ceilings$"),
+    ("scenario.does-not-load", "scenarios", r"a scenario file does not load — "),
     ("scenario.unknown-node", "scenarios", r"scenario '(?P<scenario>[^']+)' overrides '(?P<node>[^']+)', which is not a node$"),
     ("scenario.overrides-derived", "scenarios", r"scenario '(?P<scenario>[^']+)' overrides '(?P<node>[^']+)', which is derived\."),
     ("scenario.does-not-evaluate", "scenarios", r"scenario '(?P<scenario>[^']+)' does not evaluate — "),
@@ -247,14 +255,20 @@ CAUSES: tuple[tuple[str, str], ...] = (
 #: Why the loader refused a file, by exception type and text.
 REFUSALS: tuple[tuple[str, str], ...] = (
     ("load.not-a-mapping", r": is not a mapping$"),
+    ("load.dsl-version", r": is written for dsl .*, and this toolkit reads dsl \d+$"),
+    ("load.duplicate-key", r": line \d+: (?P<key>.*) is written twice in the same mapping"),
+    ("load.not-a-number", r": (?P<field>value|range|samples|seed|override '[^']*'|\w+ \w+) is .*, which is not a number$"),
+    ("load.no-unit", r"node '(?P<node>[^']+)' declares no unit\. "),
+    ("load.not-ratio-scale", r"node '(?P<node>[^']+)' declares an unknown unit — unit .* is not a ratio scale: "),
+    ("load.formula-arity", r"takes the (?:min|max) of fewer than two things"),
     ("load.missing-field", r"missing required field '(?P<field>[^']+)'$"),
     ("load.node-not-a-mapping", r"node '(?P<node>[^']+)' is not a mapping$"),
     ("load.unknown-kind", r"node '(?P<node>[^']+)' has kind "),
-    ("load.unknown-unit", r"node '(?P<node>[^']+)' declares an unknown unit"),
+    ("load.unknown-unit", r"node '(?P<node>[^']+)' declares an unknown unit — unknown unit "),
     ("load.formula-syntax", r"does not parse \("),
     ("load.formula-function", r"calls '[^']*'\. A formula may call only"),
     ("load.formula-keywords", r"takes positional arguments only$"),
-    ("load.formula-constant", r"is not a number$"),
+    ("load.formula-constant", r"(?<!, which) is not a number$"),
     ("load.formula-construct", r"which this language does not have\."),
     ("load.unknown-reference", r"node '(?P<node>[^']+)' refers to '(?P<ref>[^']+)', which this model does not define"),
     ("load.unknown-output", r"declares an output '(?P<node>[^']+)' that is not a node$"),
@@ -376,10 +390,14 @@ class LocalResults:
         self.dsl.load_result, self.dsl.result_exists, self.verify.load_result = load, exists, load
 
 
+#: The book's full models, each a case read in place.
+REFERENCE = ("web_service", "observability", "mixed_pool")
+
+
 def case_sources() -> list[tuple[str, Path, bool]]:
     """(id, directory, in the book) for every case, in a stable order."""
     out: list[tuple[str, Path, bool]] = []
-    for name in ("web_service", "observability"):
+    for name in REFERENCE:
         out.append((f"reference/{name}", CHECKOUT / "models" / name, True))
     for stage in sorted((CHECKOUT / "models" / "web_service" / "stages").iterdir()):
         if (stage / "model.yaml").exists():
@@ -591,6 +609,8 @@ def unit_table(units) -> dict:
         except Exception as exc:
             entry["error"] = f"{type(exc).__name__}: {exc}"
         table["units"][name] = entry
+    # The ISO codes a model may declare as its `currency:`, each a dimension of its own.
+    table["currencies"] = list(units.CURRENCIES)
     return table
 
 
@@ -646,14 +666,28 @@ def typed(value):
 
 
 def yaml_probes(strings: list[str]) -> list[dict]:
+    """Each probe as PyYAML's safe_load builds it, and as the book's model reader does: that one
+    refuses a key written twice, and so does not take a merge key either."""
     import yaml
+
+    from sizing import dsl
 
     out = []
     for text in strings:
         try:
-            out.append({"yaml": text, "ok": True, "value": typed(yaml.safe_load(text))})
+            entry = {"yaml": text, "ok": True, "value": typed(yaml.safe_load(text))}
         except yaml.YAMLError as exc:
-            out.append({"yaml": text, "ok": False, "message": str(exc).splitlines()[0]})
+            entry = {"yaml": text, "ok": False, "message": str(exc).splitlines()[0]}
+        try:
+            entry["read"] = {"ok": True, "value": typed(dsl.read_yaml(text, "probe"))}
+        except yaml.YAMLError as exc:
+            entry["read"] = {"ok": False, "code": "load.yaml", "message": str(exc).splitlines()[0]}
+        except dsl.ModelError as exc:
+            code, _ = one_match(REFUSALS, str(exc), "model reader refusal")
+            entry["read"] = {"ok": False, "code": code, "message": str(exc)}
+        except Exception as exc:  # an unhashable key: a TypeError, not a worded refusal
+            entry["read"] = {"ok": False, "code": "load.malformed", "message": f"{type(exc).__name__}: {exc}"}
+        out.append(entry)
     return out
 
 
@@ -723,7 +757,7 @@ def outline() -> dict:
 
 
 #: Cases whose sampled ranges the builder is held to, every scenario of each.
-SAMPLED = ("reference/web_service", "reference/observability", "edge/all-four-shapes", "edge/strong-correlation")
+SAMPLED = (*(f"reference/{name}" for name in REFERENCE), "edge/all-four-shapes", "edge/strong-correlation")
 
 #: How many other seeds each scenario is run with, to measure how far each figure moves by
 #: chance alone at its sample count. That spread is the tolerance the builder is held to.
@@ -845,6 +879,7 @@ def examples() -> list[dict]:
         ("demand", CHECKOUT / "models" / "web_service" / "stages" / "05-demand", chapter_of["demand"]),
         ("web_service", CHECKOUT / "models" / "web_service", "the_sizing_model"),
         ("observability", CHECKOUT / "models" / "observability", "regime_changes"),
+        ("mixed_pool", CHECKOUT / "models" / "mixed_pool", "bandwidth_and_the_binding_constraint"),
     ]
     out = []
     for name, directory, chapter in picks:
@@ -906,7 +941,7 @@ def inside(out: Path) -> int:
     write(out / "yaml.json", {"probes": yaml_probes(probe_lines("yaml.txt"))})
     write(out / "results.json", measured_catalogue())
     write(out / "products.json", products())
-    for case_id in ("reference/web_service", "reference/observability", "edge/all-four-shapes", "edge/measured-book-result"):
+    for case_id in (*(f"reference/{name}" for name in REFERENCE), "edge/all-four-shapes", "edge/measured-book-result"):
         write(out / "tornado" / f"{case_id}.json", tornado_fixture(case_id, modules))
     for case_id in SAMPLED:
         write(out / "sampling" / f"{case_id}.json", sampling_fixture(case_id, modules))
@@ -920,9 +955,8 @@ def inside(out: Path) -> int:
     write(out / "manifest.json", {
         "fixture_format": FIXTURE_FORMAT,
         "book": lock(),
-        # The format version the book declares, once it does (a top-level `dsl:` line). Until
-        # then there is none, and the builder writes none.
-        "dsl": getattr(dsl, "DSL_VERSION", None),
+        # The format version the book reads, and the builder writes as a model's first line.
+        "dsl": dsl.DSL_VERSION,
         "toolkit": {
             "python": ".".join(map(str, sys.version_info[:2])),
             "numpy": numpy.__version__,
@@ -936,6 +970,7 @@ def inside(out: Path) -> int:
             "provenance_kinds": list(dsl.PROVENANCE_KINDS),
             "decided_by": list(dsl.DECIDED_BY),
             "shapes": list(mc.SHAPES),
+            "currencies": list(units.CURRENCIES),
             "citation_markers": list(verify.CITATION_MARKERS),
         },
         "cases": ids,

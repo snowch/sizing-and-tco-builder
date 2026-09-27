@@ -1,4 +1,4 @@
 about: >-
-  A scenario file with no scenario key. The verifier falls over rather than reporting it.
+  A scenario file with no scenario name. The verifier reports the file does not load.
 expect:
-  - verifier.crashed
+  - scenario.does-not-load

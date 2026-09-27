@@ -1,0 +1,2340 @@
+{
+ "about": "",
+ "files": {
+  "model.yaml": "dsl: 1\nmodel: mixed_pool\ntitle: Two generations in one pool\ncurrency: USD\n\ndescription: >-\n  The web service's fleet as ch10 sizes it, with one change: some of last generation's hosts are\n  still in service, doing the same job as the new ones. The question stops being how many hosts\n  and becomes how many new hosts, given the old ones. The demand is ch10's, at its point\n  estimates, so this model has no ranges: its lessons are in its structure. How requests are\n  spread decides whether the two generations' capacity adds. Data is placed by capacity in both\n  cases; only the routing of requests changes.\n\nnodes:\n  # -- the demand: the web service's own chain, node for node (ch02 - ch09) -------------------------\n  # Copied with its shapes, sources and correlation, so busy cores, working set and data on disk\n  # carry the running example's ranges rather than a second, made-up copy of them.\n\n  peak_request_rate_t0:\n    kind: input\n    decided: outside\n    unit: request/second\n    label: peak request rate, day one\n    distribution: {triangular: {minimum: 3000.0, likely: 8000.0, maximum: 20000.0}}\n    provenance:\n      kind: assumption\n      source: >-\n        ch04 — the busy hour, not the daily mean. Triangular, because this is an engineer's lowest,\n        most likely and highest values; claiming more precision would be invention.\n    range: [500, 40000]\n\n  stored_data_t0:\n    kind: input\n    decided: outside\n    unit: TB\n    value: 15\n    label: records held, day one\n    note: >-\n      This one keeps its single number. You can go and count how much you hold today. Nobody can\n      count next quarter's busy hour. What is uncertain about the records is how fast they grow,\n      and annual_growth carries that for the rate and the level alike.\n    provenance:\n      kind: assumption\n      source: >-\n        The service owners estimate what the service holds today: its database and the objects users\n        have uploaded, before replication, indexes or compression. It has not been counted yet, and\n        counting it would turn the estimate into a fact.\n    range: [1, 200]\n\n  annual_growth:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    label: annual growth factor\n    distribution: {lognormal: {p10: 1.12, p90: 1.60}}\n    provenance:\n      kind: assumption\n      source: >-\n        ch04 — lognormal because growth compounds and the factor cannot be zero or less. One future\n        in ten grows by less than 12% a year, and one in ten by more than 60%; outside that range\n        you would be surprised. One factor for requests and for records, because users drive both.\n    range: [1.0, 2.0]\n\n  one_year:\n    kind: input\n    decided: definition\n    unit: year\n    value: 1\n    label: one year\n    note: >-\n      Here because a duration cannot be an exponent. In (1+r)^n the n is a pure number, so the\n      horizon has to be divided by something with the same units before it can be used as one.\n      Appendix D has the rest of the conversions that bite.\n    provenance: {kind: fact, source: \"definition\"}\n\n  horizon_periods:\n    kind: derived\n    unit: dimensionless\n    formula: horizon / one_year\n\n  peak_request_rate:\n    kind: derived\n    unit: request/second\n    label: peak request rate at horizon\n    formula: peak_request_rate_t0 * annual_growth ** horizon_periods\n\n  stored_data:\n    kind: derived\n    unit: TB\n    label: records held at horizon\n    formula: stored_data_t0 * annual_growth ** horizon_periods\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: second * core / request\n    label: CPU time per request\n    note: >-\n      Core-seconds of work one request costs, which is not how long a request takes. A request\n      that occupies one core for twelve milliseconds has a service demand of twelve milliseconds\n      whether it returns in twelve milliseconds or in twelve seconds — the difference is\n      queueing, and Part II is about that difference.\n\n      This is the model's one rate constant and it belongs on a rig (ch03). No rig is declared,\n      so it is held here as an assumption whose source says what would replace it, rather than\n      as a measured node with nothing behind it.\n    distribution: {triangular: {minimum: 0.008, likely: 0.012, maximum: 0.020}}\n    provenance:\n      kind: assumption\n      source: >-\n        The lowest, likeliest and highest values are this book's own choice for the running example:\n        not measured on any machine, not taken from any product. It is held as an assumption because\n        no reference machine is declared in `rig/machine.yml`; `make measure-rig` on a declared\n        machine replaces it with a measured one. It is triangular, with three values, because it has\n        not been measured. Once it is, it becomes a normal spread around the measurement, which is a\n        change of claim and not only of numbers (ch13).\n    range: [0.002, 0.05]\n\n  busy_cores:\n    kind: derived\n    unit: core\n    label: cores busy at the busy hour\n    note: >-\n      Arrival rate times service demand. It is a count of cores doing work, it has nothing to do\n      with how many you own, and it is the numerator of every utilisation figure below.\n    formula: peak_request_rate * service_demand\n\n  hot_fraction:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    label: share of records touched in a busy hour\n    distribution: {triangular: {minimum: 0.01, likely: 0.03, maximum: 0.08}}\n    provenance:\n      kind: assumption\n      source: \"ch08 — the working set as a share of everything held. Triangular; nobody measures\n        this and everybody has an opinion, and the maximum is a service whose users all look at\n        the same week's data\"\n    range: [0.005, 0.3]\n\n  working_set:\n    kind: derived\n    unit: TB\n    label: working set at horizon\n    formula: stored_data * hot_fraction\n\n  record_compression:\n    kind: measured\n    unit: dimensionless\n    label: record compression ratio\n    result: records-compression\n\n  replication_factor:\n    kind: input\n    decided: you\n    unit: dimensionless\n    value: 3\n    provenance:\n      kind: assumption\n      source: \"three copies of every record, so that a host can die and take its disks with it.\n        A different durability scheme substitutes its own factor here and the rest of the model\n        is unchanged, which is the point of it being a node\"\n    range: [1, 4]\n\n  index_overhead:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {triangular: {minimum: 1.15, likely: 1.30, maximum: 1.60}}\n    provenance:\n      kind: assumption\n      source: \"indexes, the write-ahead log and journals as a multiplier on stored bytes.\n        Triangular, and the bounds are for a service with a few indexes per table — a\n        search-heavy one is off the top of this range\"\n\n  raw_per_stored:\n    kind: derived\n    unit: dimensionless\n    label: raw bytes per stored byte\n    formula: replication_factor * index_overhead / record_compression\n\n  raw_data:\n    kind: derived\n    unit: TB\n    label: raw disk needed at horizon\n    formula: stored_data * raw_per_stored\n\n\n\n\n\n  os_reserve:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {triangular: {minimum: 0.06, likely: 0.10, maximum: 0.18}}\n    label: memory the operating system keeps\n    provenance:\n      kind: assumption\n      source: \"Triangular, as in the web service model's os_reserve at its point estimate (ch10). The same share on\n        both generations\"\n\n  # -- the two generations ----------------------------------------------------------------------\n\n  cores_per_new_host:\n    kind: input\n    decided: you\n    unit: core/host\n    value: 16\n    label: cores per new host\n    provenance:\n      kind: vendor_claim\n      source: \"the web service model's host (ch10): spec sheet, physical cores\"\n    range: [4, 128]\n\n  ram_per_new_host:\n    kind: input\n    decided: you\n    unit: GiB/host\n    value: 64\n    label: memory per new host\n    provenance:\n      kind: vendor_claim\n      source: \"the web service model's host (ch10): spec sheet, the modules fitted\"\n    range: [8, 1024]\n\n  disk_per_new_host:\n    kind: input\n    decided: you\n    unit: TB/host\n    value: 2\n    label: disk per new host\n    provenance:\n      kind: vendor_claim\n      source: \"the web service model's host (ch10): spec sheet, one local drive\"\n    range: [1, 60]\n\n  cores_per_old_host:\n    kind: input\n    decided: outside\n    unit: core/host\n    value: 8\n    label: cores per old host\n    note: >-\n      One number: the old hosts are already bought, and you can read their specification off the hosts themselves.\n    provenance:\n      kind: assumption\n      source: \"this worked example's premise: last generation's hosts have half the cores of this\n        generation's. Fixed, because the hosts are already bought\"\n    range: [2, 64]\n\n  ram_per_old_host:\n    kind: input\n    decided: outside\n    unit: GiB/host\n    value: 128\n    label: memory per old host\n    note: >-\n      One number: the old hosts are already bought, and you can read their specification off the hosts themselves.\n    provenance:\n      kind: assumption\n      source: \"this worked example's premise: last generation's hosts were bought memory-heavy, with\n        twice this generation's memory and half its cores\"\n    range: [8, 1024]\n\n  disk_per_old_host:\n    kind: input\n    decided: outside\n    unit: TB/host\n    value: 2\n    label: disk per old host\n    note: >-\n      One number: the old hosts are already bought, and you can read their specification off the hosts themselves.\n    provenance:\n      kind: assumption\n      source: \"this worked example's premise: the same drive as the new hosts\"\n    range: [1, 60]\n\n  old_hosts:\n    kind: input\n    decided: you\n    unit: host\n    value: 30\n    label: old hosts still in service at the horizon\n    note: >-\n      Not how many old hosts there are today: how many are still running at the horizon. Old\n      hosts retire on their own schedule, and the check has to hold at the worst point, after\n      they leave and before demand stops growing. The old_retired scenario is that point.\n    provenance:\n      kind: assumption\n      source: \"this worked example's premise: thirty of last generation's hosts are kept in service\n        to the horizon. A decision, because keeping them is a choice\"\n    range: [0, 120]\n\n  new_hosts:\n    kind: input\n    decided: you\n    unit: host\n    value: 35\n    label: new hosts to buy\n    note: >-\n      The purchase, decided the usual way: the count the model recommends when requests are\n      routed by capacity, at the point estimates. Held as an input, as the web service holds\n      its fleet, so the ceilings can ask how the pool as bought fares.\n    provenance:\n      kind: assumption\n      source: \"the sizing decision: new_hosts_weighted at the point estimates (ch10, ch12)\"\n    range: [2, 120]\n\n  one_host:\n    kind: input\n    decided: definition\n    unit: host\n    value: 1\n    label: one host\n    provenance:\n      kind: fact\n      source: definition\n\n  # -- margins, as the web service declares them ------------------------------------------------\n\n  queueing_margin:\n    kind: input\n    decided: you\n    unit: dimensionless\n    value: 0.3\n    label: queueing margin\n    provenance:\n      kind: assumption\n      source: \"the web service model's queueing margin (ch06, ch11): how far under the knee the\n        fleet runs at the busy hour\"\n    range: [0.0, 0.6]\n\n  cache_margin:\n    kind: input\n    decided: you\n    unit: dimensionless\n    value: 0.25\n    label: cache margin\n    provenance:\n      kind: assumption\n      source: \"the web service model's cache margin (ch08, ch11): room for the working set to grow\n        before it spills out of memory\"\n    range: [0.0, 0.5]\n\n  disk_margin:\n    kind: input\n    decided: you\n    unit: dimensionless\n    value: 0.25\n    label: disk margin\n    provenance:\n      kind: assumption\n      source: \"the web service model's disk margin (ch11): room to re-replicate a dead host's\n        records onto the survivors\"\n    range: [0.0, 0.45]\n\n  # -- memory each generation gives the service -------------------------------------------------\n\n  ram_for_service_new:\n    kind: derived\n    unit: TB/host\n    label: memory the service can use, per new host\n    formula: ram_per_new_host * (1 - os_reserve)\n\n  ram_for_service_old:\n    kind: derived\n    unit: TB/host\n    label: memory the service can use, per old host\n    formula: ram_per_old_host * (1 - os_reserve)\n\n  # -- what the old hosts already give, per chain ------------------------------------------------\n\n  old_cores:\n    kind: derived\n    unit: core\n    label: cores the old hosts give\n    formula: old_hosts * cores_per_old_host\n\n  old_ram:\n    kind: derived\n    unit: TB\n    label: memory the old hosts give the service\n    formula: old_hosts * ram_for_service_old\n\n  old_disk:\n    kind: derived\n    unit: TB\n    label: disk the old hosts give\n    formula: old_hosts * disk_per_old_host\n\n  # -- routed by capacity: each generation adds its share ---------------------------------------\n  # What each chain still needs once the old hosts have given theirs: max(need, old) - old is\n  # the need left over, or nothing, in the chain's own unit.\n\n  new_for_requests:\n    kind: derived\n    unit: host\n    label: new hosts the requests need, routed by capacity\n    formula: ceil((max(busy_cores / (1 - queueing_margin), old_cores) - old_cores) / cores_per_new_host)\n\n  new_for_memory:\n    kind: derived\n    unit: host\n    label: new hosts the working set needs\n    formula: ceil((max(working_set / (1 - cache_margin), old_ram) - old_ram) / ram_for_service_new)\n\n  new_for_storage:\n    kind: derived\n    unit: host\n    label: new hosts the data needs\n    formula: ceil((max(raw_data / (1 - disk_margin), old_disk) - old_disk) / disk_per_new_host)\n\n  new_hosts_weighted:\n    kind: derived\n    unit: host\n    label: new hosts to buy, requests routed by capacity\n    formula: max(new_for_requests, new_for_memory, new_for_storage)\n\n  # -- routed equally: every host takes the same share ------------------------------------------\n  # Each host is sent the same share of the requests, so the smallest host reaches its margin\n  # first, and the pool can take no more than every host times the smallest host's cores.\n\n  smallest_cores:\n    kind: derived\n    unit: core/host\n    label: cores on the smallest host\n    formula: min(cores_per_old_host, cores_per_new_host)\n\n  new_for_requests_equal:\n    kind: derived\n    unit: host\n    label: new hosts the requests need, routed equally\n    formula: max(ceil(busy_cores / (smallest_cores * (1 - queueing_margin))), old_hosts) - old_hosts\n\n  new_hosts_equal:\n    kind: derived\n    unit: host\n    label: new hosts to buy, requests routed equally\n    formula: max(new_for_requests_equal, new_for_memory, new_for_storage)\n\n  # -- the pool as bought ------------------------------------------------------------------------\n\n  all_hosts:\n    kind: derived\n    unit: host\n    label: hosts in the pool\n    formula: old_hosts + new_hosts\n\n  pool_cores:\n    kind: derived\n    unit: core\n    label: cores in the pool\n    formula: old_cores + new_hosts * cores_per_new_host\n\n  utilisation_weighted:\n    kind: derived\n    unit: dimensionless\n    label: utilisation, requests routed by capacity\n    formula: busy_cores / pool_cores\n\n  utilisation_smallest_equal:\n    kind: derived\n    unit: dimensionless\n    label: the smallest host's utilisation, requests routed equally\n    formula: busy_cores / (all_hosts * smallest_cores)\n\n  queueing_headroom_weighted:\n    kind: ceiling\n    unit: dimensionless\n    label: utilisation at the busy hour, routed by capacity\n    of: utilisation_weighted\n    limit: 1\n    headroom: queueing_margin\n    because: >-\n      The web service's queueing ceiling (ch06), for a pool whose router sends each host requests\n      in proportion to its cores. Then every host is equally busy and the pool's cores add up.\n\n  queueing_headroom_equal:\n    kind: ceiling\n    unit: dimensionless\n    label: the smallest host's utilisation, routed equally\n    of: utilisation_smallest_equal\n    limit: 1\n    headroom: queueing_margin\n    because: >-\n      The same ceiling for a router that sends every host the same share. The old hosts have\n      fewer cores, so they are the busiest, and they reach the knee first while the new hosts\n      have cores to spare. The pool bought for capacity-weighted routing is checked here too.\n\n  # -- a shard lives on one host ------------------------------------------------------------------\n\n  shards:\n    kind: input\n    decided: you\n    unit: dimensionless\n    value: 64\n    label: shards the data is split into\n    provenance:\n      kind: assumption\n      source: \"this worked example's premise: the records are split into sixty-four shards, each\n        held whole by one host and copied to others\"\n    range: [8, 512]\n\n  largest_shard:\n    kind: derived\n    unit: TB\n    label: one copy of one shard at the horizon\n    note: >-\n      One copy of the stored data, with its indexes and after compression, split into equal\n      shards. Real shards are rarely equal, so the largest is at least this big.\n    formula: stored_data * index_overhead / record_compression / shards\n\n\n  smallest_disk:\n    kind: derived\n    unit: TB/host\n    label: disk on the smallest host\n    formula: min(disk_per_old_host, disk_per_new_host)\n\n  shard_fit:\n    kind: ceiling\n    unit: dimensionless\n    label: largest shard against the smallest host's disk\n    of: largest_shard / (smallest_disk * one_host)\n    limit: 1\n    headroom: disk_margin\n    because: >-\n      A shard has to fit on one host, and it can land on the smallest. The pool's total disk says\n      nothing about that, so the smallest host sets the limit. The margin is the disk margin,\n      because the host still has to take a dead host's records.\n\n  # -- a host is lost at the busy hour ---------------------------------------------------------\n\n  largest_host_cores:\n    kind: derived\n    unit: core/host\n    label: cores on the largest host\n    formula: max(cores_per_old_host, cores_per_new_host)\n\n  utilisation_after_losing_largest:\n    kind: derived\n    unit: dimensionless\n    label: utilisation after losing the largest host\n    formula: busy_cores / (pool_cores - largest_host_cores * one_host)\n\n  failure_headroom:\n    kind: ceiling\n    unit: dimensionless\n    label: utilisation with the largest host down\n    of: utilisation_after_losing_largest\n    limit: 1\n    headroom: queueing_margin\n    because: >-\n      N+1 in a mixed pool means surviving the loss of the largest host, not an average one: that\n      is the most capacity one fault can take away (ch11).\n\n  # -- what it costs over the horizon ------------------------------------------------------------\n  # The old hosts' purchase is spent, and stays out. What they cost to run does not.\n\n  horizon:\n    kind: input\n    decided: you\n    unit: year\n    value: 5\n    label: horizon\n    provenance:\n      kind: assumption\n      source: \"the web service model's horizon (ch02): the refresh cycle the fleet is bought\n        against\"\n\n  host_price:\n    kind: input\n    decided: outside\n    unit: USD/host\n    distribution: {lognormal: {p10: 4500, p90: 9500}}\n    label: price of a new host\n    provenance:\n      kind: assumption\n      source: \"Lognormal, as in the web service model's host price at its point estimate (ch15)\"\n\n  new_capex:\n    kind: derived\n    unit: USD\n    label: capital spent on new hosts\n    formula: new_hosts * host_price\n\n  new_host_power:\n    kind: input\n    decided: outside\n    unit: W/host\n    distribution: {triangular: {minimum: 220, likely: 300, maximum: 420}}\n    label: power per new host\n    provenance:\n      kind: assumption\n      source: \"Triangular, as in the web service model's host power at its point estimate (ch16)\"\n\n  old_host_power:\n    kind: input\n    decided: outside\n    unit: W/host\n    value: 280\n    label: power per old host\n    note: >-\n      One number: a premise of this worked example, not an estimate of any real host, so a range would be a claim nobody made.\n    provenance:\n      kind: assumption\n      source: \"this worked example's premise: an older host draws nearly as much as a new one for\n        half the cores\"\n\n  pue:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    distribution: {triangular: {minimum: 1.15, likely: 1.35, maximum: 1.75}}\n    label: PUE\n    provenance:\n      kind: assumption\n      source: \"Triangular, as in the web service model's PUE at its point estimate (ch16)\"\n\n  hours_per_year:\n    kind: input\n    decided: definition\n    unit: hour/year\n    value: 8766\n    label: hours in a year\n    provenance:\n      kind: fact\n      source: \"definition: 365.25 days of 24 hours\"\n\n  electricity_price:\n    kind: input\n    decided: outside\n    unit: USD/kWh\n    distribution: {lognormal: {p10: 0.085, p90: 0.21}}\n    label: electricity price\n    provenance:\n      kind: assumption\n      source: \"Lognormal, as in the web service model's electricity price at its point estimate (ch16)\"\n\n  annual_energy_cost:\n    kind: derived\n    unit: USD/year\n    label: energy per year\n    formula: (old_hosts * old_host_power + new_hosts * new_host_power) * pue * hours_per_year * electricity_price\n\n  licence_per_core:\n    kind: input\n    decided: outside\n    unit: USD/core/year\n    distribution: {lognormal: {p10: 40, p90: 160}}\n    label: licence per core per year\n    provenance:\n      kind: assumption\n      source: \"Lognormal, as in the web service model's licence per core (ch15). Charged on every core running,\n        old or new\"\n\n  annual_licences:\n    kind: derived\n    unit: USD/year\n    label: licences per year\n    formula: pool_cores * licence_per_core\n\n  support_rate:\n    kind: input\n    decided: outside\n    unit: 1/year\n    distribution: {triangular: {minimum: 0.07, likely: 0.11, maximum: 0.18}}\n    label: support rate on new hosts\n    provenance:\n      kind: assumption\n      source: \"Triangular, as in the web service model's support rate at its point estimate (ch15): a yearly share of\n        the capital cost\"\n\n  old_support_per_host:\n    kind: input\n    decided: outside\n    unit: USD/host/year\n    value: 300\n    label: support per old host per year\n    note: >-\n      One number: a premise of this worked example, not an estimate of any real host, so a range would be a claim nobody made.\n    provenance:\n      kind: assumption\n      source: \"this worked example's premise: a maintenance contract on hosts whose purchase is\n        long paid for. A share of a capital cost no longer counted would not describe it\"\n\n  annual_support:\n    kind: derived\n    unit: USD/year\n    label: support per year\n    formula: new_capex * support_rate + old_hosts * old_support_per_host\n\n  annual_running:\n    kind: derived\n    unit: USD/year\n    label: running cost per year\n    formula: annual_energy_cost + annual_licences + annual_support\n\n  total_cost:\n    kind: derived\n    unit: USD\n    label: cost over the horizon\n    formula: new_capex + annual_running * horizon\n\noutputs:\n  - new_hosts_weighted\n  - new_hosts_equal\n  - new_for_requests\n  - new_for_memory\n  - new_for_storage\n  - new_for_requests_equal\n  - total_cost\n  - new_capex\n  - annual_running\n  - queueing_headroom_weighted\n  - queueing_headroom_equal\n  - shard_fit\n  - failure_headroom\n\ncorrelations:\n  - a: peak_request_rate_t0\n    b: service_demand\n    rho: 0.4\n    because: >-\n      As in the web service model (ch14): a busier service is usually a slower one per request, so\n      the two rise together, and treating them as independent understates the tail.\n",
+  "scenarios/old_retired.yaml": "scenario: old_retired\ntitle: The old hosts retire before the horizon\nbecause: >-\n  The worst point for a pool bought on the assumption that the old hosts stay: they have gone, and\n  demand has not stopped growing. The new hosts are the ones bought for the reference case.\nsamples: 100000\nseed: 20260916\noverrides:\n  old_hosts: 0\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Keep the old hosts\nbecause: >-\n  Thirty of last generation's hosts stay in service to the horizon, and the new hosts are bought\n  for what they cannot cover, with requests routed by capacity. Every figure the book quotes for\n  this model comes from here unless it says otherwise.\nsamples: 100000\nseed: 20260916\noverrides: {}\n",
+  "scenarios/replace.yaml": "scenario: replace\ntitle: Replace the old hosts\nbecause: >-\n  The other half of keep versus replace (ch22): every old host is retired now and the fleet is all\n  new, sized as the web service sizes it. Its purchase count is the web service model's own\n  recommendation at the point estimates, hosts_recommended (ch10).\nsamples: 100000\nseed: 20260916\noverrides:\n  old_hosts: 0\n  new_hosts: 54\n"
+ },
+ "id": "reference/mixed_pool",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "conditional",
+  "correlations": [
+   {
+    "a": "peak_request_rate_t0",
+    "b": "service_demand",
+    "because": "As in the web service model (ch14): a busier service is usually a slower one per request, so the two rise together, and treating them as independent understates the tail.",
+    "rho": 0.4
+   }
+  ],
+  "currency": "USD",
+  "description": "The web service's fleet as ch10 sizes it, with one change: some of last generation's hosts are still in service, doing the same job as the new ones. The question stops being how many hosts and becomes how many new hosts, given the old ones. The demand is ch10's, at its point estimates, so this model has no ranges: its lessons are in its structure. How requests are spread decides whether the two generations' capacity adds. Data is placed by capacity in both cases; only the routing of requests changes.",
+  "name": "mixed_pool",
+  "order": [
+   "annual_growth",
+   "cache_margin",
+   "cores_per_new_host",
+   "cores_per_old_host",
+   "disk_margin",
+   "disk_per_new_host",
+   "disk_per_old_host",
+   "electricity_price",
+   "horizon",
+   "host_price",
+   "hot_fraction",
+   "hours_per_year",
+   "index_overhead",
+   "largest_host_cores",
+   "licence_per_core",
+   "new_host_power",
+   "new_hosts",
+   "new_capex",
+   "old_host_power",
+   "old_hosts",
+   "all_hosts",
+   "old_cores",
+   "old_disk",
+   "old_support_per_host",
+   "one_host",
+   "one_year",
+   "horizon_periods",
+   "os_reserve",
+   "peak_request_rate_t0",
+   "peak_request_rate",
+   "pool_cores",
+   "annual_licences",
+   "pue",
+   "annual_energy_cost",
+   "queueing_margin",
+   "ram_per_new_host",
+   "ram_for_service_new",
+   "ram_per_old_host",
+   "ram_for_service_old",
+   "old_ram",
+   "record_compression",
+   "replication_factor",
+   "raw_per_stored",
+   "service_demand",
+   "busy_cores",
+   "new_for_requests",
+   "shards",
+   "smallest_cores",
+   "new_for_requests_equal",
+   "smallest_disk",
+   "stored_data_t0",
+   "stored_data",
+   "largest_shard",
+   "raw_data",
+   "new_for_storage",
+   "shard_fit",
+   "support_rate",
+   "annual_support",
+   "annual_running",
+   "total_cost",
+   "utilisation_after_losing_largest",
+   "failure_headroom",
+   "utilisation_smallest_equal",
+   "queueing_headroom_equal",
+   "utilisation_weighted",
+   "queueing_headroom_weighted",
+   "working_set",
+   "new_for_memory",
+   "new_hosts_equal",
+   "new_hosts_weighted"
+  ],
+  "outputs": [
+   "new_hosts_weighted",
+   "new_hosts_equal",
+   "new_for_requests",
+   "new_for_memory",
+   "new_for_storage",
+   "new_for_requests_equal",
+   "total_cost",
+   "new_capex",
+   "annual_running",
+   "queueing_headroom_weighted",
+   "queueing_headroom_equal",
+   "shard_fit",
+   "failure_headroom"
+  ],
+  "title": "Two generations in one pool",
+  "unit_problems": 0,
+  "unmeasured": []
+ },
+ "nodes": {
+  "all_hosts": {
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "old_hosts",
+      "op": "ref"
+     },
+     {
+      "name": "new_hosts",
+      "op": "ref"
+     }
+    ],
+    "op": "+"
+   },
+   "kind": "derived",
+   "magnitude": 65.0,
+   "unit": "host"
+  },
+  "annual_energy_cost": {
+   "dimensionality": {
+    "[currency_usd]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 0.001,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "args": [
+             {
+              "name": "old_hosts",
+              "op": "ref"
+             },
+             {
+              "name": "old_host_power",
+              "op": "ref"
+             }
+            ],
+            "op": "*"
+           },
+           {
+            "args": [
+             {
+              "name": "new_hosts",
+              "op": "ref"
+             },
+             {
+              "name": "new_host_power",
+              "op": "ref"
+             }
+            ],
+            "op": "*"
+           }
+          ],
+          "op": "+"
+         },
+         {
+          "name": "pue",
+          "op": "ref"
+         }
+        ],
+        "op": "*"
+       },
+       {
+        "name": "hours_per_year",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     },
+     {
+      "name": "electricity_price",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 31670217.259020418,
+   "unit": "USD/year"
+  },
+  "annual_growth": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": {
+    "lognormal": {
+     "p10": 1.12,
+     "p90": 1.6
+    }
+   },
+   "kind": "input",
+   "magnitude": 1.338656042454521,
+   "provenance": {
+    "kind": "assumption",
+    "source": "ch04 — lognormal because growth compounds and the factor cannot be zero or less. One future in ten grows by less than 12% a year, and one in ten by more than 60%; outside that range you would be surprised. One factor for requests and for records, because users drive both."
+   },
+   "range": [
+    1.0,
+    2.0
+   ],
+   "unit": "dimensionless",
+   "value": null
+  },
+  "annual_licences": {
+   "dimensionality": {
+    "[currency_usd]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "pool_cores",
+      "op": "ref"
+     },
+     {
+      "name": "licence_per_core",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 63999.99999999998,
+   "unit": "USD/year"
+  },
+  "annual_running": {
+   "dimensionality": {
+    "[currency_usd]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "annual_energy_cost",
+        "op": "ref"
+       },
+       {
+        "name": "annual_licences",
+        "op": "ref"
+       }
+      ],
+      "op": "+"
+     },
+     {
+      "name": "annual_support",
+      "op": "ref"
+     }
+    ],
+    "op": "+"
+   },
+   "kind": "derived",
+   "magnitude": 31770209.569283765,
+   "unit": "USD/year"
+  },
+  "annual_support": {
+   "dimensionality": {
+    "[currency_usd]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "new_capex",
+        "op": "ref"
+       },
+       {
+        "name": "support_rate",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     },
+     {
+      "args": [
+       {
+        "name": "old_hosts",
+        "op": "ref"
+       },
+       {
+        "name": "old_support_per_host",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     }
+    ],
+    "op": "+"
+   },
+   "kind": "derived",
+   "magnitude": 35992.31026334592,
+   "unit": "USD/year"
+  },
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "peak_request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 556.3360618821654,
+   "unit": "core"
+  },
+  "cache_margin": {
+   "decided": "you",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.25,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the web service model's cache margin (ch08, ch11): room for the working set to grow before it spills out of memory"
+   },
+   "range": [
+    0.0,
+    0.5
+   ],
+   "unit": "dimensionless",
+   "value": 0.25
+  },
+  "cores_per_new_host": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[host]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "vendor_claim",
+    "source": "the web service model's host (ch10): spec sheet, physical cores"
+   },
+   "range": [
+    4.0,
+    128.0
+   ],
+   "unit": "core/host",
+   "value": 16.0
+  },
+  "cores_per_old_host": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[host]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 8.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "this worked example's premise: last generation's hosts have half the cores of this generation's. Fixed, because the hosts are already bought"
+   },
+   "range": [
+    2.0,
+    64.0
+   ],
+   "unit": "core/host",
+   "value": 8.0
+  },
+  "disk_margin": {
+   "decided": "you",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.25,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the web service model's disk margin (ch11): room to re-replicate a dead host's records onto the survivors"
+   },
+   "range": [
+    0.0,
+    0.45
+   ],
+   "unit": "dimensionless",
+   "value": 0.25
+  },
+  "disk_per_new_host": {
+   "decided": "you",
+   "dimensionality": {
+    "[host]": -1.0,
+    "[information]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 2.0,
+   "provenance": {
+    "kind": "vendor_claim",
+    "source": "the web service model's host (ch10): spec sheet, one local drive"
+   },
+   "range": [
+    1.0,
+    60.0
+   ],
+   "unit": "TB/host",
+   "value": 2.0
+  },
+  "disk_per_old_host": {
+   "decided": "outside",
+   "dimensionality": {
+    "[host]": -1.0,
+    "[information]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 2.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "this worked example's premise: the same drive as the new hosts"
+   },
+   "range": [
+    1.0,
+    60.0
+   ],
+   "unit": "TB/host",
+   "value": 2.0
+  },
+  "electricity_price": {
+   "decided": "outside",
+   "dimensionality": {
+    "[currency_usd]": 1.0,
+    "[length]": -2.0,
+    "[mass]": -1.0,
+    "[time]": 2.0
+   },
+   "distribution": {
+    "lognormal": {
+     "p10": 0.085,
+     "p90": 0.21
+    }
+   },
+   "kind": "input",
+   "magnitude": 0.13360389215887386,
+   "provenance": {
+    "kind": "assumption",
+    "source": "Lognormal, as in the web service model's electricity price at its point estimate (ch16)"
+   },
+   "range": null,
+   "unit": "USD/kWh",
+   "value": null
+  },
+  "failure_headroom": {
+   "because": "N+1 in a mixed pool means surviving the loss of the largest host, not an average one: that is the most capacity one fault can take away (ch11).",
+   "declares_headroom": true,
+   "dimensionality": {},
+   "factor": 1.0,
+   "factor_headroom": 1.0,
+   "factor_limit": 1.0,
+   "headroom": {
+    "name": "queueing_margin",
+    "op": "ref"
+   },
+   "kind": "ceiling",
+   "limit": {
+    "op": "const",
+    "value": 1.0
+   },
+   "magnitude": 0.7096123238292926,
+   "of": {
+    "name": "utilisation_after_losing_largest",
+    "op": "ref"
+   },
+   "unit": "dimensionless"
+  },
+  "horizon": {
+   "decided": "you",
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 5.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the web service model's horizon (ch02): the refresh cycle the fleet is bought against"
+   },
+   "range": null,
+   "unit": "year",
+   "value": 5.0
+  },
+  "horizon_periods": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "horizon",
+      "op": "ref"
+     },
+     {
+      "name": "one_year",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 5.0,
+   "unit": "dimensionless"
+  },
+  "host_price": {
+   "decided": "outside",
+   "dimensionality": {
+    "[currency_usd]": 1.0,
+    "[host]": -1.0
+   },
+   "distribution": {
+    "lognormal": {
+     "p10": 4500,
+     "p90": 9500
+    }
+   },
+   "kind": "input",
+   "magnitude": 6538.348415311009,
+   "provenance": {
+    "kind": "assumption",
+    "source": "Lognormal, as in the web service model's host price at its point estimate (ch15)"
+   },
+   "range": null,
+   "unit": "USD/host",
+   "value": null
+  },
+  "hot_fraction": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": {
+    "triangular": {
+     "likely": 0.03,
+     "maximum": 0.08,
+     "minimum": 0.01
+    }
+   },
+   "kind": "input",
+   "magnitude": 0.03816699867329622,
+   "provenance": {
+    "kind": "assumption",
+    "source": "ch08 — the working set as a share of everything held. Triangular; nobody measures this and everybody has an opinion, and the maximum is a service whose users all look at the same week's data"
+   },
+   "range": [
+    0.005,
+    0.3
+   ],
+   "unit": "dimensionless",
+   "value": null
+  },
+  "hours_per_year": {
+   "decided": "definition",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 8766.0,
+   "provenance": {
+    "kind": "fact",
+    "source": "definition: 365.25 days of 24 hours"
+   },
+   "range": null,
+   "unit": "hour/year",
+   "value": 8766.0
+  },
+  "index_overhead": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": {
+    "triangular": {
+     "likely": 1.3,
+     "maximum": 1.6,
+     "minimum": 1.15
+    }
+   },
+   "kind": "input",
+   "magnitude": 1.3401923788646684,
+   "provenance": {
+    "kind": "assumption",
+    "source": "indexes, the write-ahead log and journals as a multiplier on stored bytes. Triangular, and the bounds are for a service with a few indexes per table — a search-heavy one is off the top of this range"
+   },
+   "range": null,
+   "unit": "dimensionless",
+   "value": null
+  },
+  "largest_host_cores": {
+   "dimensionality": {
+    "[core]": 1.0,
+    "[host]": -1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "cores_per_old_host",
+      "op": "ref"
+     },
+     {
+      "name": "cores_per_new_host",
+      "op": "ref"
+     }
+    ],
+    "fn": "max",
+    "op": "call"
+   },
+   "kind": "derived",
+   "magnitude": 16.0,
+   "unit": "core/host"
+  },
+  "largest_shard": {
+   "dimensionality": {
+    "[information]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "name": "stored_data",
+          "op": "ref"
+         },
+         {
+          "name": "index_overhead",
+          "op": "ref"
+         }
+        ],
+        "op": "*"
+       },
+       {
+        "name": "record_compression",
+        "op": "ref"
+       }
+      ],
+      "op": "/"
+     },
+     {
+      "name": "shards",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.3768734714085634,
+   "unit": "TB"
+  },
+  "licence_per_core": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": -1.0,
+    "[currency_usd]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": {
+    "lognormal": {
+     "p10": 40,
+     "p90": 160
+    }
+   },
+   "kind": "input",
+   "magnitude": 79.99999999999997,
+   "provenance": {
+    "kind": "assumption",
+    "source": "Lognormal, as in the web service model's licence per core (ch15). Charged on every core running, old or new"
+   },
+   "range": null,
+   "unit": "USD/core/year",
+   "value": null
+  },
+  "new_capex": {
+   "dimensionality": {
+    "[currency_usd]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "new_hosts",
+      "op": "ref"
+     },
+     {
+      "name": "host_price",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 228842.19453588533,
+   "unit": "USD"
+  },
+  "new_for_memory": {
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "args": [
+             {
+              "name": "working_set",
+              "op": "ref"
+             },
+             {
+              "args": [
+               {
+                "op": "const",
+                "value": 1.0
+               },
+               {
+                "name": "cache_margin",
+                "op": "ref"
+               }
+              ],
+              "op": "-"
+             }
+            ],
+            "op": "/"
+           },
+           {
+            "name": "old_ram",
+            "op": "ref"
+           }
+          ],
+          "fn": "max",
+          "op": "call"
+         },
+         {
+          "name": "old_ram",
+          "op": "ref"
+         }
+        ],
+        "op": "-"
+       },
+       {
+        "name": "ram_for_service_new",
+        "op": "ref"
+       }
+      ],
+      "op": "/"
+     }
+    ],
+    "fn": "ceil",
+    "op": "call"
+   },
+   "kind": "derived",
+   "magnitude": 0.0,
+   "unit": "host"
+  },
+  "new_for_requests": {
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "args": [
+             {
+              "name": "busy_cores",
+              "op": "ref"
+             },
+             {
+              "args": [
+               {
+                "op": "const",
+                "value": 1.0
+               },
+               {
+                "name": "queueing_margin",
+                "op": "ref"
+               }
+              ],
+              "op": "-"
+             }
+            ],
+            "op": "/"
+           },
+           {
+            "name": "old_cores",
+            "op": "ref"
+           }
+          ],
+          "fn": "max",
+          "op": "call"
+         },
+         {
+          "name": "old_cores",
+          "op": "ref"
+         }
+        ],
+        "op": "-"
+       },
+       {
+        "name": "cores_per_new_host",
+        "op": "ref"
+       }
+      ],
+      "op": "/"
+     }
+    ],
+    "fn": "ceil",
+    "op": "call"
+   },
+   "kind": "derived",
+   "magnitude": 35.0,
+   "unit": "host"
+  },
+  "new_for_requests_equal": {
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "name": "busy_cores",
+            "op": "ref"
+           },
+           {
+            "args": [
+             {
+              "name": "smallest_cores",
+              "op": "ref"
+             },
+             {
+              "args": [
+               {
+                "op": "const",
+                "value": 1.0
+               },
+               {
+                "name": "queueing_margin",
+                "op": "ref"
+               }
+              ],
+              "op": "-"
+             }
+            ],
+            "op": "*"
+           }
+          ],
+          "op": "/"
+         }
+        ],
+        "fn": "ceil",
+        "op": "call"
+       },
+       {
+        "name": "old_hosts",
+        "op": "ref"
+       }
+      ],
+      "fn": "max",
+      "op": "call"
+     },
+     {
+      "name": "old_hosts",
+      "op": "ref"
+     }
+    ],
+    "op": "-"
+   },
+   "kind": "derived",
+   "magnitude": 70.0,
+   "unit": "host"
+  },
+  "new_for_storage": {
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "args": [
+             {
+              "name": "raw_data",
+              "op": "ref"
+             },
+             {
+              "args": [
+               {
+                "op": "const",
+                "value": 1.0
+               },
+               {
+                "name": "disk_margin",
+                "op": "ref"
+               }
+              ],
+              "op": "-"
+             }
+            ],
+            "op": "/"
+           },
+           {
+            "name": "old_disk",
+            "op": "ref"
+           }
+          ],
+          "fn": "max",
+          "op": "call"
+         },
+         {
+          "name": "old_disk",
+          "op": "ref"
+         }
+        ],
+        "op": "-"
+       },
+       {
+        "name": "disk_per_new_host",
+        "op": "ref"
+       }
+      ],
+      "op": "/"
+     }
+    ],
+    "fn": "ceil",
+    "op": "call"
+   },
+   "kind": "derived",
+   "magnitude": 19.0,
+   "unit": "host"
+  },
+  "new_host_power": {
+   "decided": "outside",
+   "dimensionality": {
+    "[host]": -1.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "distribution": {
+    "triangular": {
+     "likely": 300,
+     "maximum": 420,
+     "minimum": 220
+    }
+   },
+   "kind": "input",
+   "magnitude": 310.45548849896676,
+   "provenance": {
+    "kind": "assumption",
+    "source": "Triangular, as in the web service model's host power at its point estimate (ch16)"
+   },
+   "range": null,
+   "unit": "W/host",
+   "value": null
+  },
+  "new_hosts": {
+   "decided": "you",
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 35.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the sizing decision: new_hosts_weighted at the point estimates (ch10, ch12)"
+   },
+   "range": [
+    2.0,
+    120.0
+   ],
+   "unit": "host",
+   "value": 35.0
+  },
+  "new_hosts_equal": {
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "new_for_requests_equal",
+      "op": "ref"
+     },
+     {
+      "name": "new_for_memory",
+      "op": "ref"
+     },
+     {
+      "name": "new_for_storage",
+      "op": "ref"
+     }
+    ],
+    "fn": "max",
+    "op": "call"
+   },
+   "kind": "derived",
+   "magnitude": 70.0,
+   "unit": "host"
+  },
+  "new_hosts_weighted": {
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "new_for_requests",
+      "op": "ref"
+     },
+     {
+      "name": "new_for_memory",
+      "op": "ref"
+     },
+     {
+      "name": "new_for_storage",
+      "op": "ref"
+     }
+    ],
+    "fn": "max",
+    "op": "call"
+   },
+   "kind": "derived",
+   "magnitude": 35.0,
+   "unit": "host"
+  },
+  "old_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "old_hosts",
+      "op": "ref"
+     },
+     {
+      "name": "cores_per_old_host",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 240.0,
+   "unit": "core"
+  },
+  "old_disk": {
+   "dimensionality": {
+    "[information]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "old_hosts",
+      "op": "ref"
+     },
+     {
+      "name": "disk_per_old_host",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 60.0,
+   "unit": "TB"
+  },
+  "old_host_power": {
+   "decided": "outside",
+   "dimensionality": {
+    "[host]": -1.0,
+    "[length]": 2.0,
+    "[mass]": 1.0,
+    "[time]": -3.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 280.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "this worked example's premise: an older host draws nearly as much as a new one for half the cores"
+   },
+   "range": null,
+   "unit": "W/host",
+   "value": 280.0
+  },
+  "old_hosts": {
+   "decided": "you",
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 30.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "this worked example's premise: thirty of last generation's hosts are kept in service to the horizon. A decision, because keeping them is a choice"
+   },
+   "range": [
+    0.0,
+    120.0
+   ],
+   "unit": "host",
+   "value": 30.0
+  },
+  "old_ram": {
+   "dimensionality": {
+    "[information]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "old_hosts",
+      "op": "ref"
+     },
+     {
+      "name": "ram_for_service_old",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 3414.843004042579,
+   "unit": "TB"
+  },
+  "old_support_per_host": {
+   "decided": "outside",
+   "dimensionality": {
+    "[currency_usd]": 1.0,
+    "[host]": -1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 300.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "this worked example's premise: a maintenance contract on hosts whose purchase is long paid for. A share of a capital cost no longer counted would not describe it"
+   },
+   "range": null,
+   "unit": "USD/host/year",
+   "value": 300.0
+  },
+  "one_host": {
+   "decided": "definition",
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 1.0,
+   "provenance": {
+    "kind": "fact",
+    "source": "definition"
+   },
+   "range": null,
+   "unit": "host",
+   "value": 1.0
+  },
+  "one_year": {
+   "decided": "definition",
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 1.0,
+   "provenance": {
+    "kind": "fact",
+    "source": "definition"
+   },
+   "range": null,
+   "unit": "year",
+   "value": 1.0
+  },
+  "os_reserve": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": {
+    "triangular": {
+     "likely": 0.1,
+     "maximum": 0.18,
+     "minimum": 0.06
+    }
+   },
+   "kind": "input",
+   "magnitude": 0.11071796769724492,
+   "provenance": {
+    "kind": "assumption",
+    "source": "Triangular, as in the web service model's os_reserve at its point estimate (ch10). The same share on both generations"
+   },
+   "range": null,
+   "unit": "dimensionless",
+   "value": null
+  },
+  "peak_request_rate": {
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "peak_request_rate_t0",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "name": "annual_growth",
+        "op": "ref"
+       },
+       {
+        "name": "horizon_periods",
+        "op": "ref"
+       }
+      ],
+      "op": "**"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 42560.029939471824,
+   "unit": "request/second"
+  },
+  "peak_request_rate_t0": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": {
+    "triangular": {
+     "likely": 8000.0,
+     "maximum": 20000.0,
+     "minimum": 3000.0
+    }
+   },
+   "kind": "input",
+   "magnitude": 9900.495061637923,
+   "provenance": {
+    "kind": "assumption",
+    "source": "ch04 — the busy hour, not the daily mean. Triangular, because this is an engineer's lowest, most likely and highest values; claiming more precision would be invention."
+   },
+   "range": [
+    500.0,
+    40000.0
+   ],
+   "unit": "request/second",
+   "value": null
+  },
+  "pool_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "old_cores",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "name": "new_hosts",
+        "op": "ref"
+       },
+       {
+        "name": "cores_per_new_host",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     }
+    ],
+    "op": "+"
+   },
+   "kind": "derived",
+   "magnitude": 800.0,
+   "unit": "core"
+  },
+  "pue": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": {
+    "triangular": {
+     "likely": 1.35,
+     "maximum": 1.75,
+     "minimum": 1.15
+    }
+   },
+   "kind": "input",
+   "magnitude": 1.4035898384862247,
+   "provenance": {
+    "kind": "assumption",
+    "source": "Triangular, as in the web service model's PUE at its point estimate (ch16)"
+   },
+   "range": null,
+   "unit": "dimensionless",
+   "value": null
+  },
+  "queueing_headroom_equal": {
+   "because": "The same ceiling for a router that sends every host the same share. The old hosts have fewer cores, so they are the busiest, and they reach the knee first while the new hosts have cores to spare. The pool bought for capacity-weighted routing is checked here too.",
+   "declares_headroom": true,
+   "dimensionality": {},
+   "factor": 1.0,
+   "factor_headroom": 1.0,
+   "factor_limit": 1.0,
+   "headroom": {
+    "name": "queueing_margin",
+    "op": "ref"
+   },
+   "kind": "ceiling",
+   "limit": {
+    "op": "const",
+    "value": 1.0
+   },
+   "magnitude": 1.0698770420810872,
+   "of": {
+    "name": "utilisation_smallest_equal",
+    "op": "ref"
+   },
+   "unit": "dimensionless"
+  },
+  "queueing_headroom_weighted": {
+   "because": "The web service's queueing ceiling (ch06), for a pool whose router sends each host requests in proportion to its cores. Then every host is equally busy and the pool's cores add up.",
+   "declares_headroom": true,
+   "dimensionality": {},
+   "factor": 1.0,
+   "factor_headroom": 1.0,
+   "factor_limit": 1.0,
+   "headroom": {
+    "name": "queueing_margin",
+    "op": "ref"
+   },
+   "kind": "ceiling",
+   "limit": {
+    "op": "const",
+    "value": 1.0
+   },
+   "magnitude": 0.6954200773527067,
+   "of": {
+    "name": "utilisation_weighted",
+    "op": "ref"
+   },
+   "unit": "dimensionless"
+  },
+  "queueing_margin": {
+   "decided": "you",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.3,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the web service model's queueing margin (ch06, ch11): how far under the knee the fleet runs at the busy hour"
+   },
+   "range": [
+    0.0,
+    0.6
+   ],
+   "unit": "dimensionless",
+   "value": 0.3
+  },
+  "ram_for_service_new": {
+   "dimensionality": {
+    "[host]": -1.0,
+    "[information]": 1.0
+   },
+   "factor": 0.001073741824,
+   "formula": {
+    "args": [
+     {
+      "name": "ram_per_new_host",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "op": "const",
+        "value": 1.0
+       },
+       {
+        "name": "os_reserve",
+        "op": "ref"
+       }
+      ],
+      "op": "-"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 56.91405006737632,
+   "unit": "TB/host"
+  },
+  "ram_for_service_old": {
+   "dimensionality": {
+    "[host]": -1.0,
+    "[information]": 1.0
+   },
+   "factor": 0.001073741824,
+   "formula": {
+    "args": [
+     {
+      "name": "ram_per_old_host",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "op": "const",
+        "value": 1.0
+       },
+       {
+        "name": "os_reserve",
+        "op": "ref"
+       }
+      ],
+      "op": "-"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 113.82810013475265,
+   "unit": "TB/host"
+  },
+  "ram_per_new_host": {
+   "decided": "you",
+   "dimensionality": {
+    "[host]": -1.0,
+    "[information]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 64.0,
+   "provenance": {
+    "kind": "vendor_claim",
+    "source": "the web service model's host (ch10): spec sheet, the modules fitted"
+   },
+   "range": [
+    8.0,
+    1024.0
+   ],
+   "unit": "GiB/host",
+   "value": 64.0
+  },
+  "ram_per_old_host": {
+   "decided": "outside",
+   "dimensionality": {
+    "[host]": -1.0,
+    "[information]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 128.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "this worked example's premise: last generation's hosts were bought memory-heavy, with twice this generation's memory and half its cores"
+   },
+   "range": [
+    8.0,
+    1024.0
+   ],
+   "unit": "GiB/host",
+   "value": 128.0
+  },
+  "raw_data": {
+   "dimensionality": {
+    "[information]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "stored_data",
+      "op": "ref"
+     },
+     {
+      "name": "raw_per_stored",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 72.35970651044417,
+   "unit": "TB"
+  },
+  "raw_per_stored": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "replication_factor",
+        "op": "ref"
+       },
+       {
+        "name": "index_overhead",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     },
+     {
+      "name": "record_compression",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 1.1221748324066343,
+   "unit": "dimensionless"
+  },
+  "record_compression": {
+   "dimensionality": {},
+   "kind": "measured",
+   "magnitude": 3.5828437962482282,
+   "measured": true,
+   "measured_sd": 0.000854733297721808,
+   "measured_value": 3.5828437962482282,
+   "result": "records-compression",
+   "stack": "python zlib (DEFLATE level 6)",
+   "unit": "dimensionless"
+  },
+  "replication_factor": {
+   "decided": "you",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 3.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "three copies of every record, so that a host can die and take its disks with it. A different durability scheme substitutes its own factor here and the rest of the model is unchanged, which is the point of it being a node"
+   },
+   "range": [
+    1.0,
+    4.0
+   ],
+   "unit": "dimensionless",
+   "value": 3.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": {
+    "triangular": {
+     "likely": 0.012,
+     "maximum": 0.02,
+     "minimum": 0.008
+    }
+   },
+   "kind": "input",
+   "magnitude": 0.01307179676972449,
+   "provenance": {
+    "kind": "assumption",
+    "source": "The lowest, likeliest and highest values are this book's own choice for the running example: not measured on any machine, not taken from any product. It is held as an assumption because no reference machine is declared in `rig/machine.yml`; `make measure-rig` on a declared machine replaces it with a measured one. It is triangular, with three values, because it has not been measured. Once it is, it becomes a normal spread around the measurement, which is a change of claim and not only of numbers (ch13)."
+   },
+   "range": [
+    0.002,
+    0.05
+   ],
+   "unit": "second * core / request",
+   "value": null
+  },
+  "shard_fit": {
+   "because": "A shard has to fit on one host, and it can land on the smallest. The pool's total disk says nothing about that, so the smallest host sets the limit. The margin is the disk margin, because the host still has to take a dead host's records.",
+   "declares_headroom": true,
+   "dimensionality": {},
+   "factor": 1.0,
+   "factor_headroom": 1.0,
+   "factor_limit": 1.0,
+   "headroom": {
+    "name": "disk_margin",
+    "op": "ref"
+   },
+   "kind": "ceiling",
+   "limit": {
+    "op": "const",
+    "value": 1.0
+   },
+   "magnitude": 0.1884367357042817,
+   "of": {
+    "args": [
+     {
+      "name": "largest_shard",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "name": "smallest_disk",
+        "op": "ref"
+       },
+       {
+        "name": "one_host",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     }
+    ],
+    "op": "/"
+   },
+   "unit": "dimensionless"
+  },
+  "shards": {
+   "decided": "you",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 64.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "this worked example's premise: the records are split into sixty-four shards, each held whole by one host and copied to others"
+   },
+   "range": [
+    8.0,
+    512.0
+   ],
+   "unit": "dimensionless",
+   "value": 64.0
+  },
+  "smallest_cores": {
+   "dimensionality": {
+    "[core]": 1.0,
+    "[host]": -1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "cores_per_old_host",
+      "op": "ref"
+     },
+     {
+      "name": "cores_per_new_host",
+      "op": "ref"
+     }
+    ],
+    "fn": "min",
+    "op": "call"
+   },
+   "kind": "derived",
+   "magnitude": 8.0,
+   "unit": "core/host"
+  },
+  "smallest_disk": {
+   "dimensionality": {
+    "[host]": -1.0,
+    "[information]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "disk_per_old_host",
+      "op": "ref"
+     },
+     {
+      "name": "disk_per_new_host",
+      "op": "ref"
+     }
+    ],
+    "fn": "min",
+    "op": "call"
+   },
+   "kind": "derived",
+   "magnitude": 2.0,
+   "unit": "TB/host"
+  },
+  "stored_data": {
+   "dimensionality": {
+    "[information]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "stored_data_t0",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "name": "annual_growth",
+        "op": "ref"
+       },
+       {
+        "name": "horizon_periods",
+        "op": "ref"
+       }
+      ],
+      "op": "**"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 64.48166936275017,
+   "unit": "TB"
+  },
+  "stored_data_t0": {
+   "decided": "outside",
+   "dimensionality": {
+    "[information]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 15.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "The service owners estimate what the service holds today: its database and the objects users have uploaded, before replication, indexes or compression. It has not been counted yet, and counting it would turn the estimate into a fact."
+   },
+   "range": [
+    1.0,
+    200.0
+   ],
+   "unit": "TB",
+   "value": 15.0
+  },
+  "support_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[time]": -1.0
+   },
+   "distribution": {
+    "triangular": {
+     "likely": 0.11,
+     "maximum": 0.18,
+     "minimum": 0.07
+    }
+   },
+   "kind": "input",
+   "magnitude": 0.11795163177004572,
+   "provenance": {
+    "kind": "assumption",
+    "source": "Triangular, as in the web service model's support rate at its point estimate (ch15): a yearly share of the capital cost"
+   },
+   "range": null,
+   "unit": "1/year",
+   "value": null
+  },
+  "total_cost": {
+   "dimensionality": {
+    "[currency_usd]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "new_capex",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "name": "annual_running",
+        "op": "ref"
+       },
+       {
+        "name": "horizon",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     }
+    ],
+    "op": "+"
+   },
+   "kind": "derived",
+   "magnitude": 159079890.0409547,
+   "unit": "USD"
+  },
+  "utilisation_after_losing_largest": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "name": "pool_cores",
+        "op": "ref"
+       },
+       {
+        "args": [
+         {
+          "name": "largest_host_cores",
+          "op": "ref"
+         },
+         {
+          "name": "one_host",
+          "op": "ref"
+         }
+        ],
+        "op": "*"
+       }
+      ],
+      "op": "-"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.7096123238292926,
+   "unit": "dimensionless"
+  },
+  "utilisation_smallest_equal": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "name": "all_hosts",
+        "op": "ref"
+       },
+       {
+        "name": "smallest_cores",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 1.0698770420810872,
+   "unit": "dimensionless"
+  },
+  "utilisation_weighted": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "pool_cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.6954200773527067,
+   "unit": "dimensionless"
+  },
+  "working_set": {
+   "dimensionality": {
+    "[information]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "stored_data",
+      "op": "ref"
+     },
+     {
+      "name": "hot_fraction",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 2.461071789020011,
+   "unit": "TB"
+  }
+ },
+ "path": "models/mixed_pool/model.yaml",
+ "results": {},
+ "scenarios": {
+  "old_retired": {
+   "ceilings": {
+    "failure_headroom": {
+     "allowed": 0.7,
+     "because": "N+1 in a mixed pool means surviving the loss of the largest host, not an average one: that is the most capacity one fault can take away (ch11).",
+     "headroom": 0.3,
+     "headroom_text": "queueing_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 1.0226765843422159,
+     "verdict": "over"
+    },
+    "queueing_headroom_equal": {
+     "allowed": 0.7,
+     "because": "The same ceiling for a router that sends every host the same share. The old hosts have fewer cores, so they are the busiest, and they reach the knee first while the new hosts have cores to spare. The pool bought for capacity-weighted routing is checked here too.",
+     "headroom": 0.3,
+     "headroom_text": "queueing_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 1.9869145067220193,
+     "verdict": "over"
+    },
+    "queueing_headroom_weighted": {
+     "allowed": 0.7,
+     "because": "The web service's queueing ceiling (ch06), for a pool whose router sends each host requests in proportion to its cores. Then every host is equally busy and the pool's cores add up.",
+     "headroom": 0.3,
+     "headroom_text": "queueing_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 0.9934572533610097,
+     "verdict": "inside headroom"
+    },
+    "shard_fit": {
+     "allowed": 0.75,
+     "because": "A shard has to fit on one host, and it can land on the smallest. The pool's total disk says nothing about that, so the smallest host sets the limit. The margin is the disk margin, because the host still has to take a dead host's records.",
+     "headroom": 0.25,
+     "headroom_text": "disk_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 0.1884367357042817,
+     "verdict": "ok"
+    }
+   },
+   "overrides": {
+    "old_hosts": 0.0
+   },
+   "point": {
+    "all_hosts": 35.0,
+    "annual_energy_cost": 17861.92158212271,
+    "annual_growth": 1.338656042454521,
+    "annual_licences": 44799.999999999985,
+    "annual_running": 89654.23184546862,
+    "annual_support": 26992.310263345917,
+    "busy_cores": 556.3360618821654,
+    "cache_margin": 0.25,
+    "cores_per_new_host": 16.0,
+    "cores_per_old_host": 8.0,
+    "disk_margin": 0.25,
+    "disk_per_new_host": 2.0,
+    "disk_per_old_host": 2.0,
+    "electricity_price": 0.13360389215887386,
+    "failure_headroom": 1.0226765843422159,
+    "horizon": 5.0,
+    "horizon_periods": 5.0,
+    "host_price": 6538.348415311009,
+    "hot_fraction": 0.03816699867329622,
+    "hours_per_year": 8766.0,
+    "index_overhead": 1.3401923788646684,
+    "largest_host_cores": 16.0,
+    "largest_shard": 0.3768734714085634,
+    "licence_per_core": 79.99999999999997,
+    "new_capex": 228842.19453588533,
+    "new_for_memory": 54.0,
+    "new_for_requests": 50.0,
+    "new_for_requests_equal": 100.0,
+    "new_for_storage": 49.0,
+    "new_host_power": 310.45548849896676,
+    "new_hosts": 35.0,
+    "new_hosts_equal": 100.0,
+    "new_hosts_weighted": 54.0,
+    "old_cores": 0.0,
+    "old_disk": 0.0,
+    "old_host_power": 280.0,
+    "old_hosts": 0.0,
+    "old_ram": 0.0,
+    "old_support_per_host": 300.0,
+    "one_host": 1.0,
+    "one_year": 1.0,
+    "os_reserve": 0.11071796769724492,
+    "peak_request_rate": 42560.029939471824,
+    "peak_request_rate_t0": 9900.495061637923,
+    "pool_cores": 560.0,
+    "pue": 1.4035898384862247,
+    "queueing_headroom_equal": 1.9869145067220193,
+    "queueing_headroom_weighted": 0.9934572533610097,
+    "queueing_margin": 0.3,
+    "ram_for_service_new": 0.061110995930571975,
+    "ram_for_service_old": 0.12222199186114395,
+    "ram_per_new_host": 64.0,
+    "ram_per_old_host": 128.0,
+    "raw_data": 72.35970651044417,
+    "raw_per_stored": 1.1221748324066343,
+    "record_compression": 3.5828437962482282,
+    "replication_factor": 3.0,
+    "service_demand": 0.01307179676972449,
+    "shard_fit": 0.1884367357042817,
+    "shards": 64.0,
+    "smallest_cores": 8.0,
+    "smallest_disk": 2.0,
+    "stored_data": 64.48166936275017,
+    "stored_data_t0": 15.0,
+    "support_rate": 0.11795163177004572,
+    "total_cost": 677113.3537632284,
+    "utilisation_after_losing_largest": 1.0226765843422159,
+    "utilisation_smallest_equal": 1.9869145067220193,
+    "utilisation_weighted": 0.9934572533610097,
+    "working_set": 2.461071789020011
+   },
+   "samples": 100000,
+   "seed": 20260916,
+   "title": "The old hosts retire before the horizon"
+  },
+  "reference": {
+   "ceilings": {
+    "failure_headroom": {
+     "allowed": 0.7,
+     "because": "N+1 in a mixed pool means surviving the loss of the largest host, not an average one: that is the most capacity one fault can take away (ch11).",
+     "headroom": 0.3,
+     "headroom_text": "queueing_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 0.7096123238292926,
+     "verdict": "inside headroom"
+    },
+    "queueing_headroom_equal": {
+     "allowed": 0.7,
+     "because": "The same ceiling for a router that sends every host the same share. The old hosts have fewer cores, so they are the busiest, and they reach the knee first while the new hosts have cores to spare. The pool bought for capacity-weighted routing is checked here too.",
+     "headroom": 0.3,
+     "headroom_text": "queueing_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 1.0698770420810872,
+     "verdict": "over"
+    },
+    "queueing_headroom_weighted": {
+     "allowed": 0.7,
+     "because": "The web service's queueing ceiling (ch06), for a pool whose router sends each host requests in proportion to its cores. Then every host is equally busy and the pool's cores add up.",
+     "headroom": 0.3,
+     "headroom_text": "queueing_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 0.6954200773527067,
+     "verdict": "ok"
+    },
+    "shard_fit": {
+     "allowed": 0.75,
+     "because": "A shard has to fit on one host, and it can land on the smallest. The pool's total disk says nothing about that, so the smallest host sets the limit. The margin is the disk margin, because the host still has to take a dead host's records.",
+     "headroom": 0.25,
+     "headroom_text": "disk_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 0.1884367357042817,
+     "verdict": "ok"
+    }
+   },
+   "overrides": {},
+   "point": {
+    "all_hosts": 65.0,
+    "annual_energy_cost": 31670.217259020417,
+    "annual_growth": 1.338656042454521,
+    "annual_licences": 63999.99999999998,
+    "annual_running": 131662.52752236632,
+    "annual_support": 35992.31026334592,
+    "busy_cores": 556.3360618821654,
+    "cache_margin": 0.25,
+    "cores_per_new_host": 16.0,
+    "cores_per_old_host": 8.0,
+    "disk_margin": 0.25,
+    "disk_per_new_host": 2.0,
+    "disk_per_old_host": 2.0,
+    "electricity_price": 0.13360389215887386,
+    "failure_headroom": 0.7096123238292926,
+    "horizon": 5.0,
+    "horizon_periods": 5.0,
+    "host_price": 6538.348415311009,
+    "hot_fraction": 0.03816699867329622,
+    "hours_per_year": 8766.0,
+    "index_overhead": 1.3401923788646684,
+    "largest_host_cores": 16.0,
+    "largest_shard": 0.3768734714085634,
+    "licence_per_core": 79.99999999999997,
+    "new_capex": 228842.19453588533,
+    "new_for_memory": 0.0,
+    "new_for_requests": 35.0,
+    "new_for_requests_equal": 70.0,
+    "new_for_storage": 19.0,
+    "new_host_power": 310.45548849896676,
+    "new_hosts": 35.0,
+    "new_hosts_equal": 70.0,
+    "new_hosts_weighted": 35.0,
+    "old_cores": 240.0,
+    "old_disk": 60.0,
+    "old_host_power": 280.0,
+    "old_hosts": 30.0,
+    "old_ram": 3.6666597558343184,
+    "old_support_per_host": 300.0,
+    "one_host": 1.0,
+    "one_year": 1.0,
+    "os_reserve": 0.11071796769724492,
+    "peak_request_rate": 42560.029939471824,
+    "peak_request_rate_t0": 9900.495061637923,
+    "pool_cores": 800.0,
+    "pue": 1.4035898384862247,
+    "queueing_headroom_equal": 1.0698770420810872,
+    "queueing_headroom_weighted": 0.6954200773527067,
+    "queueing_margin": 0.3,
+    "ram_for_service_new": 0.061110995930571975,
+    "ram_for_service_old": 0.12222199186114395,
+    "ram_per_new_host": 64.0,
+    "ram_per_old_host": 128.0,
+    "raw_data": 72.35970651044417,
+    "raw_per_stored": 1.1221748324066343,
+    "record_compression": 3.5828437962482282,
+    "replication_factor": 3.0,
+    "service_demand": 0.01307179676972449,
+    "shard_fit": 0.1884367357042817,
+    "shards": 64.0,
+    "smallest_cores": 8.0,
+    "smallest_disk": 2.0,
+    "stored_data": 64.48166936275017,
+    "stored_data_t0": 15.0,
+    "support_rate": 0.11795163177004572,
+    "total_cost": 887154.8321477169,
+    "utilisation_after_losing_largest": 0.7096123238292926,
+    "utilisation_smallest_equal": 1.0698770420810872,
+    "utilisation_weighted": 0.6954200773527067,
+    "working_set": 2.461071789020011
+   },
+   "samples": 100000,
+   "seed": 20260916,
+   "title": "Keep the old hosts"
+  },
+  "replace": {
+   "ceilings": {
+    "failure_headroom": {
+     "allowed": 0.7,
+     "because": "N+1 in a mixed pool means surviving the loss of the largest host, not an average one: that is the most capacity one fault can take away (ch11).",
+     "headroom": 0.3,
+     "headroom_text": "queueing_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 0.6560566767478365,
+     "verdict": "ok"
+    },
+    "queueing_headroom_equal": {
+     "allowed": 0.7,
+     "because": "The same ceiling for a router that sends every host the same share. The old hosts have fewer cores, so they are the busiest, and they reach the knee first while the new hosts have cores to spare. The pool bought for capacity-weighted routing is checked here too.",
+     "headroom": 0.3,
+     "headroom_text": "queueing_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 1.287814958060568,
+     "verdict": "over"
+    },
+    "queueing_headroom_weighted": {
+     "allowed": 0.7,
+     "because": "The web service's queueing ceiling (ch06), for a pool whose router sends each host requests in proportion to its cores. Then every host is equally busy and the pool's cores add up.",
+     "headroom": 0.3,
+     "headroom_text": "queueing_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 0.643907479030284,
+     "verdict": "ok"
+    },
+    "shard_fit": {
+     "allowed": 0.75,
+     "because": "A shard has to fit on one host, and it can land on the smallest. The pool's total disk says nothing about that, so the smallest host sets the limit. The margin is the disk margin, because the host still has to take a dead host's records.",
+     "headroom": 0.25,
+     "headroom_text": "disk_margin",
+     "limit": 1.0,
+     "limit_text": "1",
+     "value": 0.1884367357042817,
+     "verdict": "ok"
+    }
+   },
+   "overrides": {
+    "new_hosts": 54.0,
+    "old_hosts": 0.0
+   },
+   "point": {
+    "all_hosts": 54.0,
+    "annual_energy_cost": 27558.393298132185,
+    "annual_growth": 1.338656042454521,
+    "annual_licences": 69119.99999999997,
+    "annual_running": 138323.67199015158,
+    "annual_support": 41645.27869201941,
+    "busy_cores": 556.3360618821654,
+    "cache_margin": 0.25,
+    "cores_per_new_host": 16.0,
+    "cores_per_old_host": 8.0,
+    "disk_margin": 0.25,
+    "disk_per_new_host": 2.0,
+    "disk_per_old_host": 2.0,
+    "electricity_price": 0.13360389215887386,
+    "failure_headroom": 0.6560566767478365,
+    "horizon": 5.0,
+    "horizon_periods": 5.0,
+    "host_price": 6538.348415311009,
+    "hot_fraction": 0.03816699867329622,
+    "hours_per_year": 8766.0,
+    "index_overhead": 1.3401923788646684,
+    "largest_host_cores": 16.0,
+    "largest_shard": 0.3768734714085634,
+    "licence_per_core": 79.99999999999997,
+    "new_capex": 353070.81442679453,
+    "new_for_memory": 54.0,
+    "new_for_requests": 50.0,
+    "new_for_requests_equal": 100.0,
+    "new_for_storage": 49.0,
+    "new_host_power": 310.45548849896676,
+    "new_hosts": 54.0,
+    "new_hosts_equal": 100.0,
+    "new_hosts_weighted": 54.0,
+    "old_cores": 0.0,
+    "old_disk": 0.0,
+    "old_host_power": 280.0,
+    "old_hosts": 0.0,
+    "old_ram": 0.0,
+    "old_support_per_host": 300.0,
+    "one_host": 1.0,
+    "one_year": 1.0,
+    "os_reserve": 0.11071796769724492,
+    "peak_request_rate": 42560.029939471824,
+    "peak_request_rate_t0": 9900.495061637923,
+    "pool_cores": 864.0,
+    "pue": 1.4035898384862247,
+    "queueing_headroom_equal": 1.287814958060568,
+    "queueing_headroom_weighted": 0.643907479030284,
+    "queueing_margin": 0.3,
+    "ram_for_service_new": 0.061110995930571975,
+    "ram_for_service_old": 0.12222199186114395,
+    "ram_per_new_host": 64.0,
+    "ram_per_old_host": 128.0,
+    "raw_data": 72.35970651044417,
+    "raw_per_stored": 1.1221748324066343,
+    "record_compression": 3.5828437962482282,
+    "replication_factor": 3.0,
+    "service_demand": 0.01307179676972449,
+    "shard_fit": 0.1884367357042817,
+    "shards": 64.0,
+    "smallest_cores": 8.0,
+    "smallest_disk": 2.0,
+    "stored_data": 64.48166936275017,
+    "stored_data_t0": 15.0,
+    "support_rate": 0.11795163177004572,
+    "total_cost": 1044689.1743775524,
+    "utilisation_after_losing_largest": 0.6560566767478365,
+    "utilisation_smallest_equal": 1.287814958060568,
+    "utilisation_weighted": 0.643907479030284,
+    "working_set": 2.461071789020011
+   },
+   "samples": 100000,
+   "seed": 20260916,
+   "title": "Replace the old hosts"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": true,
+  "problems": []
+ }
+}

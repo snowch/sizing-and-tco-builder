@@ -13,9 +13,31 @@
 
 import { isAlias, isMap, isScalar, isSeq, parseAllDocuments } from "../vendor/yaml/index.js";
 
-import { PyError, pyInt } from "./python.js";
+import { PyError, isInt, pyInt, repr } from "./python.js";
 
 export class YamlError extends Error {}
+
+/* dsl.read_yaml's refusal of a key written twice in one mapping, before the file is a model. */
+export class DuplicateKey extends Error {
+  constructor(line, key) {
+    super(`line ${line}: ${repr(key)} is written twice in the same mapping, and only the second would count`);
+    this.line = line;
+    this.key = key;
+  }
+}
+
+/* Python's equality for a mapping key: 1, 1.0 and True are one key; "a" and 'a' are one key. */
+function keyIdentity(value) {
+  if (value === null) return "None";
+  if (typeof value === "boolean") return `n:${value ? 1 : 0}`;
+  if (typeof value === "number") return Number.isNaN(value) ? `nan:${Math.random()}` : `n:${value}`;
+  if (isInt(value)) {
+    const big = value.value < 0n ? -value.value : value.value;
+    return big <= 2n ** 53n ? `n:${Number(value.value)}` : `i:${value.value}`;
+  }
+  if (typeof value === "string") return `s:${value}`;
+  return `o:${JSON.stringify(value)}`;
+}
 
 // yaml/resolver.py, as regular expressions over the scalar's text, in the order PyYAML tries them.
 const BOOL = /^(?:yes|Yes|YES|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)$/;
@@ -109,17 +131,16 @@ function key(value) {
   if (Array.isArray(value) || value instanceof Map) {
     throw new YamlError("found unhashable key while constructing a mapping");
   }
-  // Python's dict treats 1, 1.0 and True as the same key. Rare enough in a model file to leave.
   return value;
 }
 
-function build(node, doc, seen = new Set()) {
+function build(node, doc, seen = new Set(), strict = null) {
   if (node === null || node === undefined) return null;
   if (isAlias(node)) {
     const target = node.resolve(doc);
     if (!target) throw new YamlError(`found undefined alias ${node.source}`);
     if (seen.has(target)) throw new YamlError("found a recursive alias");
-    return build(target, doc, new Set([...seen, target]));
+    return build(target, doc, new Set([...seen, target]), strict);
   }
   if (isScalar(node)) {
     const text = String(node.value ?? "");
@@ -130,9 +151,11 @@ function build(node, doc, seen = new Set()) {
     if (node.type === "PLAIN") return construct(resolve(text), text);
     return text;
   }
-  if (isSeq(node)) return node.items.map((item) => build(item, doc, seen));
+  if (isSeq(node)) return node.items.map((item) => build(item, doc, seen, strict));
+  if (isMap(node) && strict) return strictMapping(node, doc, seen, strict);
   if (isMap(node)) {
     const out = new Map();
+    const first = new Map();
     const merged = [];
     for (const pair of node.items) {
       const k = pair.key;
@@ -146,7 +169,11 @@ function build(node, doc, seen = new Set()) {
         }
         continue;
       }
-      out.set(key(build(k, doc, seen)), build(pair.value, doc, seen));
+      // A Python dict keeps a key where it was first set, and treats 1, 1.0 and True as one key.
+      const built = key(build(k, doc, seen));
+      const identity = keyIdentity(built);
+      if (!first.has(identity)) first.set(identity, built);
+      out.set(first.get(identity), build(pair.value, doc, seen));
     }
     if (!merged.length) return out;
     // PyYAML's flatten_mapping: the merged mappings go first, the last source first, so an
@@ -158,6 +185,65 @@ function build(node, doc, seen = new Set()) {
     return result;
   }
   throw new YamlError("unsupported YAML node");
+}
+
+/*
+ * dsl.read_yaml's mapping: every key first, refusing one written twice, then the values. A merge
+ * key has no constructor there, because the check constructs each key before PyYAML flattens it.
+ */
+function strictMapping(node, doc, seen, strict) {
+  const keys = [];
+  const identities = new Set();
+  for (const pair of node.items) {
+    const k = pair.key;
+    if (isScalar(k) && k.type === "PLAIN" && !k.tag && k.value === "<<") {
+      throw new YamlError("could not determine a constructor for the tag 'tag:yaml.org,2002:merge'");
+    }
+    const value = build(k, doc, seen, strict);
+    if (Array.isArray(value) || value instanceof Map) {
+      throw new PyError("TypeError", `unhashable type: '${Array.isArray(value) ? "list" : "dict"}'`);
+    }
+    const identity = keyIdentity(value);
+    if (identities.has(identity)) throw new DuplicateKey(strict.lineOf(k), value);
+    identities.add(identity);
+    keys.push(value);
+  }
+  const out = new Map();
+  node.items.forEach((pair, i) => out.set(keys[i], build(pair.value, doc, seen, strict)));
+  return out;
+}
+
+function documentOf(text) {
+  const docs = parseAllDocuments(String(text), {
+    version: "1.1",
+    schema: "failsafe",
+    uniqueKeys: false,
+    merge: false,
+  });
+  if (!docs.length) return null;
+  if (docs.length > 1) throw new YamlError("expected a single document in the stream");
+  const [doc] = docs;
+  if (doc.errors.length) throw new YamlError(doc.errors[0].message);
+  return doc;
+}
+
+/* dsl.read_yaml: safe_load, but a key written twice in one mapping is refused (DuplicateKey). */
+export function readYaml(text) {
+  const doc = documentOf(text);
+  if (!doc) return null;
+  const source = String(text);
+  const lineOf = (node) => {
+    const at = node?.range?.[0] ?? 0;
+    let line = 1;
+    for (let i = 0; i < at; i++) if (source.charCodeAt(i) === 10) line++;
+    return line;
+  };
+  try {
+    return build(doc.contents, doc, new Set(), { lineOf });
+  } catch (error) {
+    if (error instanceof YamlError || error instanceof PyError || error instanceof DuplicateKey) throw error;
+    throw new YamlError(String(error?.message ?? error));
+  }
 }
 
 /* yaml.safe_load: one document, or None for an empty stream. */

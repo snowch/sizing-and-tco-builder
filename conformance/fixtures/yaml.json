@@ -2,6 +2,24 @@
  "probes": [
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "bool",
+        "value": true
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -21,6 +39,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "bool",
+        "value": true
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -40,6 +76,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "str",
+        "value": "n"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -59,6 +113,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "bool",
+        "value": false
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -78,6 +150,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "str",
+        "value": "1e3"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -97,6 +187,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "1000.0"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -116,6 +224,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "str",
+        "value": "1.5e3"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -135,6 +261,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "int",
+        "value": "8"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -154,6 +298,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "str",
+        "value": "0o10"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -173,6 +335,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "int",
+        "value": "5"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -192,6 +372,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "int",
+        "value": "31"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -211,6 +409,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "int",
+        "value": "90"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -230,6 +446,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "90.5"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -249,6 +483,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "int",
+        "value": "1000"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -268,6 +520,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "1000.5"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -287,6 +557,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "0.5"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -306,6 +594,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "1.0"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -325,6 +631,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "3.0"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -344,6 +668,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "int",
+        "value": "-2"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -363,6 +705,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "int",
+        "value": "7"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -382,6 +742,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "0.1"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -401,6 +779,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "str",
+        "value": "1e-7"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -420,6 +816,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "1e-07"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -439,6 +853,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "1.2345678901234567e+19"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -458,6 +890,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "int",
+        "value": "100000000000000000000"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -477,6 +927,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "date",
+        "value": "2026-09-26"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -496,6 +964,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "date",
+        "value": "2026-09-26 10:00:00"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -515,6 +1001,23 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "none"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -533,6 +1036,23 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "none"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -551,6 +1071,23 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "none"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -569,6 +1106,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "str",
+        "value": ""
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -588,6 +1143,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "nan"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -607,6 +1180,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "inf"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -626,6 +1217,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "-inf"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -645,6 +1254,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "str",
+        "value": "1"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -664,6 +1291,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "str",
+        "value": "yes"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -683,6 +1328,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "str",
+        "value": "12"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -702,6 +1365,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "float",
+        "value": "12.0"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -721,6 +1402,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "int",
+        "value": "12"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -741,10 +1440,20 @@
   {
    "message": "could not determine a constructor for the tag 'tag:yaml.org,2002:python/name:os.system'",
    "ok": false,
+   "read": {
+    "code": "load.yaml",
+    "message": "could not determine a constructor for the tag 'tag:yaml.org,2002:python/name:os.system'",
+    "ok": false
+   },
    "yaml": "v: !!python/name:os.system"
   },
   {
    "ok": true,
+   "read": {
+    "code": "load.duplicate-key",
+    "message": "probe: line 2: 'a' is written twice in the same mapping, and only the second would count",
+    "ok": false
+   },
    "value": {
     "items": [
      [
@@ -764,6 +1473,56 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "a"
+       },
+       {
+        "items": [
+         [
+          {
+           "py": "str",
+           "value": "k"
+          },
+          {
+           "py": "int",
+           "value": "1"
+          }
+         ]
+        ],
+        "py": "dict"
+       }
+      ],
+      [
+       {
+        "py": "str",
+        "value": "b"
+       },
+       {
+        "items": [
+         [
+          {
+           "py": "str",
+           "value": "k"
+          },
+          {
+           "py": "int",
+           "value": "1"
+          }
+         ]
+        ],
+        "py": "dict"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -815,6 +1574,11 @@
   },
   {
    "ok": true,
+   "read": {
+    "code": "load.yaml",
+    "message": "could not determine a constructor for the tag 'tag:yaml.org,2002:merge'",
+    "ok": false
+   },
    "value": {
     "items": [
      [
@@ -886,6 +1650,11 @@
   },
   {
    "ok": true,
+   "read": {
+    "code": "load.yaml",
+    "message": "could not determine a constructor for the tag 'tag:yaml.org,2002:merge'",
+    "ok": false
+   },
    "value": {
     "items": [
      [
@@ -926,6 +1695,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "str",
+        "value": "folded text"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -945,6 +1732,24 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "str",
+        "value": "kept\nlines\n"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -964,6 +1769,37 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "items": [
+         {
+          "py": "int",
+          "value": "1"
+         },
+         {
+          "py": "str",
+          "value": "two"
+         },
+         {
+          "py": "float",
+          "value": "3.0"
+         }
+        ],
+        "py": "list"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -996,6 +1832,35 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "items": [
+         [
+          {
+           "py": "str",
+           "value": "a"
+          },
+          {
+           "py": "int",
+           "value": "1"
+          }
+         ]
+        ],
+        "py": "dict"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -1026,6 +1891,22 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      {
+       "py": "str",
+       "value": "a"
+      },
+      {
+       "py": "str",
+       "value": "b"
+      }
+     ],
+     "py": "list"
+    }
+   },
    "value": {
     "items": [
      {
@@ -1043,6 +1924,13 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "py": "str",
+     "value": "just text"
+    }
+   },
    "value": {
     "py": "str",
     "value": "just text"
@@ -1051,6 +1939,12 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "py": "none"
+    }
+   },
    "value": {
     "py": "none"
    },
@@ -1058,6 +1952,12 @@
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "py": "none"
+    }
+   },
    "value": {
     "py": "none"
    },
@@ -1066,40 +1966,93 @@
   {
    "message": "expected a single document in the stream",
    "ok": false,
+   "read": {
+    "code": "load.yaml",
+    "message": "expected a single document in the stream",
+    "ok": false
+   },
    "yaml": "a: 1\n---\nb: 2"
   },
   {
    "message": "while parsing a flow sequence",
    "ok": false,
+   "read": {
+    "code": "load.yaml",
+    "message": "while parsing a flow sequence",
+    "ok": false
+   },
    "yaml": "v: [unclosed"
   },
   {
    "message": "while parsing a flow mapping",
    "ok": false,
+   "read": {
+    "code": "load.yaml",
+    "message": "while parsing a flow mapping",
+    "ok": false
+   },
    "yaml": "v: {a: 1"
   },
   {
    "message": "while scanning a quoted scalar",
    "ok": false,
+   "read": {
+    "code": "load.yaml",
+    "message": "while scanning a quoted scalar",
+    "ok": false
+   },
    "yaml": "v: 'unclosed"
   },
   {
    "message": "while scanning for the next token",
    "ok": false,
+   "read": {
+    "code": "load.yaml",
+    "message": "while scanning for the next token",
+    "ok": false
+   },
    "yaml": "\tv: 1"
   },
   {
    "message": "while scanning for the next token",
    "ok": false,
+   "read": {
+    "code": "load.yaml",
+    "message": "while scanning for the next token",
+    "ok": false
+   },
    "yaml": "v: @reserved"
   },
   {
    "message": "while constructing a mapping",
    "ok": false,
+   "read": {
+    "code": "load.malformed",
+    "message": "TypeError: unhashable type: 'list'",
+    "ok": false
+   },
    "yaml": "? [a, b]\n: 1"
   },
   {
    "ok": true,
+   "read": {
+    "ok": true,
+    "value": {
+     "items": [
+      [
+       {
+        "py": "str",
+        "value": "v"
+       },
+       {
+        "py": "int",
+        "value": "3"
+       }
+      ]
+     ],
+     "py": "dict"
+    }
+   },
    "value": {
     "items": [
      [
@@ -1120,7 +2073,335 @@
   {
    "message": "mapping values are not allowed here",
    "ok": false,
+   "read": {
+    "code": "load.yaml",
+    "message": "mapping values are not allowed here",
+    "ok": false
+   },
    "yaml": "v: a: b"
+  },
+  {
+   "ok": true,
+   "read": {
+    "code": "load.duplicate-key",
+    "message": "probe: line 3: 'a' is written twice in the same mapping, and only the second would count",
+    "ok": false
+   },
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "a"
+      },
+      {
+       "py": "int",
+       "value": "3"
+      }
+     ],
+     [
+      {
+       "py": "str",
+       "value": "b"
+      },
+      {
+       "items": [
+        [
+         {
+          "py": "str",
+          "value": "c"
+         },
+         {
+          "py": "int",
+          "value": "2"
+         }
+        ]
+       ],
+       "py": "dict"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "a: 1\nb: {c: 1, c: 2}\na: 3"
+  },
+  {
+   "ok": true,
+   "read": {
+    "code": "load.duplicate-key",
+    "message": "probe: line 2: 'a' is written twice in the same mapping, and only the second would count",
+    "ok": false
+   },
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "a"
+      },
+      {
+       "py": "int",
+       "value": "2"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "a: {b: 1, b: 2}\na: 2"
+  },
+  {
+   "ok": true,
+   "read": {
+    "code": "load.duplicate-key",
+    "message": "probe: line 1: 'a' is written twice in the same mapping, and only the second would count",
+    "ok": false
+   },
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "x"
+      },
+      {
+       "items": [
+        {
+         "items": [
+          [
+           {
+            "py": "str",
+            "value": "a"
+           },
+           {
+            "py": "int",
+            "value": "2"
+           }
+          ]
+         ],
+         "py": "dict"
+        }
+       ],
+       "py": "list"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "x: [ {a: 1, a: 2} ]"
+  },
+  {
+   "ok": true,
+   "read": {
+    "code": "load.duplicate-key",
+    "message": "probe: line 2: 1.0 is written twice in the same mapping, and only the second would count",
+    "ok": false
+   },
+   "value": {
+    "items": [
+     [
+      {
+       "py": "int",
+       "value": "1"
+      },
+      {
+       "py": "str",
+       "value": "b"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "1: a\n1.0: b"
+  },
+  {
+   "ok": true,
+   "read": {
+    "code": "load.duplicate-key",
+    "message": "probe: line 2: 1 is written twice in the same mapping, and only the second would count",
+    "ok": false
+   },
+   "value": {
+    "items": [
+     [
+      {
+       "py": "bool",
+       "value": true
+      },
+      {
+       "py": "str",
+       "value": "b"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "true: a\n1: b"
+  },
+  {
+   "ok": true,
+   "read": {
+    "code": "load.duplicate-key",
+    "message": "probe: line 2: 'a' is written twice in the same mapping, and only the second would count",
+    "ok": false
+   },
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "a"
+      },
+      {
+       "py": "int",
+       "value": "2"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "a: 1\n\"a\": 2"
+  },
+  {
+   "message": "while constructing a mapping",
+   "ok": false,
+   "read": {
+    "code": "load.malformed",
+    "message": "TypeError: unhashable type: 'list'",
+    "ok": false
+   },
+   "yaml": "a: 1\n? [1]\n: 2"
+  },
+  {
+   "ok": true,
+   "read": {
+    "code": "load.yaml",
+    "message": "could not determine a constructor for the tag 'tag:yaml.org,2002:merge'",
+    "ok": false
+   },
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "a"
+      },
+      {
+       "items": [
+        [
+         {
+          "py": "str",
+          "value": "b"
+         },
+         {
+          "py": "int",
+          "value": "1"
+         }
+        ]
+       ],
+       "py": "dict"
+      }
+     ],
+     [
+      {
+       "py": "str",
+       "value": "c"
+      },
+      {
+       "items": [
+        [
+         {
+          "py": "str",
+          "value": "b"
+         },
+         {
+          "py": "int",
+          "value": "1"
+         }
+        ],
+        [
+         {
+          "py": "str",
+          "value": "d"
+         },
+         {
+          "py": "int",
+          "value": "2"
+         }
+        ]
+       ],
+       "py": "dict"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "a: &x {b: 1}\nc:\n  <<: *x\n  d: 2"
+  },
+  {
+   "ok": true,
+   "read": {
+    "code": "load.duplicate-key",
+    "message": "probe: line 6: 'e' is written twice in the same mapping, and only the second would count",
+    "ok": false
+   },
+   "value": {
+    "items": [
+     [
+      {
+       "py": "str",
+       "value": "a"
+      },
+      {
+       "py": "int",
+       "value": "1"
+      }
+     ],
+     [
+      {
+       "py": "str",
+       "value": "b"
+      },
+      {
+       "items": [
+        [
+         {
+          "py": "str",
+          "value": "c"
+         },
+         {
+          "py": "int",
+          "value": "1"
+         }
+        ],
+        [
+         {
+          "py": "str",
+          "value": "d"
+         },
+         {
+          "items": [
+           [
+            {
+             "py": "str",
+             "value": "e"
+            },
+            {
+             "py": "int",
+             "value": "2"
+            }
+           ]
+          ],
+          "py": "dict"
+         }
+        ]
+       ],
+       "py": "dict"
+      }
+     ]
+    ],
+    "py": "dict"
+   },
+   "yaml": "a: 1\nb:\n  c: 1\n  d:\n    e: 1\n    e: 2"
   }
  ]
 }

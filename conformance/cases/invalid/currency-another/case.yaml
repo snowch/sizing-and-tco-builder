@@ -1,0 +1,5 @@
+about: >-
+  A model priced in dollars with one node counting euros. A rate between two currencies is a
+  node of its own.
+expect:
+  - currency.another

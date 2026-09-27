@@ -1,0 +1,6 @@
+scenario: busier
+title: Busier
+because: a busier hour
+samples: 1000
+seed: 20260916
+overrides: {request_rate: yes}

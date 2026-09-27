@@ -1,0 +1,69 @@
+dsl: 1
+model: tiny
+title: plus two with units
+currency: USD
+
+nodes:
+
+  request_rate:
+    kind: input
+    decided: outside
+    unit: request/second
+    value: 200
+    provenance: {kind: assumption, source: "the busy hour, as stated for this case"}
+
+  service_demand:
+    kind: input
+    decided: outside
+    unit: core*second/request
+    value: 0.02
+    provenance: {kind: assumption, source: "processor time per request, as stated for this case"}
+
+  cores:
+    kind: input
+    decided: you
+    unit: core
+    value: 16
+    provenance: {kind: assumption, source: "the fleet chosen for this case"}
+
+  busy_cores:
+    kind: derived
+    unit: core
+    formula: request_rate * service_demand
+
+  utilisation:
+    kind: derived
+    unit: dimensionless
+    formula: busy_cores / cores
+
+  stored:
+    kind: input
+    decided: outside
+    unit: TB
+    value: 15
+    provenance: {kind: assumption, source: "what is held, as stated for this case"}
+
+  index:
+    kind: input
+    decided: outside
+    unit: GB
+    value: 500
+    provenance: {kind: assumption, source: "the index, as stated for this case"}
+
+  disk_per_host:
+    kind: input
+    decided: outside
+    unit: TB/host
+    value: 2
+    provenance: {kind: assumption, source: "the disk each host has, as stated for this case"}
+
+  bumped:
+    kind: derived
+    unit: TB
+    formula: stored + 2
+
+outputs:
+  - utilisation
+  - bumped
+  - index
+  - disk_per_host

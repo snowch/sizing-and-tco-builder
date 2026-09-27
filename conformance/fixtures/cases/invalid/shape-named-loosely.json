@@ -1,0 +1,163 @@
+{
+ "about": "A triangular input whose source says normal. The source must name the input's own shape, as a word.",
+ "files": {
+  "model.yaml": "dsl: 1\nmodel: tiny\ntitle: Loosely named\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    distribution: {triangular: {minimum: 100.0, likely: 200.0, maximum: 600.0}}\n    provenance: {kind: assumption, source: \"a normal busy hour, as the owners estimate it\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\noutputs:\n  - utilisation\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "invalid/shape-named-loosely",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "definitional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "cores",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "utilisation"
+  ],
+  "outputs": [
+   "utilisation"
+  ],
+  "title": "Loosely named",
+  "unit_problems": 0,
+  "unmeasured": []
+ },
+ "nodes": {
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 5.675444679663241,
+   "unit": "core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": {
+    "triangular": {
+     "likely": 200.0,
+     "maximum": 600.0,
+     "minimum": 100.0
+    }
+   },
+   "kind": "input",
+   "magnitude": 283.77223398316204,
+   "provenance": {
+    "kind": "assumption",
+    "source": "a normal busy hour, as the owners estimate it"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": null
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.35471529247895256,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/shape-named-loosely/model.yaml",
+ "results": {},
+ "scenarios": {
+  "reference": {
+   "ceilings": {},
+   "overrides": {},
+   "point": {
+    "busy_cores": 5.675444679663241,
+    "cores": 16.0,
+    "request_rate": 283.77223398316204,
+    "service_demand": 0.02,
+    "utilisation": 0.35471529247895256
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": false,
+  "problems": [
+   {
+    "code": "input.shape-not-named",
+    "message": "_builder_conformance/shape-named-loosely/model.yaml: input 'request_rate' is sampled as a triangular and its provenance never says so. The shape is a claim about what can happen — that a price cannot go negative, that a count has a hard maximum — and it is the claim a reviewer should argue with first. Name it in the source and say why (ch13, appendix C).",
+    "node": "request_rate",
+    "part": null,
+    "rule": "2"
+   }
+  ]
+ }
+}

@@ -1,0 +1,4 @@
+about: >-
+  A node in decibels. A logarithmic unit is not a ratio scale.
+expect:
+  - load.not-ratio-scale

@@ -49,18 +49,21 @@ a decision I have taken provisionally; say if you want it the other way.
    book's outline, which the generator exports (`fixtures/outline.json`). Where the design's
    number and the outline disagree, the outline wins: the design cites ch09 for measured
    constants, which the outline and `sizing/dsl.py` put in ch03 (*Where the numbers come from*).
-5. **The engine is never stricter than the book.** The mock-up's build checks include "a pair that
-   moves together has no reason", which the book does not check (BOOK-REQUESTS 7). The engine
-   reports exactly what the book reports. The interface may ask for more (it always asks for a
-   correlation's reason), and where it does it says it is the builder asking, not the build.
+5. **The engine is never stricter than the book.** The engine reports exactly what the book
+   reports. The interface may ask for more, and where it does it says it is the builder asking,
+   not the build. (The mock-up's "a pair that moves together has no reason" was once such a case;
+   the book has checked it since 156e02b, BOOK-REQUESTS 7.)
 6. **Measured nodes offer the book's results or "not yet measured".** A reader's own measurement
    cannot be carried in the book's format today (BOOK-REQUESTS 12). The builder offers the book's
    four stamped constants with the implementation each was measured on, or a result name nobody
    has taken, which the book accepts and treats as not yet measured.
-7. **Currency is USD only.** The book's unit registry has no other (BOOK-REQUESTS 4).
-8. **The design's mixed-generations formula does not pass the book's rules as written**
-   (BOOK-REQUESTS 6). Out of scope anyway: the prompt leaves several generations out until the
-   book covers it, and the hosts question offers one kind or several roles only.
+7. **The builder writes USD.** The book's registry has had 21 currencies since 156e02b
+   (BOOK-REQUESTS 4), and the engine checks a model in any of them (`edge/currency-euro`), but the
+   builder does not yet ask which one a reader prices in.
+8. **Several generations in one pool is not offered yet.** The prompt leaves it out until the book
+   covers it. The book now does (`models/mixed_pool`, ch10), and `max(0, need - held)` passes its
+   rules (BOOK-REQUESTS 6). The builder opens the book's mixed-pool model as an example and holds
+   it to the book like the others; the hosts question still offers one kind or several roles.
 
 ## Technology
 
@@ -121,9 +124,9 @@ Done when: every case and probe passes; CI is green on both jobs; every model th
 written back out and read again, by the engine and by the book's toolkit, to the same nodes,
 fields, outputs, correlations, scenarios, point values and build-check verdicts.
 
-The engine will check the book's format version once the book declares one, and refuse a file
-whose `dsl:` differs from the fixtures' (BOOK-REQUESTS 1). The writer already writes the line when
-a document carries it.
+The engine checks the book's format version (`dsl: 1`, from 156e02b): it refuses a file written for
+another, and reports one that does not say, as the book does. The builder writes the line first in
+every model it makes.
 
 ### 2. The answer-first interface
 
@@ -179,22 +182,24 @@ tolerance written next to the test.
 
 ### Milestone 1: done, and checked
 
-- `book.lock.json` pins the book at `888ac509f2e923a50f6ac6b51153e2c1b6119172` (its `main` on
-  2026-09-26). It is the only place the pin lives.
+- `book.lock.json` pins the book at `156e02b4137e757fc040540123be741140fcfd1f` (its `main` on
+  2026-09-27, the commit that closed eleven of this repository's requests). It is the only place
+  the pin lives.
 - `conformance/generate.py` checks the book out at that commit, builds an environment from the
   book's `requirements.txt` (numpy 2.4.6, Pint 0.25.3, PyYAML 6.0.1 on Python 3.11), and writes
-  108 cases: both reference models, all 15 stages, 60 hand-written invalid models (one or more for
-  every refusal the loader and `verify-models.py` know) and 31 edge cases; plus 190 unit probes,
-  143 formula probes, 61 YAML probes, the measured-result catalogue (four constants) and the
-  outline. `--check` regenerates and compares, numbers to a part in a trillion (the book's own
+  130 cases: the three reference models (web service, observability, mixed pool), all 15 stages,
+  85 hand-written invalid models (one or more for every refusal the loader and `verify-models.py`
+  know) and 27 edge cases; plus 190 unit probes, 143 formula probes, 70 YAML probes (each read by
+  PyYAML and by the book's model reader, which refuses a key written twice), the
+  measured-result catalogue (four constants) and the outline. `--check` regenerates and compares, numbers to a part in a trillion (the book's own
   point values differ in the last bit between processors; CI found that).
 - Each hand-written case declares what it is for, and the generator refuses to write fixtures if
   the book does not say it. It stopped three times while the cases were written, each time
   correctly: a failure it had no code for, and one case whose expectation was mine and wrong.
-- `npm test`: 232 passing, none failing (at the end of milestone 4). Every case and every probe agrees with the book; every
+- `npm test`: 268 passing, none failing (after the move to 156e02b). Every case and every probe agrees with the book; every
   model the book loads round-trips through the engine's writer; the comparison itself is tested
   against altered answers; the vendored YAML package is checked against the pinned install.
-- `python3 conformance/roundtrip.py`: the book's toolkit reads all 76 writable models, as written
+- `python3 conformance/roundtrip.py`: the book's toolkit reads all 86 writable models, as written
   by the engine, exactly as it reads the originals. Altering one written value, one scenario
   override or one `decided:` makes it fail, as it should.
 - CI runs all of it on every push.
@@ -221,10 +226,10 @@ no network. `test/neutrality.test.js` holds every file to the book's product lis
 ### Milestone 3: done, and checked
 
 Sources grouped by claim; ceilings with a margin and a reason; ranges in the four shapes, each
-named in its source; inputs that move together, with a reason (which the builder asks for and
-says the book does not check); scenarios, each its own file; the hosts question, one kind of host
+named in its source; inputs that move together, with a reason (which the book's checks now
+require too); scenarios, each its own file; the hosts question, one kind of host
 (the answer is the largest of its chains) or several roles (the pools add up). Several
-generations is not offered, and the screen says why.
+generations is not offered yet; the screen says so and points at the book's mixed-pool example.
 
 Measure first is `engine/tornado.js`, held to the book's `tornado()` bar for bar and in the same
 order, for every output of both reference models and two edge cases (`test/tornado.test.js`).
@@ -257,8 +262,6 @@ never freezes it.
   scenario the book refuses because one draw in a hundred thousand goes non-finite may pass here,
   or the other way round. Structural failures (a square root of a range crossing zero) land the
   same way.
-- **Offset and logarithmic units** (`degC`, `dB`): the book loads them; the engine refuses them
-  rather than check them differently (BOOK-REQUESTS 5). The builder never offers them.
 - **A mapping key YAML reads as something other than a string** (a node named `on` is the key
   `True` to PyYAML): the engine uses the key's text. No case covers it.
 - **Integers in the unit pass.** After `ceil` or `floor` the book carries a Python integer, which
@@ -273,8 +276,8 @@ never freezes it.
 3. **Refine before the tree is complete.** The design leaves it open. I plan the mock-up's rule:
    refinements unlock when nothing is left to define, because measuring first on half a model
    misleads.
-4. **A reader's own measurements** (BOOK-REQUESTS 12). Until the book has a place for them, the
-   builder offers only the book's constants or *not yet measured*.
+4. **A reader's own measurements** (BOOK-REQUESTS 12, still open). Until the book has a place for
+   them, the builder offers only the book's constants or *not yet measured*.
 5. **Licence.** This repository has none yet. The book's code is Apache-2.0; the same?
 6. **The decision the answer feeds.** The format has no field for it, so it goes in the model's
    `description`. Would the book want a field of its own (design, *The flow*, step 2)?

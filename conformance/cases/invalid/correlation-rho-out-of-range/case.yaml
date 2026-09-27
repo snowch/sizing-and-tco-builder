@@ -1,0 +1,5 @@
+about: >-
+  A correlation of 1.5, outside -1 to 1.
+expect:
+  - correlation.rho
+  - scenario.does-not-evaluate

@@ -99,7 +99,7 @@
    "number": 5,
    "page": "littles-law.html",
    "part": "Part II — Ceilings",
-   "question": "What can you infer about a system from the one relationship that is always true, and what can you not?",
+   "question": "What can you infer from the law when the system is steady, with as many requests leaving as arriving, and what can you not?",
    "slug": "littles_law",
    "title": "Little's law"
   },
@@ -126,7 +126,7 @@
    "number": 8,
    "page": "regime-changes.html",
    "part": "Part II — Ceilings",
-   "question": "Which ceilings can a chain of multiplications not model at all?",
+   "question": "When does a chain of multiplications stop describing a system?",
    "slug": "regime_changes",
    "title": "Regime changes"
   },
@@ -144,7 +144,7 @@
    "number": 10,
    "page": "bandwidth-and-the-binding-constraint.html",
    "part": "Part III — Sizing",
-   "question": "When three independent chains each demand a different size, which one are you actually buying?",
+   "question": "When three chains each demand a different size, which one are you buying?",
    "slug": "bandwidth_and_the_binding_constraint",
    "title": "Three chains, and the binding constraint"
   },
@@ -180,7 +180,7 @@
    "number": 14,
    "page": "correlation-and-convergence.html",
    "part": "Part IV — Uncertainty",
-   "question": "That interval assumed every input moves on its own, and that more samples would settle it. Are either of those true?",
+   "question": "ch13's figures already paired some inputs to move together and ran the arithmetic a fixed number of times. What did the pairing change, and how many runs are enough?",
    "slug": "correlation_and_convergence",
    "title": "Correlation and convergence"
   },
@@ -216,7 +216,7 @@
    "number": 18,
    "page": "the-five-year-model.html",
    "part": "Part V — Cost",
-   "question": "How does a cost model consume a sizing model's output without swallowing its uncertainty?",
+   "question": "How does one model use a figure another model computed, without losing its uncertainty?",
    "slug": "the_five_year_model",
    "title": "The five-year model"
   },

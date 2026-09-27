@@ -9,6 +9,8 @@
  * missing, full, or refused, and the builder must still work with nothing stored.
  */
 
+import { DSL_VERSION } from "../engine/model.js";
+
 const KEY = "sizing-and-tco-builder:v1";
 
 export function emptyState() {
@@ -19,7 +21,7 @@ export function emptyState() {
     decision: "",
     horizon: null, // a node name, "none" when the answer is for today, or null when not yet asked
     hosts: null, // "one" or "roles", once the hosts question is answered
-    doc: { model: "my_model", title: "", currency: "USD", description: "", nodes: [], outputs: [], correlations: [] },
+    doc: { dsl: DSL_VERSION, model: "my_model", title: "", currency: "USD", description: "", nodes: [], outputs: [], correlations: [] },
     pending: [], // { name, unit, label, suggested } for each name a formula uses and nobody has defined
     scenarios: [reference()],
     skipped: [],
@@ -36,7 +38,10 @@ export function load() {
     const raw = globalThis.localStorage?.getItem(KEY);
     if (!raw) return null;
     const state = JSON.parse(raw);
-    return state?.version === 1 ? state : null;
+    if (state?.version !== 1) return null;
+    // A model saved before the book declared its format version is written in that version.
+    if (state.doc && state.doc.dsl === undefined) state.doc = { dsl: DSL_VERSION, ...state.doc };
+    return state;
   } catch {
     return null;
   }

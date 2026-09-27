@@ -1,0 +1,5 @@
+about: >-
+  A model that declares currency EUR and counts its money in euros. The book accepts any of the
+  currencies its registry defines.
+expect:
+  - valid

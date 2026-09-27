@@ -1,5 +1,0 @@
-about: >-
-  Terabytes plus a plain two: bytes are dimensionless in the book's registry, so this typechecks
-  as a pure number.
-expect:
-  - units.mixed-operands

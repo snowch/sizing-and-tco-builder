@@ -1,0 +1,6 @@
+about: >-
+  Terabytes plus a plain two. Bytes are information in the book's registry, so a pure number
+  cannot be added to them.
+expect:
+  - units.does-not-typecheck
+  - scenario.does-not-evaluate

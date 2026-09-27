@@ -1,4 +1,0 @@
-about: >-
-  The same node name twice. The book's YAML keeps the last and says nothing.
-expect:
-  - valid

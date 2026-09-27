@@ -1,0 +1,5 @@
+about: >-
+  A triangular input whose source says normal. The source must name the input's own shape, as a
+  word.
+expect:
+  - input.shape-not-named

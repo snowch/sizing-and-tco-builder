@@ -11,7 +11,7 @@ import { CITATION_MARKERS } from "../engine/verify.js";
 import { checkShape } from "../engine/evaluate.js";
 import { writeModel } from "../engine/write.js";
 import { addPending, exists, nodeNamed, pendingNamed, putNode } from "./state.js";
-import { $, chapters, esc, fmt, nameProblem } from "./ui.js";
+import { $, chapterLink, chapters, esc, fmt, nameProblem } from "./ui.js";
 import {
   ANSWERS, DECIDED, KIND_CHOICES, PROVENANCE, QUANTITY, QUESTIONS, SHAPES, SURE,
 } from "./words.js";
@@ -229,7 +229,7 @@ const VIEWS = {
       ${choice("hosts", "roles", "Several roles", "Separate pools of machines, each sized by its own chains. The fleet is the sum of the pools.", d.hosts === "roles", "derived")}</div>
       ${d.hosts === "one" ? `<fieldset style="margin-top:12px"><legend>Which resources could bind?</legend>${[["requests", "Processor time for the requests"], ["memory", "Memory for what must stay in it"], ["storage", "Disk for what is stored"]].map(([k, t]) => `<label class="row"><input type="checkbox" data-chain="${k}" ${d.chains?.includes(k) ? "checked" : ""} style="width:auto"> ${t}</label>`).join("")}</fieldset>` : ""}
       ${d.hosts === "roles" ? field("w-roles", "The roles, separated by commas", d.roles ?? "", { placeholder: "collectors, store, query", hint: "Each becomes a pool to define, in hosts." }) : ""}
-      <p class="note">Several generations of hardware in one role is not offered: the book does not cover it yet.</p>`;
+      <p class="note">Several generations of hardware in one role is not offered here yet. The book covers it (${chapterLink("bandwidth_and_the_binding_constraint")}); its two-generation model is one of the examples on the start screen.</p>`;
   },
 };
 

@@ -1,0 +1,4 @@
+about: >-
+  A model file written for dsl 2. The loader refuses it: this toolkit reads dsl 1.
+expect:
+  - load.dsl-version

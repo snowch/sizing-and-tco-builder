@@ -252,6 +252,9 @@ export const REFINE = [
 
 /* The book's build checks, by the conformance suite's codes, in words a reader can act on. */
 export const PROBLEM_WORDS = {
+  "dsl.not-declared": ["The file does not say which rules it is written for: its first line is dsl: 1", "appendix_a_dsl_reference"],
+  "currency.unknown": ["The model's currency is not one the book's units know", "unit_economics"],
+  "currency.another": ["{node} counts money in a second currency: price in one, or make the exchange rate a node", "unit_economics"],
   "units.does-not-typecheck": ["The formula of {node}{part} does not work in units", "what_a_workload_is"],
   "units.declared-vs-produced": ["{node}{part} declares one unit and its formula gives another", "what_a_workload_is"],
   "units.mixed-operands": ["{node}{part} adds or compares quantities in different units: declare them in one", "what_a_workload_is"],
@@ -260,6 +263,7 @@ export const PROBLEM_WORDS = {
   "input.provenance-kind": ["{node} does not say what kind of claim it is", "where_the_numbers_come_from"],
   "input.empty-source": ["{node} does not say where it came from", "where_the_numbers_come_from"],
   "input.shape-not-named": ["{node} has a shape its source does not name: say why it is that shape", "peak_mean_and_growth"],
+  "input.no-one-shape": ["{node} does not declare exactly one shape for its range", "monte_carlo"],
   "input.fact-cites-nothing": ["{node} is called a fact but cites nothing", "where_the_numbers_come_from"],
   "measured.no-result": ["{node} names no measurement", "where_the_numbers_come_from"],
   "measured.no-summary-value": ["{node}'s measurement holds no value", "where_the_numbers_come_from"],
@@ -267,9 +271,13 @@ export const PROBLEM_WORDS = {
   "measured.no-uncertainty": ["{node}'s measurement reports no error", "where_the_numbers_come_from"],
   "ceiling.no-headroom": ["The ceiling {node} keeps no margin", "headroom_and_failure_domains"],
   "ceiling.no-reason": ["The ceiling {node} gives no reason", "headroom_and_failure_domains"],
+  "correlation.not-varying": ["A pair said to move together names {node}, which has no range to move in", "correlation_and_convergence"],
+  "correlation.rho": ["A pair said to move together has a strength that is not a number from -1 to 1", "correlation_and_convergence"],
+  "correlation.no-reason": ["A pair said to move together gives no reason why", "correlation_and_convergence"],
   "shape.feeds-no-output": ["{node} feeds no answer: remove it, or make it an answer", "point_estimates"],
   "shape.no-outputs": ["The model has no answers, so nothing in it can be checked", "point_estimates"],
   "classification.measured-without-ceiling": ["A measured constant and no ceiling: say where the model stops working", "headroom_and_failure_domains"],
+  "scenario.does-not-load": ["A scenario file cannot be read", "a_tco_for_finance"],
   "scenario.unknown-node": ["Scenario {scenario} changes {node}, which is not in the model", "a_tco_for_finance"],
   "scenario.overrides-derived": ["Scenario {scenario} changes {node}, which is worked out: change its inputs instead", "a_tco_for_finance"],
   "scenario.does-not-evaluate": ["Scenario {scenario} cannot be worked out", "point_estimates"],

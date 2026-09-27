@@ -1,0 +1,4 @@
+about: >-
+  A range with a word in it.
+expect:
+  - load.not-a-number

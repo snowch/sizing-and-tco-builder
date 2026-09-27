@@ -1,7 +1,7 @@
 {
  "about": "A derived node whose formula produces cores and declares requests.",
  "files": {
-  "model.yaml": "model: tiny\ntitle: Wrong unit\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: request\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\noutputs:\n  - utilisation\n",
+  "model.yaml": "dsl: 1\nmodel: tiny\ntitle: Wrong unit\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: request\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\noutputs:\n  - utilisation\n",
   "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
  },
  "id": "invalid/unit-declared-vs-produced",
@@ -128,7 +128,7 @@
    "overrides": {},
    "point_error": {
     "exception": "EvaluationError",
-    "message": "tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'busy_cores' declares 'request' [[request]] but `request_rate * service_demand` produces 'core' [[core]]\n  - tiny: node 'utilisation' declares 'dimensionless' [dimensionless] but `busy_cores / cores` produces 'request / core' [[request] / [core]]"
+    "message": "tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'busy_cores' declares 'request', an amount, but `request_rate * service_demand` produces 'core', an amount\n  - tiny: node 'utilisation' declares 'dimensionless', a pure number, but `busy_cores / cores` produces 'request / core', a ratio"
    },
    "samples": 1000,
    "seed": 20260916,
@@ -141,14 +141,14 @@
   "problems": [
    {
     "code": "units.declared-vs-produced",
-    "message": "_builder_conformance/unit-declared-vs-produced/model.yaml: tiny: node 'busy_cores' declares 'request' [[request]] but `request_rate * service_demand` produces 'core' [[core]]",
+    "message": "_builder_conformance/unit-declared-vs-produced/model.yaml: tiny: node 'busy_cores' declares 'request', an amount, but `request_rate * service_demand` produces 'core', an amount",
     "node": "busy_cores",
     "part": null,
     "rule": "1"
    },
    {
     "code": "units.declared-vs-produced",
-    "message": "_builder_conformance/unit-declared-vs-produced/model.yaml: tiny: node 'utilisation' declares 'dimensionless' [dimensionless] but `busy_cores / cores` produces 'request / core' [[request] / [core]]",
+    "message": "_builder_conformance/unit-declared-vs-produced/model.yaml: tiny: node 'utilisation' declares 'dimensionless', a pure number, but `busy_cores / cores` produces 'request / core', a ratio",
     "node": "utilisation",
     "part": null,
     "rule": "1"
@@ -156,7 +156,7 @@
    {
     "cause": "typecheck",
     "code": "scenario.does-not-evaluate",
-    "message": "_builder_conformance/unit-declared-vs-produced/model.yaml: scenario 'reference' does not evaluate — tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'busy_cores' declares 'request' [[request]] but `request_rate * service_demand` produces 'core' [[core]]\n  - tiny: node 'utilisation' declares 'dimensionless' [dimensionless] but `busy_cores / cores` produces 'request / core' [[request] / [core]]",
+    "message": "_builder_conformance/unit-declared-vs-produced/model.yaml: scenario 'reference' does not evaluate — tiny does not typecheck, so it cannot be evaluated:\n  - tiny: node 'busy_cores' declares 'request', an amount, but `request_rate * service_demand` produces 'core', an amount\n  - tiny: node 'utilisation' declares 'dimensionless', a pure number, but `busy_cores / cores` produces 'request / core', a ratio",
     "part": null,
     "rule": "scenarios",
     "scenario": "reference"

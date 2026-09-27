@@ -1,4 +1,4 @@
 about: >-
   An input whose value is a word.
 expect:
-  - load.malformed
+  - load.not-a-number

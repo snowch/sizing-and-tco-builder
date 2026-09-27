@@ -1,0 +1,4 @@
+about: >-
+  A correlation that gives no reason.
+expect:
+  - correlation.no-reason

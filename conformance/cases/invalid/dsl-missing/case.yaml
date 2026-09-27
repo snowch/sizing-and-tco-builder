@@ -1,0 +1,5 @@
+about: >-
+  A model file that does not say which rules it is written against. It loads, and the verifier
+  asks for dsl: 1 on its first line.
+expect:
+  - dsl.not-declared

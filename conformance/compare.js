@@ -166,7 +166,15 @@ export function compareFormula(want, got) {
 }
 
 export function compareYaml(want, got) {
-  if (want.ok !== got.ok) return [`yaml ${JSON.stringify(want.yaml)}: book ${want.ok ? "reads it" : "refuses it"}, engine ${got.ok ? "reads it" : `refuses it (${got.message})`}`];
-  if (!want.ok) return [];
-  return same(want.value, got.value) ? [] : [`yaml ${JSON.stringify(want.yaml)}: book ${JSON.stringify(want.value)}, engine ${JSON.stringify(got.value)}`];
+  const out = [];
+  if (want.ok !== got.ok) out.push(`yaml ${JSON.stringify(want.yaml)}: book ${want.ok ? "reads it" : "refuses it"}, engine ${got.ok ? "reads it" : `refuses it (${got.message})`}`);
+  else if (want.ok && !same(want.value, got.value)) out.push(`yaml ${JSON.stringify(want.yaml)}: book ${JSON.stringify(want.value)}, engine ${JSON.stringify(got.value)}`);
+  // The model reader, which refuses a key written twice: the verdict, the code, and the value.
+  const [w, g] = [want.read, got.read ?? {}];
+  if (w.ok !== g.ok || (!w.ok && w.code !== g.code)) {
+    out.push(`yaml ${JSON.stringify(want.yaml)} as a model file: book ${w.ok ? "reads it" : `refuses it (${w.code})`}, engine ${g.ok ? "reads it" : `refuses it (${g.code}: ${g.message})`}`);
+  } else if (w.ok && !same(w.value, g.value)) {
+    out.push(`yaml ${JSON.stringify(want.yaml)} as a model file: book ${JSON.stringify(w.value)}, engine ${JSON.stringify(g.value)}`);
+  }
+  return out;
 }

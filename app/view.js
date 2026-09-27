@@ -463,7 +463,7 @@ const PANELS = {
         const msg = P.querySelector("#c-msg");
         if (a === b) return void (msg.textContent = "Pick two different inputs.");
         if (Number.isNaN(r) || r < -1 || r > 1) return void (msg.textContent = "The strength is between −1 and 1.");
-        if (!why) return void (msg.textContent = "Say why they move together. The book does not check this; the builder asks, because a number with no reason gets copied.");
+        if (!why) return void (msg.textContent = "Say why they move together. The book's checks refuse a pair with no reason, because a number with no reason gets copied.");
         if (app.state.doc.correlations.some((c) => (c.a === a && c.b === b) || (c.a === b && c.b === a))) return void (msg.textContent = "That pair is already there.");
         app.state.doc.correlations.push({ a, b, rho: r, because: why });
         app.commit();

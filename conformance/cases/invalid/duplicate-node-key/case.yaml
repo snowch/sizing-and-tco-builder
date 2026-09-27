@@ -1,0 +1,4 @@
+about: >-
+  The same node name twice. The book's loader refuses a key written twice in one mapping.
+expect:
+  - load.duplicate-key

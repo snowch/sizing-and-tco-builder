@@ -1,0 +1,4 @@
+about: >-
+  A lognormal input whose source says lognormal. Its own shape is named, as a word.
+expect:
+  - valid

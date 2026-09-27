@@ -1,0 +1,5 @@
+about: >-
+  A normal input whose source says only lognormal. The word normal inside lognormal does not
+  count.
+expect:
+  - input.shape-not-named

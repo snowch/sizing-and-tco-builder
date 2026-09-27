@@ -1,0 +1,4 @@
+about: >-
+  A formula that takes the min of one thing. The parser refuses fewer than two.
+expect:
+  - load.formula-arity

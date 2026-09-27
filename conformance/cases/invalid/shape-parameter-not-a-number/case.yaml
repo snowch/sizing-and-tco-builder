@@ -1,0 +1,5 @@
+about: >-
+  A uniform whose maximum is a word. The loader refuses a distribution parameter that is not a
+  number.
+expect:
+  - load.not-a-number

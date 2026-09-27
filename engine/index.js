@@ -18,7 +18,7 @@
 import { FormulaError, parse as parseFormulaText } from "./formula.js";
 import { ceilingReport, point } from "./evaluate.js";
 import "./sample.js";
-import { blocked, classification, loadModel, loadScenario, LoadError, unmeasured } from "./model.js";
+import { blocked, classification, loadModel, loadScenario, LoadError, readModelYaml, unmeasured } from "./model.js";
 import { PyError, floatRepr, isDict, isInt } from "./python.js";
 import { Registry, UnitError } from "./units.js";
 import { verify } from "./verify.js";
@@ -147,11 +147,18 @@ export function parseFormula(text) {
 
 /* A YAML document as the book's PyYAML reads it, each value with its Python type. */
 export function readYaml(text) {
+  let out;
   try {
-    return { ok: true, yaml: text, value: typed(safeLoad(text)) };
+    out = { ok: true, yaml: text, value: typed(safeLoad(text)) };
   } catch (error) {
-    return { ok: false, yaml: text, message: error.message };
+    out = { ok: false, yaml: text, message: error.message };
   }
+  try {
+    out.read = { ok: true, value: typed(readModelYaml(text, "probe")) };
+  } catch (error) {
+    out.read = refusal(error);
+  }
+  return out;
 }
 
 function typed(value) {
