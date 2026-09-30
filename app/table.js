@@ -10,7 +10,7 @@
  */
 
 import { NotExportable, workbook } from "../engine/spreadsheet.js";
-import { $, esc, fmt } from "./ui.js";
+import { $, esc, fmt, plain } from "./ui.js";
 import { DECIDED_WORDS, PROVENANCE_WORDS } from "./words.js";
 import { graph } from "./workbench.js";
 
@@ -100,7 +100,7 @@ export function downloadSpreadsheet(app) {
     bytes = workbook(app.files, { units: app.ctx.units, results: app.ctx.results, ranges: app.ranges, chart: app.explore });
   } catch (error) {
     if (error instanceof NotExportable) return error.message;
-    return `The book would not load the file yet, so there is nothing to export: ${error.message}`;
+    return `The model file cannot be read yet, so there is nothing to export: ${plain(error.message)}`;
   }
   const url = URL.createObjectURL(new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
   const a = document.createElement("a");

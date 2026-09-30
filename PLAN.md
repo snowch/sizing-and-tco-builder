@@ -319,6 +319,16 @@ break-even, the plane's boundary, payback by year and the five-year breakdown fr
 alone, to a part in a billion. A flow draws all three charts on the seller's model and checks the
 break-evens the page reports against the book's.
 
+### The page stands on its own
+
+The builder is for someone who has not read the book. Every explanation on the page is complete
+without it; the book appears only as an optional "Read more" after an explanation, named by
+topic, never by chapter number. The page speaks of "the checks", "examples" and "published
+measurements", not of the book's, and the engine's messages are shown with their references to
+the book's chapters taken out (`plain` in `app/ui.js`). `test/site.test.js` fails if any text the
+page shows says "book" or cites a chapter by number. The repository's own documents still say
+where the method comes from.
+
 ### Known gaps
 
 - **A failure only rare draws produce.** The builder's random stream is not the book's, so a

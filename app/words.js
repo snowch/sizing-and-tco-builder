@@ -109,7 +109,7 @@ export const QUESTIONS = {
   },
   measured: {
     q: "Which measurement is it?",
-    why: "A measured constant is not typed in. It points at one of the book's stamped results, which carries the number, its error and the implementation it was measured on. It holds only for that implementation, so it makes the model conditional.",
+    why: "A measured constant is not typed in. It points at a published measurement, which carries the number, its error and the implementation it was measured on. It holds only for that implementation, so it makes the model conditional.",
     chapters: ["where_the_numbers_come_from"],
   },
   ceiling: {
@@ -119,7 +119,7 @@ export const QUESTIONS = {
   },
   review: {
     q: "This is what goes in the file.",
-    why: "The same format the book's models use, so the book's checks and viewer read it as they read the book's own.",
+    why: "A plain text file: this is exactly what will be written, and what the checks read.",
     chapters: [],
     appendix: "appendix_a_dsl_reference",
   },
@@ -128,7 +128,7 @@ export const QUESTIONS = {
 export const KIND_CHOICES = [
   ["input", "Given", "A number the model is told: the busy hour, a price, a margin you choose. The branch stops here."],
   ["derived", "Worked out from other things", "Arithmetic over other quantities. Each new name becomes the next thing to define."],
-  ["measured", "Measured", "One of the book's stamped measurements, with its error and the implementation it belongs to. Makes the model conditional."],
+  ["measured", "Measured", "A published measurement, with its error and the implementation it belongs to. Makes the model conditional."],
 ];
 
 export const QUANTITY = [
@@ -353,7 +353,7 @@ export const REFINE = [
 /* The book's build checks, by the conformance suite's codes, in words a reader can act on. */
 export const PROBLEM_WORDS = {
   "dsl.not-declared": ["The file does not say which rules it is written for: its first line is dsl: 1", "appendix_a_dsl_reference"],
-  "currency.unknown": ["The model's currency is not one the book's units know", "unit_economics"],
+  "currency.unknown": ["The model's currency is not one the builder knows", "unit_economics"],
   "currency.another": ["{node} counts money in a second currency: price in one, or make the exchange rate a node", "unit_economics"],
   "units.does-not-typecheck": ["The formula of {node}{part} does not work in units", "what_a_workload_is"],
   "units.declared-vs-produced": ["{node}{part} declares one unit and its formula gives another", "what_a_workload_is"],

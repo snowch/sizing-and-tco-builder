@@ -7,7 +7,7 @@ import { DSL_VERSION, loadModel, loadScenario } from "../engine/model.js";
 import { Registry } from "../engine/units.js";
 import { documentFrom, scenarioDocumentFrom } from "../engine/write.js";
 import { emptyState, forget, load, reference, save } from "./state.js";
-import { $, esc, useOutline } from "./ui.js";
+import { $, esc, plain, useOutline } from "./ui.js";
 import { drawAnswers, drawCoach, drawGraph, drawHeader, drawPanel, drawRefine, drawTree } from "./view.js";
 import { openWizard, wireWizardButtons } from "./wizard.js";
 import { drawTable } from "./table.js";
@@ -96,7 +96,7 @@ async function boot() {
     const { state } = app;
     const current = app.verdict.id === asked && app.verdict.report ? { files: app.verdict.files, report: app.verdict.report } : null;
     const checking = app.verdict.id !== asked;
-    app.checks = checking ? [{ level: "todo", text: "Checking the file with the book's rules…" }] : checks(state, current);
+    app.checks = checking ? [{ level: "todo", text: "Checking the model…" }] : checks(state, current);
     app.ranges = checking ? null : app.verdict.ranges;
     const answerUnit = state.pending.find((p) => p.name === state.answer)?.unit;
     const answerUnitIsHosts = Boolean(answerUnit) && /^hosts?$/.test(answerUnit.trim());
@@ -161,7 +161,7 @@ async function boot() {
     try {
       model = loadModel(text, { registry: ctx.registry, results: ctx.results, where: modelPath });
     } catch (error) {
-      return { error: `The book would refuse ${modelPath}: ${error.message}` };
+      return { error: `${modelPath} cannot be opened: ${plain(error.message)}` };
     }
     let doc;
     try {

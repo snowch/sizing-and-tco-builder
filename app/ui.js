@@ -24,17 +24,32 @@ function entry(slug) {
   return OUTLINE.chapters.find((c) => c.slug === slug) ?? OUTLINE.appendices.find((a) => a.slug === slug) ?? null;
 }
 
-/* "ch04", linked to the chapter's page, with its title on hover. From the book's outline. */
-export function chapterLink(slug, { long = false } = {}) {
+/*
+ * Further reading on a topic, by its title. Every explanation in the builder is complete without
+ * it; the link is for a reader who wants the longer account the method comes from.
+ */
+export function chapterLink(slug) {
   const c = entry(slug);
   if (!c) return "";
-  const text = long ? `${c.label} · ${c.title}` : c.label;
-  return `<a href="${esc(OUTLINE.site + c.page)}" target="_blank" rel="noopener" title="${esc(`${c.label}: ${c.title}`)}">${esc(text)}</a>`;
+  return `<a href="${esc(OUTLINE.site + c.page)}" target="_blank" rel="noopener">${esc(c.title)}</a>`;
 }
 
 export function chapters(slugs = [], appendix = null) {
   const links = [...slugs, ...(appendix ? [appendix] : [])].map((s) => chapterLink(s)).filter(Boolean);
-  return links.length ? `<span class="ch">${links.join(" · ")}</span>` : "";
+  return links.length ? `<span class="ch">Read more: ${links.join(" · ")}</span>` : "";
+}
+
+/*
+ * An engine message as the page shows it. The engine words its refusals as the rules it follows
+ * do, with references to where each rule is explained; the page's own explanations stand alone,
+ * so those references are taken out.
+ */
+export function plain(message) {
+  return String(message ?? "")
+    .replace(/\s*\((?:ch\d+|appendix [A-H])[^)]*\)/g, "")
+    .replace(/\s*[—-]+\s*see ch\d+[^.]*\./g, ".")
+    .replace(/\s*\bsee ch\d+[^.;]*/g, "")
+    .replace(/\s+\./g, ".");
 }
 
 export const NAME = /^[a-z_][a-z0-9_]*$/;

@@ -4,7 +4,7 @@
  */
 
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join, normalize, relative } from "node:path";
 import { test } from "node:test";
 
@@ -39,4 +39,18 @@ test("the offline cache holds every file the page reaches", () => {
   const listed = new Set([...sw.matchAll(/^\s+"([^"]+)",$/gm)].map((m) => m[1]));
   const missing = reachable().filter((f) => !listed.has(f));
   assert.deepEqual(missing, [], "add these to FILES in sw.js");
+});
+
+test("the page stands on its own: its words never send the reader to the book", () => {
+  // Every explanation is complete without the book; the only way to it is a "Read more" link,
+  // named by topic. So no text the page shows says "book" or cites a chapter by its number.
+  const code = (text) => text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1").replace(/<!--[\s\S]*?-->/g, "");
+  const files = [join(ROOT, "index.html"), ...readdirSync(join(ROOT, "app")).filter((f) => f.endsWith(".js")).map((f) => join(ROOT, "app", f))];
+  const found = [];
+  for (const file of files) {
+    code(readFileSync(file, "utf8")).split("\n").forEach((line, i) => {
+      if (/\bbook(?:'s)?\b/i.test(line) || /\bch\d{2}\b/.test(line)) found.push(`${relative(ROOT, file)}:${i + 1}: ${line.trim().slice(0, 120)}`);
+    });
+  }
+  assert.deepEqual(found, []);
 });

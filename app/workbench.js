@@ -24,6 +24,7 @@ import { blocked, isConditional, order } from "../engine/model.js";
 import { sorted } from "../engine/python.js";
 import { writeModel, writeScenario } from "../engine/write.js";
 import { PATTERNS, PROBLEM_WORDS, CAUSE_WORDS, REFINE, money } from "./words.js";
+import { plain } from "./ui.js";
 
 // -- the graph as it stands -----------------------------------------------------------------------
 
@@ -260,7 +261,7 @@ export function checks(state, judged) {
   if (!judged) return out;
   const r = judged.report;
   if (!r.load.ok) {
-    out.push({ level: "fail", text: `The book would refuse the file: ${r.load.message}`, chapter: null });
+    out.push({ level: "fail", text: `The model file cannot be read: ${plain(r.load.message)}`, chapter: null });
     return out;
   }
   for (const p of r.verify.problems) {
@@ -270,8 +271,8 @@ export function checks(state, judged) {
     if (p.cause) text += `: ${CAUSE_WORDS[p.cause] ?? p.cause}`;
     out.push({ level: "fail", text, chapter, code: p.code, node: p.node, detail: p.detail });
   }
-  if (r.verify.crashed) out.push({ level: "fail", text: "The book's checks cannot read this file through to the end", detail: r.verify.crashed.message });
-  if (!out.some((c) => c.level === "fail")) out.unshift({ level: "pass", text: "Every check the book's build makes passes." });
+  if (r.verify.crashed) out.push({ level: "fail", text: "The checks cannot read this file through to the end", detail: plain(r.verify.crashed.message) });
+  if (!out.some((c) => c.level === "fail")) out.unshift({ level: "pass", text: "Every check passes." });
   return out;
 }
 
@@ -461,7 +462,7 @@ export function unitWords(registry, text) {
     if (!info.multiplicative) return { ok: false, words: "a unit that does not convert by a factor. The builder does not offer it." };
     return { ok: true, ...describe(info.dimensionality, units) };
   } catch {
-    return { ok: false, words: "not a unit the book's registry knows." };
+    return { ok: false, words: "not a unit the builder knows." };
   }
 }
 

@@ -112,7 +112,7 @@ const field = (id, label, value, { hint = "", mono = false, type = "text", place
 function unitHint(text) {
   if (!text) return "";
   const u = unitWords(APP.ctx.registry, text);
-  return u.ok ? `The book's registry reads this as ${esc(u.words)}` : `<span style="color:var(--bad)">This is ${esc(u.words)}</span>`;
+  return u.ok ? `Read as ${esc(u.words)}` : `<span style="color:var(--bad)">This is ${esc(u.words)}</span>`;
 }
 
 // -- the steps ----------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ const VIEWS = {
       <div class="choices">${QUANTITY.map(([k, t, desc]) => choice("qkind", k, t, esc(desc), qkind === k)).join("")}</div>
       <div style="margin-top:12px">${field("w-unit", "Unit", d.unit, { mono: true, placeholder: "request/second", hint: unitHint(d.unit) })}</div>
       <div class="chips">${[...new Set([...(d.fixedUnit ? [d.fixedUnit] : []), ...(d.suggested ? [d.suggested] : []), ...chips])].map((c) => `<button type="button" data-unit="${esc(c)}">${esc(c)}</button>`).join("")}</div>
-      ${d.suggested && !d.fixedUnit ? `<p class="note">The book's own model uses <code>${esc(d.suggested)}</code> for a quantity by this name.</p>` : ""}`;
+      ${d.suggested && !d.fixedUnit ? `<p class="note">The worked examples use <code>${esc(d.suggested)}</code> for a quantity by this name.</p>` : ""}`;
   },
   decided(d) {
     return `${question("decided")}<div class="choices">${DECIDED.map(([k, t, desc]) => choice("decided", k, t, esc(desc), d.decided === k, "input")).join("")}</div>`;
@@ -179,16 +179,16 @@ const VIEWS = {
       body = `<div class="field"><span class="field-label"><strong>Shape</strong></span><div class="chips">${Object.keys(SHAPES).map((s) => `<button type="button" data-shape="${s}" aria-pressed="${shape === s}"${shape === s ? ' style="border-color:var(--accent)"' : ""}>${s}</button>`).join("")}</div>${shape ? `<span class="hint">${esc(SHAPES[shape].words)}</span>` : ""}</div>`;
       if (shape) {
         body += `<div class="grid2">${SHAPES[shape].fields.map((f) => field(`w-p-${f}`, esc(SHAPES[shape].labels[f]), params[f] ?? "", { type: "number" })).join("")}</div>`;
-        body += field("w-value", `The number at the point, in ${esc(d.unit)} (optional)`, d.value ?? "", { type: "number", hint: "Left blank, the book uses the middle of the range. Give one only if there is a figure you would quote on its own." });
+        body += field("w-value", `The number at the point, in ${esc(d.unit)} (optional)`, d.value ?? "", { type: "number", hint: "Left blank, the middle of the range is used. Give one only if there is a figure you would quote on its own." });
         const named = (d.provenance?.source ?? "").toLowerCase().includes(shape);
-        body += `<div class="verdict ${named ? "ok" : "warn"}">${named ? `The source names the shape.` : `The source must name the shape and say why it is ${esc(shape)}: the book's build checks for the word. Go back to the source to add it.`}</div>`;
+        body += `<div class="verdict ${named ? "ok" : "warn"}">${named ? `The source names the shape.` : `The source must name the shape and say why it is ${esc(shape)}: the checks look for the word. Go back to the source to add it.`}</div>`;
       }
     }
     if (d.sure === "none") {
-      body = `<div class="verdict warn">It and everything downstream will show as not yet measured. The book cannot work out a scenario with an input that has no number, so its checks will ask you for one before the file builds: give it a number, or make it a measurement nobody has taken yet.</div>`;
+      body = `<div class="verdict warn">It and everything downstream will show as not yet measured. A scenario cannot be worked out with an input that has no number, so the checks will ask for one before the model is finished: give it a number, or make it a measurement nobody has taken yet.</div>`;
     }
     const range = d.sure === "one" || d.sure === "shape"
-      ? `<div class="grid2">${field("w-r0", "Slider from (optional)", d.range?.[0] ?? "", { type: "number" })}${field("w-r1", "to", d.range?.[1] ?? "", { type: "number" })}</div><p class="note">Where the book's viewer lets a reader drag it. Not a claim about the range.</p>`
+      ? `<div class="grid2">${field("w-r0", "Slider from (optional)", d.range?.[0] ?? "", { type: "number" })}${field("w-r1", "to", d.range?.[1] ?? "", { type: "number" })}</div><p class="note">The span Explore draws it across, and a viewer lets someone drag it across. Not a claim about how likely any value is.</p>`
       : "";
     return `${question("sure", outside ? " This one is outside your control." : "")}
       <div class="choices">${SURE.map(([k, t, desc]) => choice("sure", k, t, esc(desc), d.sure === k)).join("")}</div>
@@ -200,7 +200,7 @@ const VIEWS = {
     return `${question("formula")}
       ${field("w-formula", `Formula, giving ${esc(d.unit)}`, d.formula ?? "", { mono: true, placeholder: "stored_data_t0 * annual_growth ** horizon_periods" })}
       <div id="w-live" aria-live="polite">${liveFormula(d)}</div>
-      ${patterns.length ? `<p class="note" style="margin:0 0 4px">Patterns from the book's models that give ${esc(d.unit)}:</p><div class="sugs">${patterns.map((p) => `<button type="button" class="sug" data-formula="${esc(p.formula)}"><code>${esc(p.formula)}</code><span>${esc(p.words)} ${chapters(p.chapters)}</span></button>`).join("")}</div>` : ""}
+      ${patterns.length ? `<p class="note" style="margin:0 0 4px">Patterns from worked examples that give ${esc(d.unit)}:</p><div class="sugs">${patterns.map((p) => `<button type="button" class="sug" data-formula="${esc(p.formula)}"><code>${esc(p.formula)}</code><span>${esc(p.words)} ${chapters(p.chapters)}</span></button>`).join("")}</div>` : ""}
       ${names.length ? `<p class="note" style="margin:8px 0 4px">Names already in the model:</p><div class="chips">${names.map((n) => `<button type="button" data-insert="${esc(n)}">${esc(n)}</button>`).join("")}</div>` : ""}
       <p class="note">Functions: min, max, ceil, floor, sqrt, log, exp. Arithmetic: + − * / and ** for a power.</p>`;
   },
@@ -212,7 +212,7 @@ const VIEWS = {
     });
     rows.push(choice("result", "", "Not taken yet", "A measurement nobody has taken. Name the result that will hold it: the node, and everything downstream, shows as not yet measured until it exists.", Boolean(d.untaken), "unknown"));
     return `${question("measured")}<div class="choices">${rows.join("")}</div>
-      ${d.untaken ? `<div style="margin-top:12px">${field("w-result", "Name of the result that will hold it", d.result ?? "", { mono: true, placeholder: "spans-per-request", hint: "Lower case, with hyphens, as the book names its results." })}</div>` : ""}`;
+      ${d.untaken ? `<div style="margin-top:12px">${field("w-result", "Name of the result that will hold it", d.result ?? "", { mono: true, placeholder: "spans-per-request", hint: "Lower case, with hyphens." })}</div>` : ""}`;
   },
   ceiling(d) {
     return `${question("ceiling")}
@@ -348,14 +348,14 @@ const CHECKS = {
     return "";
   },
   decided(d) {
-    return d.decided ? "" : "Say who decides it. The book's build refuses an input that does not.";
+    return d.decided ? "" : "Say who decides it. The checks refuse an input that does not.";
   },
   source(d) {
     const p = d.provenance ?? {};
     if (!p.kind) return "Say what kind of claim this is.";
     if (!(p.source ?? "").trim()) return "Write the source. An input with no source does not build.";
     if (p.kind === "fact" && !CITATION_MARKERS.some((m) => p.source.includes(m))) {
-      return "A fact has to cite something the book can recognise: a link (http…), a file (.json or .yaml), an invoice, a result under bench/results/, or the word definition.";
+      return "A fact has to cite something a reader can check: a link (http…), a file (.json or .yaml), an invoice, a published result, or the word definition.";
     }
     return "";
   },
@@ -372,7 +372,7 @@ const CHECKS = {
       } catch {
         return { triangular: "The least, the likely and the most must be in that order.", lognormal: "The low figure must be above zero and below the high one.", normal: "The standard error cannot be negative." }[shape] ?? "Those numbers do not make a shape.";
       }
-      if (!(d.provenance?.source ?? "").toLowerCase().includes(shape)) return `Name the shape in the source and say why it is ${shape}: the book's build checks for the word. Go back to the source to add it.`;
+      if (!(d.provenance?.source ?? "").toLowerCase().includes(shape)) return `Name the shape in the source and say why it is ${shape}: the checks look for the word. Go back to the source to add it.`;
     }
     if (d.range && (typeof d.range[0] !== "number" || typeof d.range[1] !== "number" || d.range[0] >= d.range[1])) {
       return "The slider needs a low end below its high end, or neither.";
@@ -395,7 +395,7 @@ const CHECKS = {
   measured(d) {
     if (d.untaken) {
       if (!/^[a-z0-9][a-z0-9-]*$/.test(d.result ?? "")) return "Name the result: lower case, digits and hyphens.";
-      if (APP.ctx.results[d.result]) return "The book has a result by that name. Pick it from the list instead.";
+      if (APP.ctx.results[d.result]) return "There is already a published result by that name. Pick it from the list instead.";
       return "";
     }
     if (!d.result) return "Pick the measurement, or say it is not taken yet.";

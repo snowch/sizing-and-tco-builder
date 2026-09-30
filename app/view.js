@@ -5,7 +5,7 @@
 import { point } from "../engine/evaluate.js";
 import { sorted } from "../engine/python.js";
 import { removeNode } from "./state.js";
-import { $, chapterLink, chapters, esc, fmt } from "./ui.js";
+import { $, chapterLink, chapters, esc, fmt, plain } from "./ui.js";
 import { CAUSE_WORDS, DECIDED_WORDS, PROVENANCE_WORDS, QUESTIONS, REFINE } from "./words.js";
 import {
   graph, isComplete, measureFirst, parentsOf, pendingOrder, refinementDone, upstream,
@@ -59,9 +59,9 @@ export function drawHeader(app) {
   badge.textContent = `${klass} model`;
   badge.className = `badge ${klass}`;
   badge.title = klass === "conditional"
-    ? "It has a measured constant or a ceiling, so its answer holds only on what those describe (ch01)."
-    : "Every relationship in it holds by definition, so sampling its inputs is enough (ch01).";
-  $("qline").textContent = state.example ? `The book's model: ${state.exampleTitle}` : state.decision;
+    ? "It has a measured constant or a ceiling, so its answer holds only on what those describe."
+    : "Every relationship in it holds by definition, so sampling its inputs is enough.";
+  $("qline").textContent = state.example ? `Example: ${state.exampleTitle}` : state.decision;
 }
 
 export function drawTree(app) {
@@ -148,7 +148,7 @@ export function drawCoach(app) {
     for (const el of C.querySelectorAll("[data-coach]")) el.addEventListener("click", () => buttons[Number(el.dataset.coach)][1]());
   };
   if (state.example) {
-    return set("", "The book's model", `This is ${state.exampleTitle}, from the book.`, "Look around: every node, its source and the build's checks. Its numbers are the book's, with the book's sources. Start your own when you are ready.", null, [["Start your own model", () => app.startOver()]]);
+    return set("", "Example", `This is an example: ${state.exampleTitle}.`, "Look around: every node, where each number came from, and the checks. Its numbers are the example's, each with its source. Start your own when you are ready.", null, [["Start your own model", () => app.startOver()]]);
   }
   switch (next.id) {
     case "answer":
@@ -166,13 +166,13 @@ export function drawCoach(app) {
       return set("", "Next step", `Define ${p?.label || next.name}`, `${parents.length ? `Needed by ${esc(parents.join(", "))}. ` : ""}Is it given, worked out, or measured?`, "what_a_workload_is", [["Define it", () => openWizard(app, { type: "define", name: next.name })]]);
     }
     case "fix":
-      return set("fix", "Fix first", next.check.text, "The book's build refuses a file with this problem.", next.check.chapter, [["See the checks", () => { app.ui.tab = "checks"; if (next.check.node) app.ui.selected = next.check.node; app.render(); }]]);
+      return set("fix", "Fix first", next.check.text, "A model with this problem is not finished: the checks refuse it.", next.check.chapter, [["See the checks", () => { app.ui.tab = "checks"; if (next.check.node) app.ui.selected = next.check.node; app.render(); }]]);
     case "refine":
       return set("", "Next step", next.refine.what, esc(next.refine.why), next.refine.chapters[0], [["Skip", () => { state.skipped.push(next.refine.id); app.commit(); }], ["Do it", () => refine(app, next.refine.id)]]);
     case "checking":
-      return set("", "Checking", "Checking the file with the book's rules.", "Every scenario is sampled as the book's build samples it. This takes a moment on a large model.", null, []);
+      return set("", "Checking", "Checking the model.", "Every scenario is sampled. This takes a moment on a large model.", null, []);
     default:
-      return set("done", "Done", "The answer is worked back to its inputs, the book's checks pass, and every refinement is done or skipped.", "Open File to copy or download the model.", null, [["Open the file", () => { app.ui.tab = "file"; app.render(); }]]);
+      return set("done", "Done", "The answer is worked back to its inputs, every check passes, and every refinement is done or skipped.", "Open File to copy or download the model.", null, [["Open the file", () => { app.ui.tab = "file"; app.render(); }]]);
   }
 }
 
@@ -325,8 +325,8 @@ const PANELS = {
         ${node.kind === "ceiling" ? `<dt>checks</dt><dd class="mono">${esc(node.of)}</dd><dt>limit</dt><dd class="mono">${esc(node.limit)}${c ? ` (${fmt(c.limit)})` : ""}</dd><dt>margin</dt><dd class="mono">${esc(node.headroom)}${c ? ` → allowed ${fmt(c.allowed)}` : ""}</dd>${c ? `<dt>verdict</dt><dd><strong>${esc(c.verdict)}</strong>${app.ranges?.ceilings?.[name] ? ` · over the allowed level in ${fmt(100 * app.ranges.ceilings[name].p_over_allowed)}% of draws` : ""}</dd>` : ""}<dt>because</dt><dd>${esc(node.because)}</dd>` : ""}
         ${node.note ? `<dt>note</dt><dd>${esc(node.note)}</dd>` : ""}</dl>
         ${chain(app, name)}
-        ${v?.state === "unit" ? `<div class="verdict bad">The units of this formula do not work. The Checks tab has the book's wording once the model is complete.</div>` : ""}
-        ${v?.message ? `<div class="verdict bad">${esc(v.message)}</div>` : ""}
+        ${v?.state === "unit" ? `<div class="verdict bad">The units of this formula do not work. The Checks tab says what is wrong once the model is complete.</div>` : ""}
+        ${v?.message ? `<div class="verdict bad">${esc(plain(v.message))}</div>` : ""}
         <div class="row"><button type="button" data-act="edit">Edit</button><button type="button" data-act="remove">Remove</button>
         <label class="row" style="width:auto"><input type="checkbox" data-act="output" style="width:auto" ${state.doc.outputs.includes(name) ? "checked" : ""}${name === state.answer ? " disabled" : ""}> an answer</label></div></div>`;
     },
@@ -368,8 +368,8 @@ const PANELS = {
     html(app) {
       const list = app.checks;
       const klass = app.state.doc.nodes.some((n) => n.kind === "measured" || n.kind === "ceiling") ? "conditional" : "definitional";
-      return `<h2>What the book's build checks</h2><p class="why">The rules <code>scripts/verify-models.py</code> applies to every model in the book, run by this builder's engine, which is held to the book's own toolkit case by case. A file that fails one does not build. ${chapters([], "appendix_a_dsl_reference")}</p>
-        <ul class="checks">${list.length ? list.map((c) => `<li class="${c.level}">${esc(c.text)}${c.chapter ? ` <small>${chapterLink(c.chapter, { long: true })}</small>` : ""}${c.detail ? `<span class="detail">${esc(c.detail)}</span>` : ""}</li>`).join("") : '<li class="todo">Nothing to check yet.</li>'}</ul>
+      return `<h2>The checks</h2><p class="why">Every model is held to these rules: units that work, a source for every number, a margin and a reason for every limit. A model that fails one is not finished. ${chapters([], "appendix_a_dsl_reference")}</p>
+        <ul class="checks">${list.length ? list.map((c) => `<li class="${c.level}">${esc(c.text)}${c.chapter ? ` <small>Read more: ${chapterLink(c.chapter)}</small>` : ""}${c.detail ? `<span class="detail">${esc(plain(c.detail))}</span>` : ""}</li>`).join("") : '<li class="todo">Nothing to check yet.</li>'}</ul>
         <p class="why" style="margin-top:14px">This is a <strong>${klass} model</strong>. ${klass === "conditional" ? "It has a measured constant or a ceiling, so its answer holds only for the implementation its constants were measured on and below the limits it declares." : "Every relationship in it holds by definition: sampling its inputs is enough."} ${chapters(["point_estimates"])}</p>`;
     },
   },
@@ -378,8 +378,8 @@ const PANELS = {
     html(app) {
       const written = app.files;
       const blocks = Object.entries(written).map(([path, text]) => `<div><h3>${esc(path)}</h3><div class="row" style="margin-bottom:6px"><button type="button" data-copy="${esc(path)}">Copy</button><button type="button" data-download="${esc(path)}">Download</button><span class="note" data-said="${esc(path)}"></span></div><pre class="yaml">${esc(text)}</pre></div>`);
-      return `<h2>The model file</h2><p class="why">The book's own format: the book's checks, its viewer and its problems read it as they read the book's models. Each scenario is a file of its own, in a <code>scenarios/</code> folder beside the model. ${chapters([], "appendix_a_dsl_reference")}</p>
-        ${app.state.pending.length ? `<div class="verdict warn">Still to define: ${esc(app.state.pending.map((p) => p.name).join(", "))}. The book cannot load the file until they are, because a formula names them.</div>` : ""}
+      return `<h2>The model file</h2><p class="why">A plain text file you can keep, share and put under version control, and open here again. Each scenario is a file of its own, in a <code>scenarios/</code> folder beside the model. ${chapters([], "appendix_a_dsl_reference")}</p>
+        ${app.state.pending.length ? `<div class="verdict warn">Still to define: ${esc(app.state.pending.map((p) => p.name).join(", "))}. The file cannot be read until they are, because a formula names them.</div>` : ""}
         <div class="grid2">${fieldHtml("f-model", "Model name", app.state.doc.model)}${fieldHtml("f-title", "Title", app.state.doc.title)}</div>
         <div class="xlsx"><h3>As a spreadsheet</h3><p class="note">For a process that wants a spreadsheet: an .xlsx with every given number in a shaded cell and everything else a live formula over them, so a price changed there moves the total. A spreadsheet has no units and cannot check them, and nothing changed in it comes back here: the model file stays the source of truth.</p>
           <div class="row"><button type="button" id="f-xlsx">Download as a spreadsheet (.xlsx)</button><span class="note" id="f-xlsx-msg" aria-live="polite"></span></div></div>
@@ -487,7 +487,7 @@ const PANELS = {
         const msg = P.querySelector("#c-msg");
         if (a === b) return void (msg.textContent = "Pick two different inputs.");
         if (Number.isNaN(r) || r < -1 || r > 1) return void (msg.textContent = "The strength is between −1 and 1.");
-        if (!why) return void (msg.textContent = "Say why they move together. The book's checks refuse a pair with no reason, because a number with no reason gets copied.");
+        if (!why) return void (msg.textContent = "Say why they move together. The checks refuse a pair with no reason, because a number with no reason gets copied.");
         if (app.state.doc.correlations.some((c) => (c.a === a && c.b === b) || (c.a === b && c.b === a))) return void (msg.textContent = "That pair is already there.");
         app.state.doc.correlations.push({ a, b, rho: r, because: why });
         app.commit();
