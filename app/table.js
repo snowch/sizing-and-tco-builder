@@ -97,7 +97,7 @@ export function downloadSpreadsheet(app) {
   if (app.state.pending.length) return `Define ${app.state.pending.map((p) => p.name).join(", ")} first: a formula names them.`;
   let bytes;
   try {
-    bytes = workbook(app.files, { units: app.ctx.units, results: app.ctx.results, ranges: app.ranges });
+    bytes = workbook(app.files, { units: app.ctx.units, results: app.ctx.results, ranges: app.ranges, chart: app.explore });
   } catch (error) {
     if (error instanceof NotExportable) return error.message;
     return `The book would not load the file yet, so there is nothing to export: ${error.message}`;
@@ -115,7 +115,7 @@ export function drawTable(app) {
   const wrap = $("table-view");
   const on = app.ui.view === "table";
   wrap.hidden = !on;
-  $("graph-wrap").hidden = on;
+  $("graph-wrap").hidden = (app.ui.view ?? "graph") !== "graph";
   for (const b of document.querySelectorAll("[data-view]")) b.setAttribute("aria-pressed", String(b.dataset.view === (app.ui.view ?? "graph")));
   if (!on) return;
   // A cell being typed into is not redrawn under the reader; the change redraws it when it lands.

@@ -79,6 +79,10 @@ node's percentiles and mean at the scenario's seed, and their spread across 16 o
 same for each ceiling's share of draws over its allowed level. `test/sampling.test.js` states the
 tolerance the builder is held to.
 
+`charts/<result>.json` is the summary of a stamped result the book draws charts from (ch23's
+`seller`): the numbers behind its curves, break-evens, plane and breakdown. The Explore view
+draws the same charts from the model, and `test/explore.test.js` holds it to these.
+
 `products.json` is the book's list of product names (from its `tests/test_book.py`).
 
 `outline.json` is the book's chapter list by slug. The builder links a question to the chapter

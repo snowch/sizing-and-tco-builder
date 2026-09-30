@@ -396,6 +396,59 @@ test("a file written for an earlier version of the rules opens under the current
   await r.context.close();
 });
 
+test("Explore draws the seller's charts, and their numbers are the book's", async () => {
+  const r = await Reader.start();
+  const p = r.page;
+  const seller = JSON.parse(readFileSync(new URL("../conformance/fixtures/charts/seller.json", import.meta.url), "utf8")).summary;
+  const shares = seller.curves.map((c) => c.scaling_share);
+  await p.click('[data-example="sellers_tco"]');
+  await r.settled();
+  await p.click('[data-view="explore"]');
+  // The saving against the transfer factor, one line per guess at the share that scales, on ch22's customer.
+  await p.selectOption("#x-out", "saving");
+  await p.selectOption("#x-x", "transfer_factor");
+  await p.selectOption("#x-cases", "values");
+  await p.selectOption("#x-case-input", "scaling_share");
+  await p.fill("#x-values", shares.join(", "));
+  await p.press("#x-values", "Tab");
+  await p.selectOption("#x-base", "ch22_customer");
+  assert.equal(await p.locator("svg.chart path.line").count(), 3);
+  // The break-evens the page reports are the book's, each found on the model.
+  const reported = await p.locator(".note strong.mono").allInnerTexts();
+  const fmt = (v) => String(Number(v.toPrecision(3)));
+  assert.deepEqual(reported, seller.curves.filter((c) => c.break_even_transfer <= 1.2).map((c) => fmt(c.break_even_transfer)));
+  // Its numbers are the model's at every point of the sweep.
+  const rows = await p.evaluate(() => builder.explore.rows);
+  assert.equal(rows.length, 62);
+  // The two inputs as a plane: a line, the shaded side, and a dot for each case.
+  await p.click('[data-kind="plane"]');
+  await p.selectOption("#x-y", "scaling_share");
+  assert.equal(await p.locator("svg.chart path.boundary").count(), 1);
+  assert.equal(await p.locator("svg.chart circle.point").count(), 3);
+  // The five-year spend in its parts, against the customer's own, for each guess: the book's parts.
+  await p.click('[data-kind="compare"]');
+  await p.selectOption("#x-out", "proposed_total");
+  await p.selectOption("#x-against", "current_total");
+  assert.equal(await p.locator("svg.chart rect.seg").count(), 3 * 3 - 1); // the brochure keeps nothing of today's spend
+  const parts = await p.evaluate(() => builder.explore.rows.slice(builder.explore.rows.findIndex((r) => r.length === 0) + 2));
+  // The seller's own guesses change only the share, so a case made from the share's value is that option.
+  const book = seller.breakdown.options.find((o) => o.key === "sellers_guesses");
+  const row = parts.find((r) => r[0] === fmt(shares[2]));
+  assert.ok(Math.abs(row[1] - book.stays) < 1e-6 * book.stays && Math.abs(row[2] - book.proposed_hosts) < 1e-6 * book.proposed_hosts && row[3] === book.move, JSON.stringify(row));
+  // The chart downloads on its own, and its numbers ride along in the spreadsheet.
+  const [svg] = await Promise.all([p.waitForEvent("download"), p.click("#x-svg")]);
+  assert.match(readFileSync(await svg.path(), "utf8"), /^<\?xml[\s\S]*<svg[\s\S]*current_total \* \(1 - scaling_share\)/);
+  await p.click('[data-tab="file"]');
+  const [xlsx] = await Promise.all([p.waitForEvent("download"), p.click("#f-xlsx")]);
+  const sheet = recalculated(await xlsx.path(), "Chart");
+  if (sheet) assert.ok(sheet.some((line) => line[0] === fmt(shares[1])), JSON.stringify(sheet.slice(0, 8)));
+  // On a phone, nothing scrolls the page sideways.
+  await p.setViewportSize({ width: 360, height: 740 });
+  assert.equal(await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), 0);
+  assert.deepEqual(r.errors, []);
+  await r.context.close();
+});
+
 test("it works with no network once it has loaded", async () => {
   const r = await Reader.start();
   await r.page.evaluate(() => navigator.serviceWorker.ready);

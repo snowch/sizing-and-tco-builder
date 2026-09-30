@@ -141,6 +141,41 @@
     "span": 2058.184288609019
    }
   ],
+  "payback": [
+   {
+    "base": -10.010875119040989,
+    "high": 18.49142837640004,
+    "high_input": 0.8775255128608411,
+    "kind": "input",
+    "label": "share of the benchmark advantage that carries over",
+    "low": -2.5690025444829874,
+    "low_input": 0.5449137674618945,
+    "node": "transfer_factor",
+    "span": 21.06043092088303
+   },
+   {
+    "base": -10.010875119040989,
+    "high": 8.022364295580395,
+    "high_input": 0.6775255128608412,
+    "kind": "input",
+    "label": "share of the spend that moves with hosts",
+    "low": -3.4844987199693525,
+    "low_input": 0.4,
+    "node": "scaling_share",
+    "span": 11.506863015549747
+   },
+   {
+    "base": -10.010875119040989,
+    "high": 3.60719152959142,
+    "high_input": 10999.999999999998,
+    "kind": "input",
+    "label": "customer's spend per host-year, everything in",
+    "low": -2.823722221587336,
+    "low_input": 5000.000000000004,
+    "node": "current_cost_per_host",
+    "span": 6.430913751178756
+   }
+  ],
   "proposed_hosts": [
    {
     "base": 17.264310245365223,
@@ -244,6 +279,41 @@
     "low_input": 0.4,
     "node": "scaling_share",
     "span": 514546.07215225464
+   }
+  ],
+  "saving_per_year": [
+   {
+    "base": -24972.841737331473,
+    "high": 69305.99552287068,
+    "high_input": 10999.999999999998,
+    "kind": "input",
+    "label": "customer's spend per host-year, everything in",
+    "low": -88535.62085135421,
+    "low_input": 5000.000000000004,
+    "node": "current_cost_per_host",
+    "span": 157841.6163742249
+   },
+   {
+    "base": -24972.841737331473,
+    "high": 13519.777645682916,
+    "high_input": 0.8775255128608411,
+    "kind": "input",
+    "label": "share of the benchmark advantage that carries over",
+    "low": -97314.0336263515,
+    "low_input": 0.5449137674618945,
+    "node": "transfer_factor",
+    "span": 110833.81127203442
+   },
+   {
+    "base": -24972.841737331473,
+    "high": 31162.883009155747,
+    "high_input": 0.6775255128608412,
+    "kind": "input",
+    "label": "share of the spend that moves with hosts",
+    "low": -71746.33142129518,
+    "low_input": 0.4,
+    "node": "scaling_share",
+    "span": 102909.21443045093
    }
   ]
  },

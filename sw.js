@@ -9,6 +9,7 @@ const VERSION = "builder-1";
 const FILES = [
   "./",
   "index.html",
+  "app/explore.js",
   "app/judge.js",
   "app/table.js",
   "app/main.js",
@@ -26,6 +27,7 @@ const FILES = [
   "data/units.json",
   "engine/describe.js",
   "engine/evaluate.js",
+  "engine/explore.js",
   "engine/formula.js",
   "engine/index.js",
   "engine/infer.js",

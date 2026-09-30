@@ -187,9 +187,9 @@ tolerance written next to the test.
 
 ### Milestone 1: done, and checked
 
-- `book.lock.json` pins the book at `4225e27cca5bd24fcd83b9deb8b6089c3a6c8307` (its `main` on
-  2026-09-30: `dsl: 2`, unknown keys refused, a model's own results, and ch23, *The seller's
-  TCO*). It is the only place the pin lives.
+- `book.lock.json` pins the book at `4b2a79744951cebae4bd8652f314bce5d4232832` (its `main` on
+  2026-09-30, after `4225e27` brought `dsl: 2`, unknown keys refused, a model's own results, and
+  ch23, *The seller's TCO*). It is the only place the pin lives.
 - `conformance/generate.py` checks the book out at that commit, builds an environment from the
   book's `requirements.txt` (numpy 2.4.6, Pint 0.25.3, PyYAML 6.0.1 on Python 3.11), and writes
   141 cases: the four reference models (web service, observability, mixed pool, the seller's
@@ -201,7 +201,7 @@ tolerance written next to the test.
 - Each hand-written case declares what it is for, and the generator refuses to write fixtures if
   the book does not say it. It stopped three times while the cases were written, each time
   correctly: a failure it had no code for, and one case whose expectation was mine and wrong.
-- `npm test`: 293 passing, none failing (after the move to 4225e27). Every case and every probe agrees with the book; every
+- `npm test`: 299 passing, none failing (with Explore). Every case and every probe agrees with the book; every
   model the book loads round-trips through the engine's writer; the comparison itself is tested
   against altered answers; the vendored YAML package is checked against the pinned install.
 - `python3 conformance/roundtrip.py`: the book's toolkit reads all 90 writable models, as written
@@ -291,6 +291,33 @@ and holds every cell to the book's own value from the fixtures, every ceiling's 
 allowed level to the book's, and every scenario's answers to the book's. CI installs Calc and
 fails rather than skipping without it. A spreadsheet has no units, so it cannot check them, and
 nothing changed in it comes back: each sheet says the model file is the source of truth.
+
+### After the milestones: Explore
+
+A third view beside the graph and the table: charts of the reader's own model, the kind ch23
+draws of the seller's TCO (`app/explore.js`, over `engine/explore.js`). Every chart is the model
+at its point values with some inputs changed on top of a scenario, which is how the book's own
+charts are made (`bench/run_seller.py`):
+
+- **Sweep one input** across the range its file declares, one line per case, each crossing of a
+  target (a break-even, a payback over the horizon) found by bisecting on the model and marked;
+- **Two inputs**: the line where an answer meets its target, the side above it shaded, a dot for
+  each case;
+- **Compare cases**: the answers side by side, and an answer that is a sum split into its terms
+  as stacked bars, against another answer.
+
+A case is a scenario, or a value of one input on top of a scenario; the values offered first are
+the ones the files give. A range is the one the input declares, or one the reader types, which
+can be saved into the file as its `range:`. Nothing is chosen for the reader. Each chart has a
+crosshair readout, a table of its numbers, an SVG download with its colours and key written in,
+and its numbers ride along in the spreadsheet export as a Chart sheet. The colours are the
+validated categorical order, checked against this page's own light and dark surfaces.
+
+Held to the book: the generator copies the book's stamped chart data for ch23
+(`fixtures/charts/seller.json`), and `test/explore.test.js` reproduces every curve, every
+break-even, the plane's boundary, payback by year and the five-year breakdown from the model file
+alone, to a part in a billion. A flow draws all three charts on the seller's model and checks the
+break-evens the page reports against the book's.
 
 ### Known gaps
 

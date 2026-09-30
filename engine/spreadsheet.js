@@ -127,7 +127,7 @@ function shapeText(node) {
  * builder's sampled ranges for the answers, written as a snapshot. cache: write each formula's
  * value too, so a viewer that does not recalculate still shows numbers.
  */
-export function spreadsheet(files, { units, results = {}, ranges = null, cache = true }) {
+export function spreadsheet(files, { units, results = {}, ranges = null, cache = true, chart = null }) {
   const registry = registryFor(units);
   const model = loadModel(files["model.yaml"], { registry, results });
   const checked = checkUnits(model, registry);
@@ -300,6 +300,22 @@ export function spreadsheet(files, { units, results = {}, ranges = null, cache =
           const changes = [...s.overrides].map(([k, v]) => `${k} = ${v}${model.nodes.has(k) && unitText(model.nodes.get(k).unit) ? ` ${model.nodes.get(k).unit}` : ""}`).join("; ");
           return [s.name, s.title, { v: s.because, s: "wrap" }, { v: changes || "nothing: the model as declared", s: "wrap" }, ...outs.map((o) => (at.has(o) ? at.get(o) : "not known yet"))];
         }),
+      ],
+    });
+  }
+
+  // The chart the reader last drew in Explore, as its numbers: a snapshot, worked out when exported.
+  if (chart?.rows?.length) {
+    sheets.push({
+      name: "Chart",
+      cols: chart.rows[0].map((_, i) => (i ? 18 : 30)),
+      rows: [
+        [{ v: chart.title, s: "title" }],
+        [{ v: "The numbers behind the chart last drawn in the builder's Explore view, worked out by the model when the file was exported. They do not move when a number here changes.", s: "note" }],
+        [{ v: source, s: "note" }],
+        [],
+        chart.rows[0].map((v) => ({ v: String(v), s: "head" })),
+        ...chart.rows.slice(1).map((r) => r.map((c) => (c === null || c === undefined ? "" : c))),
       ],
     });
   }

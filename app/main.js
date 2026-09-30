@@ -11,6 +11,7 @@ import { $, esc, useOutline } from "./ui.js";
 import { drawAnswers, drawCoach, drawGraph, drawHeader, drawPanel, drawRefine, drawTree } from "./view.js";
 import { openWizard, wireWizardButtons } from "./wizard.js";
 import { drawTable } from "./table.js";
+import { drawExplore } from "./explore.js";
 import { ANSWERS, PATTERNS, money } from "./words.js";
 import { judge } from "./judge.js";
 import { checks, files, nextStep, preview, reinfer } from "./workbench.js";
@@ -108,6 +109,7 @@ async function boot() {
     drawCoach(app);
     drawGraph(app);
     drawTable(app);
+    drawExplore(app);
     drawAnswers(app);
     drawPanel(app);
   }

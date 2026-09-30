@@ -900,6 +900,16 @@ def examples() -> list[dict]:
     return out
 
 
+#: The book's stamped chart data a chart in the builder is checked against, by result name.
+CHARTS = ("seller",)
+
+
+def chart_data(name: str) -> dict:
+    """A stamped result's summary, with the commit it was stamped at, as the book wrote it."""
+    payload = json.loads((CHECKOUT / "bench" / "results" / f"{name}.json").read_text())
+    return {"name": name, "summary": payload["summary"], "units": payload.get("units", {})}
+
+
 def probe_lines(name: str) -> list[str]:
     """One probe per line. A line starting ``json:`` is a JSON string, for probes with newlines."""
     lines = (PROBES / name).read_text().splitlines()
@@ -951,6 +961,10 @@ def inside(out: Path) -> int:
     write(out / "yaml.json", {"probes": yaml_probes(probe_lines("yaml.txt"))})
     write(out / "results.json", measured_catalogue())
     write(out / "products.json", products())
+    # The data behind the book's own charts of a model, as the book stamped it: the Explore view
+    # draws the same charts from the model and is held to these numbers.
+    for chart in CHARTS:
+        write(out / "charts" / f"{chart}.json", chart_data(chart))
     for case_id in (*(f"reference/{name}" for name in REFERENCE), "edge/all-four-shapes", "edge/measured-book-result"):
         write(out / "tornado" / f"{case_id}.json", tornado_fixture(case_id, modules))
     for case_id in SAMPLED:
