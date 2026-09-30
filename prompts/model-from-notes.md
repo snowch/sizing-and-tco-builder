@@ -50,7 +50,10 @@ pounds-per-year is refused, and a total in `GBP` must come out of a formula whos
 out to money. Write units as plain quotients of named units:
 
 - money: `GBP`, `GBP/host`, `GBP/host/year`, `GBP/kWh`, `GBP/TB/month`
-- counts: `host`, `core`, `node`, `user`, `device`, `request`, `count`
+- counts: `host`, `core`, `node`, `request`, `query`, `count`. There is no unit for people,
+  users, devices, sites, admins or instances: count those in `count` (an admin's pay is
+  `GBP/count/year`), or treat a plain multiplier such as a number of sites as `dimensionless`.
+  A unit name outside the registry is refused, so do not coin one.
 - rates: `request/second`, `TB/year`, `1/year`
 - data: `TB`, `GiB`, `GiB/host`, `TB/host`
 - power: `W`, `W/host`, `kW`, `kWh/year`
@@ -140,7 +143,8 @@ declare it, with headroom and a reason:
 ```
 
 A model with no ceilings is a definitional one: correct if its inputs are, and nothing more. Say
-which it is in the description.
+which it is in the description. Every ceiling must be listed in `outputs`: it is an answer (how
+close the design runs to the limit), and a node that feeds nothing is refused.
 
 ### Measured constants
 
@@ -183,8 +187,11 @@ samples: 10000
 seed: 1
 ```
 
-A scenario may override inputs only, never derived nodes. Include a `scenarios/reference.yaml`
-with `overrides: {}` so the model as declared is one of the options. When the notes describe the
+A scenario may override inputs only, never derived nodes, and every override must be a number:
+`null`, a blank or a distribution is refused. If an option's figure is unknown, do not guess and
+do not write `null`. Leave that override out, say in `because` that the scenario inherits the
+model's figure for it until the customer supplies one, and list it under the blanks. Include a
+`scenarios/reference.yaml` with `overrides: {}` so the model as declared is one of the options. When the notes describe the
 customer's current environment and our proposal, make one the model and the other a scenario,
 and say in `because` where each overridden figure came from.
 
@@ -203,8 +210,9 @@ and say in `because` where each overridden figure came from.
 6. List the outputs. Add scenarios for the other options.
 7. Check your own file against the rules before you answer: every input has `decided`, a
    provenance kind and a non-empty source; `fact` sources cite something; distributions are
-   named in their source; no `%` units; every node feeds an output; no function outside the
-   seven allowed; no number in a formula that is a fact about the world.
+   named in their source; no `%` units; every node feeds an output and every ceiling is an
+   output; no function outside the seven allowed; no number in a formula that is a fact about
+   the world; every scenario override is a number.
 8. Then write the three lists.
 
 ## A complete small example
