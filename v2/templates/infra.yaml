@@ -1,0 +1,384 @@
+dsl: 2
+model: infra
+title: Infrastructure, bought or rented
+currency: GBP
+
+description: >-
+  Processor, memory and data the customer needs, grown to the end of the period; how many
+  units (servers, nodes or cloud instances) a design needs, set by whichever resource runs out
+  first below the fill limit; and what those units cost to buy or rent, license, support, power
+  and house. Conditional: three ceilings say how close the design runs to full.
+
+nodes:
+
+  # -- what the customer needs: the same for every option ---------------------------------------
+
+  data_today:
+    kind: input
+    decided: outside
+    unit: TB
+    label: usable data held today
+
+  growth:
+    kind: input
+    decided: outside
+    unit: dimensionless
+    label: growth a year, as a fraction
+
+  horizon:
+    kind: input
+    decided: outside
+    unit: year
+    label: evaluation period
+
+  cores:
+    kind: input
+    decided: outside
+    unit: core
+    label: peak processor cores in use
+
+  memory:
+    kind: input
+    decided: outside
+    unit: GiB
+    label: peak memory in use
+
+  fill_margin:
+    kind: input
+    decided: outside
+    unit: dimensionless
+    label: share of each resource kept free
+
+  sites:
+    kind: input
+    decided: outside
+    unit: count
+    label: sites
+
+  power_price:
+    kind: input
+    decided: outside
+    unit: GBP/kWh
+    label: electricity price
+
+  pue:
+    kind: input
+    decided: outside
+    unit: dimensionless
+    label: data-centre overhead, PUE
+
+  admin_cost:
+    kind: input
+    decided: outside
+    unit: GBP/count/year
+    label: cost of one admin a year
+
+  # -- definitions ------------------------------------------------------------------------------
+
+  one_year:
+    kind: input
+    decided: definition
+    unit: year
+    value: 1
+    provenance: {kind: fact, source: definition}
+
+  hours_per_year:
+    kind: input
+    decided: definition
+    unit: hour/year
+    value: 8760
+    provenance: {kind: fact, source: "definition: 365 days of 24 hours"}
+
+  months_per_year:
+    kind: input
+    decided: definition
+    unit: month/year
+    value: 12
+    provenance: {kind: fact, source: definition}
+
+  # -- what one option provides and charges ----------------------------------------------------
+
+  included:
+    kind: input
+    decided: you
+    unit: dimensionless
+    value: 1
+    label: infrastructure is part of this option
+    note: One when the option covers infrastructure, nought when it leaves it out.
+    provenance: {kind: assumption, source: "part of this option unless its scenario says otherwise"}
+
+  unit_cores:
+    kind: input
+    decided: you
+    unit: core/host
+    label: cores per unit
+
+  unit_memory:
+    kind: input
+    decided: you
+    unit: GiB/host
+    label: memory per unit
+
+  unit_tb:
+    kind: input
+    decided: you
+    unit: TB/host
+    label: raw capacity per unit
+
+  protection:
+    kind: input
+    decided: you
+    unit: dimensionless
+    label: raw capacity per usable TB
+
+  price:
+    kind: input
+    decided: you
+    unit: GBP/host
+    label: price per unit, bought
+
+  discount:
+    kind: input
+    decided: you
+    unit: dimensionless
+    label: discount, as a fraction
+
+  rent:
+    kind: input
+    decided: you
+    unit: GBP/host/month
+    label: rent per unit a month
+
+  licence:
+    kind: input
+    decided: you
+    unit: GBP/TB/year
+    label: software licence per raw TB a year
+
+  support_rate:
+    kind: input
+    decided: you
+    unit: 1/year
+    label: support a year, as a share of hardware
+
+  watts:
+    kind: input
+    decided: you
+    unit: W/host
+    label: power per unit
+
+  hosting:
+    kind: input
+    decided: you
+    unit: GBP/host/year
+    label: rack space per unit a year
+
+  site_cost:
+    kind: input
+    decided: you
+    unit: GBP/count/year
+    label: fixed cost per site a year
+
+  admins:
+    kind: input
+    decided: you
+    unit: count
+    label: admin staff needed
+
+  migration:
+    kind: input
+    decided: you
+    unit: GBP
+    label: migration, once
+
+  # -- sizing: whichever resource runs out first ------------------------------------------------
+
+  periods:
+    kind: derived
+    unit: dimensionless
+    label: years in the period, as a count
+    formula: horizon / one_year
+
+  data_end:
+    kind: derived
+    unit: TB
+    label: usable data at the end
+    formula: data_today * (1 + growth) ** periods
+
+  cores_end:
+    kind: derived
+    unit: core
+    label: processor cores needed at the end
+    formula: cores * (1 + growth) ** periods
+
+  memory_end:
+    kind: derived
+    unit: GiB
+    label: memory needed at the end
+    formula: memory * (1 + growth) ** periods
+
+  units_for_cores:
+    kind: derived
+    unit: host
+    label: units the processor needs
+    formula: cores_end / (unit_cores * (1 - fill_margin))
+
+  units_for_memory:
+    kind: derived
+    unit: host
+    label: units the memory needs
+    formula: memory_end / (unit_memory * (1 - fill_margin))
+
+  units_for_data:
+    kind: derived
+    unit: host
+    label: units the data needs
+    formula: data_end * protection / (unit_tb * (1 - fill_margin))
+
+  units:
+    kind: derived
+    unit: host
+    label: units needed by the end
+    note: Whichever of processor, memory and data runs out first sets the number, rounded up.
+    formula: ceil(max(units_for_cores, units_for_memory, units_for_data))
+
+  units_today:
+    kind: derived
+    unit: host
+    label: units needed today
+    formula: max(cores / (unit_cores * (1 - fill_margin)), memory / (unit_memory * (1 - fill_margin)), data_today * protection / (unit_tb * (1 - fill_margin)))
+
+  unit_years:
+    kind: derived
+    unit: host * year
+    label: unit-years rented over the period
+    note: >-
+      A straight line between what is needed today and at the end. The need compounds, so the
+      line lies above the curve and rent comes out a little high; the error runs one way.
+    formula: (units_today + units) / 2 * horizon
+
+  raw_capacity:
+    kind: derived
+    unit: TB
+    label: raw capacity by the end
+    formula: units * unit_tb
+
+  # -- how full the design runs at the end -----------------------------------------------------
+
+  cores_fill:
+    kind: derived
+    unit: dimensionless
+    label: processor fill at the end
+    formula: cores_end / (units * unit_cores)
+
+  memory_fill:
+    kind: derived
+    unit: dimensionless
+    label: memory fill at the end
+    formula: memory_end / (units * unit_memory)
+
+  data_fill:
+    kind: derived
+    unit: dimensionless
+    label: storage fill at the end
+    formula: data_end * protection / (units * unit_tb)
+
+  cores_ceiling:
+    kind: ceiling
+    unit: dimensionless
+    label: processor kept below the fill limit
+    of: cores_fill
+    limit: 1
+    headroom: fill_margin
+    because: >-
+      A processor that runs full queues every request; the customer's fill limit is the margin
+      kept below that.
+
+  memory_ceiling:
+    kind: ceiling
+    unit: dimensionless
+    label: memory kept below the fill limit
+    of: memory_fill
+    limit: 1
+    headroom: fill_margin
+    because: Memory that fills is swapped or killed, not slowed; the same margin applies.
+
+  data_ceiling:
+    kind: ceiling
+    unit: dimensionless
+    label: storage kept below the fill limit
+    of: data_fill
+    limit: 1
+    headroom: fill_margin
+    because: A disk that fills stops the service; the same margin applies.
+
+  # -- what it costs over the period ------------------------------------------------------------
+
+  hardware:
+    kind: derived
+    unit: GBP
+    label: hardware, bought
+    formula: units * price * (1 - discount)
+
+  rent_cost:
+    kind: derived
+    unit: GBP
+    label: rent
+    formula: unit_years * rent * months_per_year
+
+  licence_cost:
+    kind: derived
+    unit: GBP
+    label: software licences
+    formula: raw_capacity * licence * horizon
+
+  support:
+    kind: derived
+    unit: GBP
+    label: support
+    formula: hardware * support_rate * horizon
+
+  power:
+    kind: derived
+    unit: GBP
+    label: power
+    formula: units * watts * hours_per_year * pue * power_price * horizon
+
+  rack:
+    kind: derived
+    unit: GBP
+    label: rack space
+    formula: units * hosting * horizon
+
+  site_costs:
+    kind: derived
+    unit: GBP
+    label: site costs
+    formula: sites * site_cost * horizon
+
+  operations:
+    kind: derived
+    unit: GBP
+    label: operations staff
+    formula: admins * admin_cost * horizon
+
+  migration_cost:
+    kind: derived
+    unit: GBP
+    label: migration
+    formula: migration
+
+  total_cost:
+    kind: derived
+    unit: GBP
+    label: infrastructure cost over the period
+    formula: included * (hardware + rent_cost + licence_cost + support + power + rack + site_costs + operations + migration_cost)
+
+outputs:
+  - total_cost
+  - units
+  - raw_capacity
+  - cores_fill
+  - cores_ceiling
+  - memory_ceiling
+  - data_ceiling

@@ -1,0 +1,152 @@
+dsl: 2
+model: services
+title: Running it in-house or buying it as a service
+currency: GBP
+
+description: >-
+  Devices managed today, grown to the end of the period; what onboarding, a fee per device,
+  tools, engineers and out-of-hours cover cost over the period, for the customer's own team or
+  for a managed service. Definitional: right if its inputs are.
+
+nodes:
+
+  # -- what the customer needs: the same for every option ---------------------------------------
+
+  devices:
+    kind: input
+    decided: outside
+    unit: count
+    label: devices managed today
+
+  growth:
+    kind: input
+    decided: outside
+    unit: dimensionless
+    label: device growth a year, as a fraction
+
+  horizon:
+    kind: input
+    decided: outside
+    unit: year
+    label: evaluation period
+
+  engineer_cost:
+    kind: input
+    decided: outside
+    unit: GBP/count/year
+    label: cost of one engineer a year
+
+  one_year:
+    kind: input
+    decided: definition
+    unit: year
+    value: 1
+    provenance: {kind: fact, source: definition}
+
+  months_per_year:
+    kind: input
+    decided: definition
+    unit: month/year
+    value: 12
+    provenance: {kind: fact, source: definition}
+
+  # -- what one option provides and charges ----------------------------------------------------
+
+  included:
+    kind: input
+    decided: you
+    unit: dimensionless
+    value: 1
+    label: services are part of this option
+    note: One when the option covers the service, nought when it leaves it out.
+    provenance: {kind: assumption, source: "part of this option unless its scenario says otherwise"}
+
+  onboarding:
+    kind: input
+    decided: you
+    unit: GBP
+    label: onboarding, once
+
+  fee:
+    kind: input
+    decided: you
+    unit: GBP/count/month
+    label: fee per device a month
+
+  tools:
+    kind: input
+    decided: you
+    unit: GBP/year
+    label: tools and licences a year
+
+  engineers:
+    kind: input
+    decided: you
+    unit: count
+    label: engineers needed
+
+  cover:
+    kind: input
+    decided: you
+    unit: GBP/year
+    label: out-of-hours cover a year
+
+  # -- the arithmetic ---------------------------------------------------------------------------
+
+  periods:
+    kind: derived
+    unit: dimensionless
+    label: years in the period, as a count
+    formula: horizon / one_year
+
+  devices_end:
+    kind: derived
+    unit: count
+    label: devices at the end
+    formula: devices * (1 + growth) ** periods
+
+  device_years:
+    kind: derived
+    unit: count * year
+    label: device-years over the period
+    note: A straight line between today and the end; the error runs one way, high.
+    formula: (devices + devices_end) / 2 * horizon
+
+  onboarding_cost:
+    kind: derived
+    unit: GBP
+    label: onboarding
+    formula: onboarding
+
+  fees:
+    kind: derived
+    unit: GBP
+    label: service fees
+    formula: device_years * fee * months_per_year
+
+  tools_cost:
+    kind: derived
+    unit: GBP
+    label: tools and licences
+    formula: tools * horizon
+
+  staff:
+    kind: derived
+    unit: GBP
+    label: engineers
+    formula: engineers * engineer_cost * horizon
+
+  cover_cost:
+    kind: derived
+    unit: GBP
+    label: out-of-hours cover
+    formula: cover * horizon
+
+  total_cost:
+    kind: derived
+    unit: GBP
+    label: services cost over the period
+    formula: included * (onboarding_cost + fees + tools_cost + staff + cover_cost)
+
+outputs:
+  - total_cost

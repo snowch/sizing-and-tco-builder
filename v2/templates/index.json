@@ -1,0 +1,78 @@
+{
+  "shared": ["horizon", "one_year", "hours_per_year", "months_per_year"],
+  "requirements": ["Capacity", "Growth", "Performance", "Availability", "Retention", "Users", "Locations", "Workloads", "Time period", "Current infrastructure", "Current operating costs", "Other constraints"],
+  "written": {
+    "Availability": "e.g. active/passive across two sites; a recovery time",
+    "Retention": "e.g. backups kept for 7 years",
+    "Workloads": "e.g. the main databases and virtual machines",
+    "Current infrastructure": "e.g. 12 servers with 100 TB raw each",
+    "Other constraints": "anything else the answer must respect"
+  },
+  "categories": ["Hardware", "Cloud and rental", "Software", "Services", "Support", "Power", "Facilities", "Operations", "Implementation", "Other"],
+  "parts": [
+    {
+      "id": "infra",
+      "domain": "Infrastructure",
+      "title": "Servers, storage or cloud",
+      "text": "Processor, memory and data grown over the period; how many units each design needs, set by whichever runs out first; what they cost to buy or rent, support, power and house.",
+      "file": "infra.yaml",
+      "requirements": {
+        "data_today": "Capacity", "growth": "Growth", "horizon": "Time period",
+        "cores": "Performance", "memory": "Performance", "fill_margin": "Performance",
+        "sites": "Locations", "power_price": "Current operating costs", "pue": "Current operating costs",
+        "admin_cost": "Current operating costs"
+      },
+      "lines": {
+        "hardware": "Hardware", "rent_cost": "Cloud and rental", "licence_cost": "Software", "support": "Support",
+        "power": "Power", "rack": "Facilities", "site_costs": "Facilities", "operations": "Operations",
+        "migration_cost": "Implementation"
+      },
+      "metrics": { "sizing": "units", "capacity": "raw_capacity", "performance": "cores_fill" },
+      "keys": {
+        "data_today": "usable|data|hold|storage", "growth": "grow", "horizon": "year view|-year|over \\d+ years|for \\d+ years|period",
+        "cores": "cores?|vcpu|processor", "memory": "memory|GiB|GB|RAM", "fill_margin": "below|full|headroom|utili[sz]",
+        "sites": "sites?|locations?|data cent(re|er)s", "power_price": "kwh|electric", "pue": "pue|overhead",
+        "admin_cost": "admin|salary", "unit_cores": "cores? (per|each)", "unit_memory": "(GiB|GB|memory) (per|each)",
+        "unit_tb": "raw|each|per (server|node|unit)", "protection": "protection|copies|replica|mirror|parity|erasure",
+        "price": "price|£\\S+ (each|per (server|node|unit))", "discount": "discount|off list", "rent": "month|rent|instance",
+        "licence": "licen[cs]e", "support_rate": "support|maintenance", "watts": "watts?|\\bW\\b", "hosting": "rack|hosting|colo",
+        "site_cost": "per site", "admins": "admins?\\b|fte", "migration": "migrat"
+      }
+    },
+    {
+      "id": "software",
+      "domain": "Software",
+      "title": "Business software",
+      "text": "Keep what they run, move to a subscription, or buy a licence: per-user prices, implementation, servers and the staff to run it.",
+      "file": "software.yaml",
+      "requirements": { "users": "Users", "growth": "Growth", "horizon": "Time period", "admin_cost": "Current operating costs" },
+      "lines": {
+        "licences": "Software", "subscription": "Software", "implementation_cost": "Implementation",
+        "server_hardware": "Hardware", "administration": "Operations"
+      },
+      "metrics": {},
+      "keys": {
+        "users": "users?|staff|seats|people", "growth": "grow", "horizon": "year view|-year|over \\d+ years|period",
+        "admin_cost": "admin|salary", "licence": "licen[cs]e", "per_user_year": "subscription|per user",
+        "implementation": "implement", "users_per_server": "users? per|per server", "server_price": "server", "admins": "admins?\\b|fte"
+      }
+    },
+    {
+      "id": "services",
+      "domain": "Services",
+      "title": "Run it or buy it as a service",
+      "text": "The customer's own team against a managed service: onboarding, fees per device, tools, engineers and out-of-hours cover.",
+      "file": "services.yaml",
+      "requirements": { "devices": "Workloads", "growth": "Growth", "horizon": "Time period", "engineer_cost": "Current operating costs" },
+      "lines": {
+        "onboarding_cost": "Implementation", "fees": "Services", "tools_cost": "Software", "staff": "Operations", "cover_cost": "Operations"
+      },
+      "metrics": {},
+      "keys": {
+        "devices": "devices?|laptops?|endpoints?", "growth": "grow", "horizon": "year view|-year|over \\d+ years|period",
+        "engineer_cost": "engineer", "onboarding": "onboard|set-?up", "fee": "fee|per device", "tools": "tools?",
+        "engineers": "engineers?", "cover": "cover|out of hours|on-call"
+      }
+    }
+  ]
+}

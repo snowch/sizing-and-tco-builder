@@ -1,0 +1,158 @@
+dsl: 2
+model: software
+title: Business software for a number of users
+currency: GBP
+
+description: >-
+  Users today, grown to the end of the period; what a licence or subscription, its
+  implementation, the servers it runs on and the staff who run it cost over the period.
+  Definitional: no ceilings, no measured constants; right if its inputs are.
+
+nodes:
+
+  # -- what the customer needs: the same for every option ---------------------------------------
+
+  users:
+    kind: input
+    decided: outside
+    unit: count
+    label: users today
+
+  growth:
+    kind: input
+    decided: outside
+    unit: dimensionless
+    label: user growth a year, as a fraction
+
+  horizon:
+    kind: input
+    decided: outside
+    unit: year
+    label: evaluation period
+
+  admin_cost:
+    kind: input
+    decided: outside
+    unit: GBP/count/year
+    label: cost of one software admin a year
+
+  one_year:
+    kind: input
+    decided: definition
+    unit: year
+    value: 1
+    provenance: {kind: fact, source: definition}
+
+  # -- what one option provides and charges ----------------------------------------------------
+
+  included:
+    kind: input
+    decided: you
+    unit: dimensionless
+    value: 1
+    label: software is part of this option
+    note: One when the option covers the software, nought when it leaves it out.
+    provenance: {kind: assumption, source: "part of this option unless its scenario says otherwise"}
+
+  licence:
+    kind: input
+    decided: you
+    unit: GBP/count
+    label: licence per user, paid once
+
+  per_user_year:
+    kind: input
+    decided: you
+    unit: GBP/count/year
+    label: subscription or support per user a year
+
+  implementation:
+    kind: input
+    decided: you
+    unit: GBP
+    label: implementation, once
+
+  users_per_server:
+    kind: input
+    decided: you
+    unit: count/host
+    label: users one server supports
+
+  server_price:
+    kind: input
+    decided: you
+    unit: GBP/host
+    label: price per server
+
+  admins:
+    kind: input
+    decided: you
+    unit: count
+    label: admin staff needed
+
+  # -- the arithmetic ---------------------------------------------------------------------------
+
+  periods:
+    kind: derived
+    unit: dimensionless
+    label: years in the period, as a count
+    formula: horizon / one_year
+
+  users_end:
+    kind: derived
+    unit: count
+    label: users at the end
+    formula: users * (1 + growth) ** periods
+
+  user_years:
+    kind: derived
+    unit: count * year
+    label: user-years over the period
+    note: A straight line between today and the end; the error runs one way, high.
+    formula: (users + users_end) / 2 * horizon
+
+  servers:
+    kind: derived
+    unit: host
+    label: servers
+    formula: ceil(users_end / users_per_server)
+
+  licences:
+    kind: derived
+    unit: GBP
+    label: licences
+    formula: users_end * licence
+
+  subscription:
+    kind: derived
+    unit: GBP
+    label: subscription or support
+    formula: user_years * per_user_year
+
+  implementation_cost:
+    kind: derived
+    unit: GBP
+    label: implementation
+    formula: implementation
+
+  server_hardware:
+    kind: derived
+    unit: GBP
+    label: server hardware
+    formula: servers * server_price
+
+  administration:
+    kind: derived
+    unit: GBP
+    label: admin staff
+    formula: admins * admin_cost * horizon
+
+  total_cost:
+    kind: derived
+    unit: GBP
+    label: software cost over the period
+    formula: included * (licences + subscription + implementation_cost + server_hardware + administration)
+
+outputs:
+  - total_cost
+  - servers
