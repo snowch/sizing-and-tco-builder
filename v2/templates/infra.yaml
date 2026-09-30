@@ -43,11 +43,12 @@ nodes:
     unit: GiB
     label: peak memory in use
 
-  fill_margin:
+  fill_limit:
     kind: input
     decided: outside
     unit: dimensionless
-    label: share of each resource kept free
+    label: how full each resource may run, as a fraction
+    note: The customer's limit, e.g. 0.7 for "keep everything below 70% full".
 
   sites:
     kind: input
@@ -198,6 +199,12 @@ nodes:
     unit: dimensionless
     label: years in the period, as a count
     formula: horizon / one_year
+
+  fill_margin:
+    kind: derived
+    unit: dimensionless
+    label: share of each resource kept free
+    formula: 1 - fill_limit
 
   data_end:
     kind: derived

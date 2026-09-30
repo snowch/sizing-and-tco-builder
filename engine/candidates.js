@@ -60,17 +60,17 @@ export function findCandidates(text, inputs, { current = "current" } = {}) {
       const lead = m[0].length - m[0].trimStart().length;
       const at = m.index + lead, len = m[0].trim().length;
       const near = s.text.slice(Math.max(0, at - 4), at + len + 14);
-      const wider = s.text.slice(Math.max(0, at - 16), at + len + 24);
+      const wider = s.text.slice(Math.max(0, at - 24), at + len + 24);
       const scored = pool.map((i) => {
         if (!i.re || !fits(i, kind) || !i.re.test(s.text)) return { key: i.key, score: 0 };
         if (i.scope !== "shared" && i.scope !== current) return { key: i.key, score: 0 };
         if (i.scope === current && !today) return { key: i.key, score: 0 };
-        let score = 2;
-        if (i.re.test(near)) score += 3;
-        if (i.re.test(wider)) score += 1;
+        let score = 2, strong = false;
+        if (i.re.test(near)) { score += 3; strong = true; }
+        if (i.re.test(wider)) { score += 1; strong = true; }
         if (i.context && i.context.test(s.text)) score += 1;
         if (i.scope === current) score += 1;
-        return { key: i.key, score };
+        return { key: i.key, score, strong };
       }).filter((c) => c.score > 0).sort((a, b) => b.score - a.score);
       found.push({
         id: `c${k++}`,
@@ -95,8 +95,9 @@ export function findCandidates(text, inputs, { current = "current" } = {}) {
     const scored = c.scored.filter((x) => !taken.has(x.key));
     const top = scored[0];
     const ties = top ? scored.filter((x) => x.score === top.score) : [];
-    c.confidence = !top ? "none" : ties.length > 1 ? "ambiguous" : "confident";
-    c.target = top && ties.length === 1 ? top.key : "";
+    // Confident only when the input's words sit by the number, not just somewhere in the sentence.
+    c.confidence = !top ? "none" : ties.length > 1 || !top.strong ? "ambiguous" : "confident";
+    c.target = c.confidence === "confident" ? top.key : "";
     c.alternatives = scored.slice(0, 4).map((x) => x.key);
     if (c.target) taken.add(c.target);
     delete c.scored;

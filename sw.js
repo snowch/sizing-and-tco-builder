@@ -4,7 +4,7 @@
  * the cache's name carries the version.
  */
 
-const VERSION = "builder-1";
+const VERSION = "builder-2";
 /* Every file the page reaches. test/site.test.js fails if one is missing from this list. */
 const FILES = [
   "./",
@@ -26,6 +26,7 @@ const FILES = [
   "data/outline.json",
   "data/results.json",
   "data/units.json",
+  "engine/candidates.js",
   "engine/describe.js",
   "engine/evaluate.js",
   "engine/explore.js",
@@ -45,6 +46,24 @@ const FILES = [
   "engine/xlsx.js",
   "engine/yaml.js",
   "sw.js",
+  "v2/",
+  "v2/index.html",
+  "v2/app/evaluate.js",
+  "v2/app/explain.js",
+  "v2/app/interpret.js",
+  "v2/app/journey.js",
+  "v2/app/main.js",
+  "v2/app/parts.js",
+  "v2/app/questions.js",
+  "v2/app/results.js",
+  "v2/app/state.js",
+  "v2/app/style.css",
+  "v2/app/ui.js",
+  "v2/app/webllm.js",
+  "v2/templates/index.json",
+  "v2/templates/infra.yaml",
+  "v2/templates/services.yaml",
+  "v2/templates/software.yaml",
   "vendor/yaml/compose/compose-collection.js",
   "vendor/yaml/compose/compose-doc.js",
   "vendor/yaml/compose/compose-node.js",

@@ -18,7 +18,7 @@
       "file": "infra.yaml",
       "requirements": {
         "data_today": "Capacity", "growth": "Growth", "horizon": "Time period",
-        "cores": "Performance", "memory": "Performance", "fill_margin": "Performance",
+        "cores": "Performance", "memory": "Performance", "fill_limit": "Performance",
         "sites": "Locations", "power_price": "Current operating costs", "pue": "Current operating costs",
         "admin_cost": "Current operating costs"
       },
@@ -29,11 +29,11 @@
       },
       "metrics": { "sizing": "units", "capacity": "raw_capacity", "performance": "cores_fill" },
       "keys": {
-        "data_today": "usable|data|hold|storage", "growth": "grow", "horizon": "year view|-year|over \\d+ years|for \\d+ years|period",
-        "cores": "cores?|vcpu|processor", "memory": "memory|GiB|GB|RAM", "fill_margin": "below|full|headroom|utili[sz]",
+        "data_today": "usable|data|hold|storage", "growth": "grow", "horizon": "year view|-year view|over \\d+ years|horizon|period|compare",
+        "cores": "cores?|vcpu|processor", "memory": "memory|GiB|GB|RAM", "fill_limit": "below|full|headroom|utili[sz]",
         "sites": "sites?|locations?|data cent(re|er)s", "power_price": "kwh|electric", "pue": "pue|overhead",
         "admin_cost": "admin|salary", "unit_cores": "cores? (per|each)", "unit_memory": "(GiB|GB|memory) (per|each)",
-        "unit_tb": "raw|each|per (server|node|unit)", "protection": "protection|copies|replica|mirror|parity|erasure",
+        "unit_tb": "raw|each|per (server|node|unit)", "protection": "raw per usable|protection (factor|overhead)|copies|replica|parity|erasure",
         "price": "price|£\\S+ (each|per (server|node|unit))", "discount": "discount|off list", "rent": "month|rent|instance",
         "licence": "licen[cs]e", "support_rate": "support|maintenance", "watts": "watts?|\\bW\\b", "hosting": "rack|hosting|colo",
         "site_cost": "per site", "admins": "admins?\\b|fte", "migration": "migrat"
@@ -52,7 +52,7 @@
       },
       "metrics": {},
       "keys": {
-        "users": "users?|staff|seats|people", "growth": "grow", "horizon": "year view|-year|over \\d+ years|period",
+        "users": "users?|staff|seats|people", "growth": "grow", "horizon": "year view|-year view|over \\d+ years|horizon|period|compare",
         "admin_cost": "admin|salary", "licence": "licen[cs]e", "per_user_year": "subscription|per user",
         "implementation": "implement", "users_per_server": "users? per|per server", "server_price": "server", "admins": "admins?\\b|fte"
       }
@@ -69,7 +69,7 @@
       },
       "metrics": {},
       "keys": {
-        "devices": "devices?|laptops?|endpoints?", "growth": "grow", "horizon": "year view|-year|over \\d+ years|period",
+        "devices": "devices?|laptops?|endpoints?", "growth": "grow", "horizon": "year view|-year view|over \\d+ years|horizon|period|compare",
         "engineer_cost": "engineer", "onboarding": "onboard|set-?up", "fee": "fee|per device", "tools": "tools?",
         "engineers": "engineers?", "cover": "cover|out of hours|on-call"
       }

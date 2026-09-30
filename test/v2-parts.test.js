@@ -84,6 +84,6 @@ test("a part an option leaves out costs nothing: its included switch is a scenar
 test("the inputs behind an answer are found by walking its formulas", () => {
   const infra = parts.find((p) => p.id === "infra");
   const behind = inputsBehind(infra.doc, ["units"]);
-  assert.ok(behind.has("cores") && behind.has("unit_tb") && behind.has("fill_margin"));
+  assert.ok(behind.has("cores") && behind.has("unit_tb") && behind.has("fill_limit"));
   assert.ok(!behind.has("price") && !behind.has("power_price"), "a sizing answer does not need prices");
 });

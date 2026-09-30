@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solution Builder</title>
+<meta name="description" content="Tell it what you are trying to work out and what you know about the customer, and build a sizing or cost answer you can defend: every number with its origin, every calculation shown.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='1' y='1' width='6' height='5' rx='1' fill='%232a78d6'/%3E%3Crect x='9' y='10' width='6' height='5' rx='1' fill='%231f7a45'/%3E%3Cpath d='M7 3.5h2.5v9H9' stroke='%235d717c' fill='none'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="app/style.css">
+</head>
+<body>
+<header class="app">
+  <span class="brand">Solution Builder</span>
+  <span class="solution" id="solution-line">New answer</span>
+  <span class="head-actions">
+    <button type="button" class="expert-toggle" id="expert" aria-pressed="false" title="Show inputs, origins, dependencies, sensitivity and the model's structure everywhere">Expert view</button>
+    <button type="button" id="new" title="Start again">New</button>
+    <a href="../" class="note" title="The first builder: answer first, one model file at a time">v1</a>
+  </span>
+  <nav class="modes" aria-label="Mode">
+    <button type="button" id="m-build" aria-pressed="false" disabled>Build<small>construct</small></button>
+    <button type="button" id="m-results" aria-pressed="false" disabled>Results<small>communicate</small></button>
+    <button type="button" id="m-explain" aria-pressed="false" disabled>Explain<small>defend</small></button>
+  </nav>
+</header>
+
+<main>
+  <section id="v-start" class="start">
+    <h1>What are you trying to work out?</h1>
+    <div class="types" id="types" role="group" aria-label="The question"></div>
+    <p class="hint"><strong>Start with the question you need to answer.</strong> You can build the underlying solution later. <span id="typenote"></span></p>
+    <label class="big" for="sentence" style="margin-top:14px">Your question, in one sentence</label>
+    <input type="text" id="sentence">
+
+    <h2 class="q">What do you know about the customer?</h2>
+    <p class="hint">Paste your notes, requirements, email, meeting notes or numbers here. Nothing becomes an input until you confirm it.</p>
+    <textarea class="notes" id="notes" aria-label="Customer notes" placeholder="Customer has 500 TB of usable data today, growing by about 30% per year. They currently run 12 servers with 100 TB raw storage each. They want to compare their current environment with our solution over 5 years…"></textarea>
+    <div class="actions">
+      <button type="button" class="primary" id="go-find">Find candidate inputs</button>
+      <button type="button" class="ghost" id="go-skip">Skip: I'll enter values myself</button>
+      <button type="button" class="link" id="sample-notes">Try it with example notes about a made-up customer</button>
+    </div>
+    <p class="note" id="start-note"></p>
+  </section>
+
+  <section id="v-build" hidden>
+    <p class="viewtag">Build · construct the answer</p>
+    <div class="grid">
+      <div class="steps" id="steps"></div>
+      <aside class="model">
+        <p class="eyebrow">Your answer so far</p>
+        <p class="note" style="margin:4px 0 0" id="aside-q"></p>
+        <ul class="optsum" id="optsum"></ul>
+        <div class="row" style="margin-top:14px; justify-content:space-between">
+          <span class="need" id="need"></span>
+          <button type="button" class="primary" id="go-results" disabled>See the answer</button>
+        </div>
+        <div id="structure-box" hidden>
+          <p class="eyebrow" style="margin-top:16px">Model structure</p>
+          <p class="note" style="margin:2px 0 0">Every calculation, as the model file holds it.</p>
+          <div class="structure" id="structure"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="v-results" hidden>
+    <p class="viewtag">Results · communicate the answer</p>
+    <h2 class="view" id="res-title">The answer</h2>
+    <div id="answer"></div>
+    <div class="section">
+      <h3 class="sub" id="bd-title">Where the money goes</h3>
+      <div class="stack" id="stack"></div>
+      <div class="keys" id="keys"></div>
+      <div class="table-wrap"><table id="cost-table"></table></div>
+    </div>
+    <div class="section">
+      <h3 class="sub">What if…?</h3>
+      <p class="note" style="margin:2px 0 0">Each scenario is a copy of the model with one thing changed. <span class="unchanged">The original answer is unchanged.</span></p>
+      <div class="quick" id="quick"></div>
+      <div class="custom">
+        <select id="c-input" aria-label="Number to change"></select>
+        <input type="number" id="c-value" step="any" aria-label="New value" placeholder="New value">
+        <button type="button" class="ghost" id="c-add">Copy and change</button>
+      </div>
+      <div class="table-wrap"><table id="scen-table"></table></div>
+    </div>
+  </section>
+
+  <section id="v-explain" hidden>
+    <p class="viewtag">Explain · defend every number</p>
+    <h2 class="view">Why the answer is what it is</h2>
+    <p class="lead">Every figure traced back to what it rests on. Click any line to see where it came from, how it was calculated and what it feeds.</p>
+    <div class="against"><label for="focus" class="note">Explaining</label><select id="focus"></select></div>
+    <div class="explain-grid">
+      <section class="card"><div class="tree" id="explain-tree"></div></section>
+      <section class="card detail" id="detail"><p class="note">Click a line in the explanation to see its source, origin, calculation and what depends on it.</p></section>
+    </div>
+    <div class="section" id="flip-section">
+      <h3 class="sub" id="flip-title">What would change the answer?</h3>
+      <p class="note" style="margin:6px 0 0">Each line moves one number on its own, the others held, until the two totals meet. The smallest change is the one to be ready for.</p>
+      <ul class="flips" id="flips"></ul>
+    </div>
+    <details class="expert" id="expert-more">
+      <summary>Sensitivity, checks, every origin and the files <span class="note">for when the customer challenges the numbers</span></summary>
+      <div class="cols2" style="margin-top:14px">
+        <section class="card">
+          <p class="eyebrow" id="bars-title">What moves the answer most</p>
+          <p class="note" style="margin:4px 0 0">Each input moved 20% down and up on its own. The widest bar is the number worth checking first.</p>
+          <div class="bars" id="bars"></div>
+        </section>
+        <section class="card">
+          <p class="eyebrow">Checks</p>
+          <ul class="checks" id="checks"></ul>
+        </section>
+      </div>
+      <section class="card" style="margin-top:18px">
+        <p class="eyebrow">Where every number came from</p>
+        <div class="legend">
+          <span class="chip customer">Customer</span><span class="chip quote">Quote</span><span class="chip published">Published price</span><span class="chip assume">Assumption</span><span class="chip defn">Document</span><span class="chip calc">Calculated</span>
+        </div>
+        <div class="table-wrap"><table class="origins" id="origins-shared"></table></div>
+        <div class="table-wrap"><table class="origins" id="origins-opts"></table></div>
+      </section>
+      <section class="card" style="margin-top:18px">
+        <p class="eyebrow">The model files</p>
+        <p class="note" style="margin:4px 0 0">One model file with our solution's figures, one scenario file per other option. They open in the first builder and in the toolkit the checks come from.</p>
+        <ul class="files-list" id="files-list"></ul>
+        <pre class="file" id="file-view" hidden></pre>
+      </section>
+    </details>
+  </section>
+</main>
+<div class="pop" id="pop" hidden role="dialog" aria-label="Where this number came from"></div>
+<script type="module" src="app/main.js"></script>
+</body>
+</html>
