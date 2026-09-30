@@ -410,3 +410,8 @@ tr.gh td { text-align: left; }
 .bulk-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, .8fr) minmax(0, 1.4fr) auto; gap: 8px; align-items: center; }
 .bulk-row select, .bulk-row input { padding: 6px 8px; font-size: 13px; }
 @media (max-width: 760px) { .bulk-row { grid-template-columns: minmax(0, 1fr); } }
+table.opts .cell .val input[type="number"] { flex: 1 1 96px; min-width: 96px; width: auto; }
+.tree summary .tg { display: inline-block; width: 14px; color: var(--muted); cursor: pointer; }
+.tree summary .tg::before { content: "▸"; display: inline-block; transition: transform .15s; }
+.tree details[open] > summary .tg::before { transform: rotate(90deg); }
+.tree summary[data-node] .t::before { content: none; }

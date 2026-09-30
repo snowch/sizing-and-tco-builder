@@ -12,6 +12,8 @@ import { categories, catTotal } from "./results.js";
 import { calcChip, chip, inputName } from "./journey.js";
 
 const label = (nd) => nd.label ?? nd.name.replaceAll("_", " ");
+/* What a calculated node rests on, leaving out a part's included switch: a one that changes nothing. */
+const parts = (nd) => refsOf(nd.kind === "derived" ? nd.formula : nd.of).filter((r) => !/(^|_)included$/.test(r));
 const FUNC_WORDS = { ceil: "round up", floor: "round down", max: "largest of", min: "smallest of", sqrt: "square root of", exp: "e to the", log: "log of" };
 
 /* A formula in words, or with this option's numbers in it. */
@@ -48,9 +50,9 @@ function tree(app, o, ev, name, { open = false, who = false } = {}) {
   if (nd.kind === "derived" && /(^|_)total_cost$/.test(name) && !coversPart(state, o, partOf(state, name)) ) {
     return `<details><summary class="leaf"><span class="t"><span class="who">${esc(o.name)}:</span> ${esc(label(nd))}</span><span class="tv">${money(0, cur)}</span><span class="f">Not part of this option.</span></summary></details>`;
   }
-  const kids = refsOf(nd.kind === "derived" ? nd.formula : nd.of).map((r) => tree(app, o, ev, r)).join("");
+  const kids = parts(nd).map((r) => tree(app, o, ev, r)).join("");
   const head = who ? `<span class="who">${esc(o.name)}:</span> ${esc(label(nd))}` : `${esc(label(nd))} ${calcChip}`;
-  return `<details${open ? " open" : ""}><summary data-node="${o.id}|${name}"><span class="t">${head}</span><span class="tv">${esc(fmt(value, nd.unit, cur))}</span><span class="f">${esc(formula(app, nd, ev, true))} = ${esc(formula(app, nd, ev, false))}</span></summary>${kids}</details>`;
+  return `<details${open ? " open" : ""}><summary data-node="${o.id}|${name}"><span class="t"><span class="tg" aria-hidden="true"></span>${head}</span><span class="tv">${esc(fmt(value, nd.unit, cur))}</span><span class="f">${esc(formula(app, nd, ev, true))} = ${esc(formula(app, nd, ev, false))}</span></summary>${kids}</details>`;
 }
 const tone = (d) => (Math.abs(d) < 0.5 ? "" : d > 0 ? "good" : "bad");
 const edge = (d, cur) => (Math.abs(d) < 0.5 ? "even" : `${money(Math.abs(d), cur)} ${d > 0 ? "to us" : "to them"}`);
@@ -87,7 +89,7 @@ function showDetail(app, oid, name) {
     body = `<dl><dt>Value</dt><dd class="v">${esc(fmt(valueOf(ev, name), nd.unit, cur))}</dd><dt>Origin</dt><dd>${calcChip}</dd>
       <dt>Calculation</dt><dd>${esc(label(nd))} = ${esc(formula(app, nd, ev, true))}<br><span class="mono">= ${esc(formula(app, nd, ev, false))}</span></dd>
       ${nd.note ? `<dt>Note</dt><dd>${esc(nd.note)}</dd>` : ""}
-      <dt>Made of</dt><dd><ul>${refsOf(nd.kind === "derived" ? nd.formula : nd.of).map((r) => `<li>${link(r)}</li>`).join("")}</ul></dd>
+      <dt>Made of</dt><dd><ul>${parts(nd).map((r) => `<li>${link(r)}</li>`).join("")}</ul></dd>
       <dt>Used by</dt><dd>${usedBy.length ? `<ul>${usedBy.map((x) => `<li>${link(x.name)}</li>`).join("")}</ul>` : "The answer"}</dd></dl>`;
   } else {
     const i = inputFor(app, o, name);
@@ -116,7 +118,13 @@ export function drawExplain(app) {
   sel.onchange = () => { const [kind, id] = sel.value.split("|"); state.focus = { kind, id }; app.save(); drawExplain(app); };
   const f = state.focus;
   $("explain-tree").innerHTML = f.kind === "saving" ? savingTree(app, optionById(state, f.id)) : totalTree(app, optionById(state, f.id));
-  $("explain-tree").onclick = (e) => { const s = e.target.closest("summary[data-node]"); if (s && !e.target.closest("button")) { const [a, x] = s.dataset.node.split("|"); showDetail(app, a, x); } };
+  $("explain-tree").onclick = (e) => {
+    const s = e.target.closest("summary[data-node]");
+    if (!s || e.target.closest("button")) return;
+    // The arrow opens and closes; the line itself tells the number's story without collapsing.
+    if (!e.target.closest(".tg")) e.preventDefault();
+    const [a, x] = s.dataset.node.split("|"); showDetail(app, a, x);
+  };
   $("detail").innerHTML = `<p class="note">Click a line in the explanation to see its source, origin, calculation and what depends on it.</p>`;
 
   const them = f.kind === "saving" ? optionById(state, f.id) : state.options.find((o) => o !== us);
