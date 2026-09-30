@@ -12,6 +12,8 @@ import { drawAnswers, drawCoach, drawGraph, drawHeader, drawPanel, drawRefine, d
 import { openWizard, wireWizardButtons } from "./wizard.js";
 import { drawTable } from "./table.js";
 import { drawExplore } from "./explore.js";
+import { applyGuide, notice, showEverything, showingEverything } from "./guide.js";
+import { SHAPES, shapeFrom } from "../engine/template.js";
 import { ANSWERS, PATTERNS, money } from "./words.js";
 import { judge } from "./judge.js";
 import { checks, files, nextStep, preview, reinfer } from "./workbench.js";
@@ -100,7 +102,8 @@ async function boot() {
     app.ranges = checking ? null : app.verdict.ranges;
     const answerUnit = state.pending.find((p) => p.name === state.answer)?.unit;
     const answerUnitIsHosts = Boolean(answerUnit) && /^hosts?$/.test(answerUnit.trim());
-    app.next = checking && !state.pending.length && state.answer && state.horizon !== null ? { id: "checking" } : nextStep(state, { checks: app.checks, answerUnitIsHosts });
+    app.next = nextStep(state, { checks: app.checks, answerUnitIsHosts });
+    if (checking && ["fix", "refine", "done"].includes(app.next.id)) app.next = { id: "checking" };
     if (!app.ui.selected && state.answer) app.ui.selected = state.answer;
     $("add-output").hidden = !state.answer || Boolean(state.example);
     drawHeader(app);
@@ -112,11 +115,21 @@ async function boot() {
     drawExplore(app);
     drawAnswers(app);
     drawPanel(app);
+    applyGuide(app);
   }
 
   function showStart() {
     $("start").hidden = false;
     $("goals").innerHTML = Object.entries(ANSWERS).map(([k, a]) => `<button type="button" class="goal" data-goal="${k}"><strong>${esc(a.title)}</strong><span>${esc(a.blurb)}</span>${a.unit ? `<span><code>${esc(money(a.unit, app.state.doc.currency))}</code></span>` : "<span><code>your unit</code></span>"}</button>`).join("");
+    $("shapes").innerHTML = SHAPES.map((s) => `<button type="button" class="goal" data-shape="${esc(s.id)}"><strong>${esc(s.title)}</strong><span>${esc(s.blurb)}</span></button>`).join("");
+    for (const b of $("shapes").querySelectorAll("[data-shape]")) {
+      b.addEventListener("click", () => {
+        app.state = fromShape(SHAPES.find((s) => s.id === b.dataset.shape));
+        app.ui = { tab: "node", selected: app.state.answer };
+        $("start").hidden = true;
+        app.commit();
+      });
+    }
     $("examples").innerHTML = ctx.examples.map((e) => `<button type="button" data-example="${esc(e.id)}">${esc(e.title)}</button>`).join("");
     for (const b of $("goals").querySelectorAll("[data-goal]")) {
       b.addEventListener("click", () => {
@@ -144,7 +157,20 @@ async function boot() {
     $("goals").querySelector(".goal")?.focus();
   }
 
-  /* A model file (and its scenarios) read with the engine, as the book reads it, into the state. */
+  /* A shape to start from: the whole tree of a model like the reader's, with every number blank. */
+  function fromShape(shape) {
+    const state = emptyState();
+    const doc = shapeFrom(shape, ctx.examples, { registry: ctx.registry, results: ctx.results });
+    state.doc = { ...doc, nodes: doc.nodes.map((n) => (n.kind === "input" ? { ...n, sure: "none" } : n)) };
+    state.goal = "other";
+    state.shape = shape.id;
+    state.answer = doc.outputs[0];
+    state.horizon = doc.nodes.some((n) => n.name === "horizon") ? "horizon" : "none";
+    state.hosts = "opened";
+    return state;
+  }
+
+  /* A model file (and its scenarios) read with the engine, into the state. */
   function openFiles(textByPath) {
     const modelPath = Object.keys(textByPath).find((p) => /(^|\/)model\.ya?ml$/.test(p)) ?? Object.keys(textByPath).find((p) => /^\s*nodes:/m.test(textByPath[p]));
     if (!modelPath) return { error: "None of these is a model file: a model file has a nodes: section." };
@@ -215,9 +241,14 @@ async function boot() {
   for (const b of document.querySelectorAll("[data-view]")) {
     b.addEventListener("click", () => {
       app.ui.view = b.dataset.view;
+      notice(app, `view:${b.dataset.view}`);
       draw();
     });
   }
+  $("guide").addEventListener("click", () => {
+    showEverything(!showingEverything());
+    draw();
+  });
   $("theme").addEventListener("click", () => {
     const root = document.documentElement;
     const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
@@ -226,6 +257,7 @@ async function boot() {
   for (const b of $("tabs").querySelectorAll("[data-tab]")) {
     b.addEventListener("click", () => {
       app.ui.tab = b.dataset.tab;
+      notice(app, `tab:${b.dataset.tab}`);
       if ((b.dataset.tab === "sources" || b.dataset.tab === "measure") && !app.state.seen.includes(b.dataset.tab) && !app.state.example) {
         app.state.seen.push(b.dataset.tab);
         app.commit();

@@ -56,7 +56,7 @@ export function rows(app) {
 function shownValue(v) {
   if (!v) return "";
   if (v.state === "ok") return fmt(v.value);
-  return { "to-define": "to define", waits: `waits on ${v.waits} to define`, "not-yet-measured": "not yet measured", unit: "unit problem", formula: "formula does not parse", "unknown-unit": "unknown unit" }[v.state] ?? "cannot be worked out";
+  return { "to-define": "to define", waits: `waits on ${v.waits} to define`, "not-yet-measured": v.blank ? "no number yet" : "not yet measured", unit: "unit problem", formula: "formula does not parse", "unknown-unit": "unknown unit" }[v.state] ?? "cannot be worked out";
 }
 
 const COLUMNS = [

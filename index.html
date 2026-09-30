@@ -15,6 +15,7 @@
   <span id="klass" class="badge" hidden></span>
   <span class="sub" id="qline"></span>
   <span class="grow"></span>
+  <button id="guide" type="button" aria-pressed="false">Show everything</button>
   <button id="new" type="button">New model</button>
   <button id="open" type="button">Open a file</button>
   <input id="openfile" type="file" accept=".yaml,.yml,text/yaml" multiple hidden>
@@ -80,6 +81,9 @@
     <h1>What are you being asked for?</h1>
     <p class="lead">Start from the answer and work back. You name the answer; the builder asks what it is made of, and each thing you name is given, measured, or worked out from more things. You stop when everything is given. It never fills in a number for you.</p>
     <div class="goals" id="goals"></div>
+    <h2 class="starthead">Or start from a shape</h2>
+    <p class="note">A model like yours, already worked back, with every number left for you: you fill in each one and say where it comes from.</p>
+    <div class="goals shapes" id="shapes"></div>
     <div class="startfoot">
       <span class="note">Or look around a finished example first:</span>
       <div class="chips" id="examples"></div>

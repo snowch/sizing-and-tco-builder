@@ -71,6 +71,26 @@ export function pendingOrder(state, nodes = graph(state)) {
   return out;
 }
 
+/*
+ * Inputs with no number yet, nearest the answers first: what a model started from a shape asks
+ * for next. One the reader has put off for now waits at the end.
+ */
+export function blanksOrder(state, nodes = graph(state)) {
+  const out = [];
+  const seen = new Set();
+  const queue = [...state.doc.outputs];
+  while (queue.length) {
+    const name = queue.shift();
+    if (seen.has(name) || !nodes.has(name)) continue;
+    seen.add(name);
+    const node = nodes.get(name).node;
+    if (node?.kind === "input" && node.sure === "none") out.push(name);
+    queue.push(...sorted(nodes.get(name).depends));
+  }
+  const later = state.later ?? [];
+  return [...out.filter((n) => !later.includes(n)), ...out.filter((n) => later.includes(n))];
+}
+
 /* Everything upstream of a node. */
 export function upstream(nodes, name) {
   const seen = new Set();
@@ -186,7 +206,9 @@ export function preview(state, { registry, results }, nodes = graph(state)) {
   for (const name of model.order) {
     const node = complete.get(name);
     if (stuck.has(name)) {
-      out.set(name, { state: "not-yet-measured", because: stuck.get(name) });
+      // Waiting for a number nobody has given (a blank input) reads differently from waiting for a
+      // measurement nobody has taken.
+      out.set(name, { state: "not-yet-measured", because: stuck.get(name), blank: stuck.get(name).some((c) => complete.get(c)?.missing) });
       continue;
     }
     if (unitTrouble.has(name)) {
@@ -413,6 +435,8 @@ export function nextStep(state, { checks: list, answerUnitIsHosts }) {
   }
   const todo = pendingOrder(state)[0];
   if (todo) return { id: "define", name: todo, chapter: "what_a_workload_is" };
+  const blank = blanksOrder(state)[0];
+  if (blank && !(state.later ?? []).includes(blank)) return { id: "fill", name: blank, left: blanksOrder(state).length, chapter: "where_the_numbers_come_from" };
   const failing = list.find((c) => c.level === "fail");
   if (failing) return { id: "fix", check: failing, chapter: failing.chapter };
   const refine = REFINE.find((r) => !refinementDone(state, r.id) && !state.skipped.includes(r.id));

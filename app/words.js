@@ -157,7 +157,7 @@ export const PROVENANCE_WORDS = { fact: "fact", vendor_claim: "vendor's claim", 
 export const SURE = [
   ["one", "One number", "Enough for a decision, or for now."],
   ["shape", "A range with a shape", "How low and how high it might settle, and how likely each is."],
-  ["none", "Not known yet", "No number. It and everything downstream show as not yet measured until you have one. Never a placeholder."],
+  ["none", "Not known yet", "No number. It and everything worked out from it show as having no number yet, until you have one. Never a placeholder."],
 ];
 
 export const SHAPES = {

@@ -25,7 +25,7 @@ function valueText(v, unit = "") {
     case "waits":
       return `waits on ${v.waits} to define`;
     case "not-yet-measured":
-      return "not yet measured";
+      return v.blank ? "no number yet" : "not yet measured";
     case "unit":
       return "unit problem";
     case "formula":
@@ -85,7 +85,7 @@ export function drawTree(app) {
     const label = entry.node?.label || entry.pending?.label || name;
     const flag = v?.state === "to-define" ? '<span class="todo">define</span>'
       : v?.state === "waits" ? `<span class="todo waits">waits on ${v.waits}</span>`
-        : v?.state === "not-yet-measured" ? '<span class="todo nym">not yet measured</span>'
+        : v?.state === "not-yet-measured" ? `<span class="todo nym">${v.blank ? "no number yet" : "not yet measured"}</span>`
           : ["unit", "formula", "unknown-unit", "error"].includes(v?.state) ? `<span class="todo bad">${esc(valueText(v))}</span>`
             : `<span class="v">${esc(valueText(v))}</span>`;
     return `<li style="padding-left:${depth * 14}px"><button type="button" class="treeitem" data-node="${esc(name)}" aria-current="${ui.selected === name}"><i class="swatch ${kindClass(app, name, v)}"></i><span class="n">${esc(label)}${again ? ' <span class="note">(above)</span>' : ""}</span>${again ? "" : flag}</button></li>`;
@@ -164,6 +164,11 @@ export function drawCoach(app) {
       const p = state.pending.find((x) => x.name === next.name);
       const parents = parentsOf(nodes, next.name);
       return set("", "Next step", `Define ${p?.label || next.name}`, `${parents.length ? `Needed by ${esc(parents.join(", "))}. ` : ""}Is it given, worked out, or measured?`, "what_a_workload_is", [["Define it", () => openWizard(app, { type: "define", name: next.name })]]);
+    }
+    case "fill": {
+      const node = state.doc.nodes.find((n) => n.name === next.name);
+      const who = { you: "It is yours to decide.", outside: "It is outside your control: find out what it is, from a measurement, a bill or someone who knows.", definition: "It is true by definition." }[node?.decided] ?? "";
+      return set("", `Next step · ${next.left} to fill in`, `What is ${node?.label || next.name}, in ${node?.unit === "dimensionless" ? "plain numbers" : node?.unit}?`, `${esc(who)} Give the number and say where it comes from. Not known yet is an answer too: everything that rests on it will wait for it.`, next.chapter, [["Later", () => { state.later = [...(state.later ?? []), next.name]; app.commit(); }], ["Fill it in", () => openWizard(app, { type: "edit", name: next.name, step: "source" })]]);
     }
     case "fix":
       return set("fix", "Fix first", next.check.text, "A model with this problem is not finished: the checks refuse it.", next.check.chapter, [["See the checks", () => { app.ui.tab = "checks"; if (next.check.node) app.ui.selected = next.check.node; app.render(); }]]);

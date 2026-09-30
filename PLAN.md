@@ -319,6 +319,31 @@ break-even, the plane's boundary, payback by year and the five-year breakdown fr
 alone, to a part in a billion. A flow draws all three charts on the seller's model and checks the
 break-evens the page reports against the book's.
 
+### Getting started: shapes, and a guided page
+
+For someone who does not know where to begin, the start screen offers **shapes**: a situation
+(machines for a service, the running cost of a fleet, keep or replace, check a vendor's TCO, what
+arrives and what piles up), each a worked example's structure with every number taken out
+(`engine/template.js`). Nodes, formulas, units, labels and who decides each input are kept; every
+value, range, source, note, correlation and ceiling is not, and a measured constant becomes an
+input to find out, since a measurement of someone else's system is not a figure about yours. Only
+what the shape's answers rest on is kept. `test/template.test.js` holds each shape to being blank
+and to being whole: given the example's own numbers, it passes every check and gives exactly the
+example's answers.
+
+The next-step card then walks through each blank, nearest the answer first ("What is the cost of
+the move, in USD?"), opening the wizard at where the number comes from; "not known yet" and
+"later" move a blank to the back of the queue.
+
+The page is **guided** unless the reader asks to see everything: it shows what the model is ready
+for, and each feature appears when it becomes useful (the checks and the file once nothing is
+left to define; the table once something is worked out; scenarios and Explore once the answer
+has a number; measure first once an input has a range), marked "new" until used. What shows is
+worked out from the model alone, so a finished model, an example or an opened file shows
+everything at once, and nobody can be stuck behind a step. "Show everything" in the header turns
+guidance off, remembered in the browser. A flow starts from a shape, fills every blank as asked,
+checks the page grows as described, and hands the file to the book's toolkit.
+
 ### The page stands on its own
 
 The builder is for someone who has not read the book. Every explanation on the page is complete

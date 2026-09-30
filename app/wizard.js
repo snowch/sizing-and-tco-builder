@@ -83,6 +83,8 @@ export function openWizard(app, spec) {
     Object.assign(draft, { kind: "ceiling", name: "", label: "", headroom: "" });
   }
   W = { type: spec.type, original: spec.name ?? null, step: 0, draft };
+  // Straight to the question that matters, where the steps before it are already answered.
+  if (spec.step) W.step = Math.max(0, stepsOf(W).indexOf(spec.step));
   $("wizard").hidden = false;
   draw();
 }
@@ -185,7 +187,7 @@ const VIEWS = {
       }
     }
     if (d.sure === "none") {
-      body = `<div class="verdict warn">It and everything downstream will show as not yet measured. A scenario cannot be worked out with an input that has no number, so the checks will ask for one before the model is finished: give it a number, or make it a measurement nobody has taken yet.</div>`;
+      body = `<div class="verdict warn">It and everything worked out from it will show as having no number yet. A scenario cannot be worked out with an input that has no number, so the checks will ask for one before the model is finished: give it a number, or make it a measurement nobody has taken yet.</div>`;
     }
     const range = d.sure === "one" || d.sure === "shape"
       ? `<div class="grid2">${field("w-r0", "Slider from (optional)", d.range?.[0] ?? "", { type: "number" })}${field("w-r1", "to", d.range?.[1] ?? "", { type: "number" })}</div><p class="note">The span Explore draws it across, and a viewer lets someone drag it across. Not a claim about how likely any value is.</p>`
@@ -530,6 +532,11 @@ function finish() {
     default: {
       const node = nodeForFile(d);
       putNode(state, node, W.original ?? d.name);
+      // "Not known yet" is an answer: it waits at the back of the queue rather than being asked again.
+      if (d.kind === "input") {
+        const later = (state.later ?? []).filter((n) => n !== node.name && n !== W.original);
+        state.later = d.sure === "none" ? [...later, node.name] : later;
+      }
       if (d.kind === "derived") addNewNames(d.formula, d.unit, d.name);
       if (d.kind === "ceiling") {
         const u = ceilingUnit(d).unit;

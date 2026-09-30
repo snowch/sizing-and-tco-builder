@@ -464,6 +464,62 @@ test("Explore draws the seller's charts, and their numbers are the book's", asyn
   await r.context.close();
 });
 
+test("a newcomer starts from a shape, fills each blank as asked, and the page grows with the model", async () => {
+  const r = await Reader.start();
+  const p = r.page;
+  const visible = (sel) => p.locator(sel).isVisible();
+  await p.click('[data-shape="vendor_tco"]');
+  // The whole tree is there, and every input is blank: no number came with the shape.
+  const blanks = await p.evaluate(() => builder.state.doc.nodes.filter((n) => n.kind === "input").map((n) => [n.name, n.value, n.provenance.source]));
+  assert.equal(blanks.length, 8);
+  assert.ok(blanks.every(([, value, source]) => value === null && source === ""), JSON.stringify(blanks));
+  // Guided: the checks and the file are there (nothing is left to define); what needs numbers is not.
+  assert.ok(await visible('[data-tab="checks"]'));
+  for (const hidden of ['[data-tab="scenarios"]', '[data-tab="measure"]', '[data-view="explore"]', '[data-view="table"]']) assert.ok(!(await visible(hidden)), `${hidden} shows too early`);
+  // The decision first, then each blank in turn.
+  assert.equal((await r.coach()).id, "decision");
+  await p.click("#coach button.primary");
+  await p.fill("#w-decision", "Whether to put this product in front of the customer.");
+  await r.next();
+  const numbers = { horizon: 5, usage_hosts: 50, current_cost_per_host: 7000, scaling_share: 0.6, benchmark_advantage: 3, transfer_factor: 0.8, proposed_cost_per_host: 12000, move_cost: 250000 };
+  const asked = [];
+  for (let guard = 0; guard < 12; guard += 1) {
+    const next = await r.coach();
+    if (next.id !== "fill") break;
+    asked.push(next.name);
+    await p.click("#coach button.primary");
+    // The wizard opens at the question that matters: where the number comes from.
+    await p.click('[data-prov="assumption"]');
+    await p.fill("#w-source", `the customer's own figure, from the account review`);
+    await r.next();
+    await p.click('[data-sure="one"]');
+    await r.number("#w-value", numbers[next.name]);
+    await r.next();
+    await r.next();
+    assert.ok(!(await p.isVisible("#wizard")), `the wizard is still open after ${next.name}: ${await r.problem()}`);
+  }
+  assert.deepEqual([...asked].sort(), Object.keys(numbers).sort());
+  // Now the model is complete: scenarios and Explore appear, marked new; ranges are not there yet, so measure first is not.
+  await r.settled();
+  assert.ok(await visible('[data-tab="scenarios"]') && await visible('[data-view="explore"]'));
+  assert.match(await p.locator('[data-view="explore"]').getAttribute("class"), /\bnew\b/);
+  assert.ok(!(await visible('[data-tab="measure"]')));
+  await p.click('[data-view="explore"]');
+  assert.doesNotMatch(await p.locator('[data-view="explore"]').getAttribute("class") ?? "", /\bnew\b/);
+  // Show everything shows every feature, whatever the model is ready for.
+  await p.click("#guide");
+  assert.ok(await visible('[data-tab="measure"]'));
+  await p.click("#guide");
+  // The book's toolkit reads the file and gives the answer the numbers imply.
+  const verdict = book(await r.files());
+  if (verdict) {
+    assert.ok(verdict.ok, JSON.stringify(verdict.problems));
+    assert.ok(Math.abs(verdict.points.reference.saving - -450000) < 1e-6, String(verdict.points.reference.saving));
+  }
+  assert.deepEqual(r.errors, []);
+  await r.context.close();
+});
+
 test("it works with no network once it has loaded", async () => {
   const r = await Reader.start();
   await r.page.evaluate(() => navigator.serviceWorker.ready);
