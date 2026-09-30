@@ -435,13 +435,28 @@ test("Explore draws the seller's charts, and their numbers are the book's", asyn
   const book = seller.breakdown.options.find((o) => o.key === "sellers_guesses");
   const row = parts.find((r) => r[0] === fmt(shares[2]));
   assert.ok(Math.abs(row[1] - book.stays) < 1e-6 * book.stays && Math.abs(row[2] - book.proposed_hosts) < 1e-6 * book.proposed_hosts && row[3] === book.move, JSON.stringify(row));
+  // Cases that change two inputs at once: the book's three options, written out, give the book's parts exactly.
+  await p.selectOption("#x-cases", "written");
+  await p.fill("#x-written", [
+    "brochure: transfer_factor = 1, scaling_share = 1",
+    `bottom_up_assumptions: transfer_factor = 1, scaling_share = ${shares[1]}`,
+    "sellers_guesses:",
+    "a typo: transfer_factr = 1",
+  ].join("\n"));
+  await p.press("#x-written", "Tab");
+  assert.match(await p.locator("#x-written + .hint").innerText(), /no input called transfer_factr/);
+  const written = await p.evaluate(() => builder.explore.rows.slice(builder.explore.rows.findIndex((r) => r.length === 0) + 2));
+  for (const option of seller.breakdown.options) {
+    const got = written.find((r) => r[0] === option.key);
+    [option.stays, option.proposed_hosts, option.move].forEach((want, j) => assert.ok(Math.abs(got[1 + j] - want) <= 1e-9 * Math.max(1, want), `${option.key} part ${j}: ${got[1 + j]}, book ${want}`));
+  }
   // The chart downloads on its own, and its numbers ride along in the spreadsheet.
   const [svg] = await Promise.all([p.waitForEvent("download"), p.click("#x-svg")]);
   assert.match(readFileSync(await svg.path(), "utf8"), /^<\?xml[\s\S]*<svg[\s\S]*current_total \* \(1 - scaling_share\)/);
   await p.click('[data-tab="file"]');
   const [xlsx] = await Promise.all([p.waitForEvent("download"), p.click("#f-xlsx")]);
   const sheet = recalculated(await xlsx.path(), "Chart");
-  if (sheet) assert.ok(sheet.some((line) => line[0] === fmt(shares[1])), JSON.stringify(sheet.slice(0, 8)));
+  if (sheet) assert.ok(sheet.some((line) => line[0] === "bottom_up_assumptions"), JSON.stringify(sheet.slice(0, 8)));
   // On a phone, nothing scrolls the page sideways.
   await p.setViewportSize({ width: 360, height: 740 });
   assert.equal(await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), 0);

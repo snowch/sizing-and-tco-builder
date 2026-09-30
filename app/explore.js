@@ -48,6 +48,11 @@ function drawable(app) {
 /* The cases a chart draws: each scenario, or values of one input on top of a scenario. */
 function casesOf(app, e) {
   const scenario = (name) => app.state.scenarios.find((s) => s.scenario === name);
+  if (e.cases === "written") {
+    const base = new Map(Object.entries(scenario(e.base)?.overrides ?? {}));
+    const { cases } = parseCases(e.written, movable(app));
+    return { base, heading: "case", list: cases.slice(0, SERIES) };
+  }
   if (e.cases === "values" && e.caseInput) {
     const base = new Map(Object.entries(scenario(e.base)?.overrides ?? {}));
     return {
@@ -61,6 +66,33 @@ function casesOf(app, e) {
     heading: "scenario",
     list: app.state.scenarios.slice(0, SERIES).map((s) => ({ key: s.scenario, label: s.title || s.scenario, overrides: new Map(Object.entries(s.overrides ?? {})) })),
   };
+}
+
+/*
+ * Cases the reader writes, one a line: a label, a colon, and the inputs it changes, each
+ * "name = number", separated by commas. A line with no changes is the scenario as it stands.
+ * A name the model has not got, or a value that is not a number, is reported, not guessed at.
+ */
+export function parseCases(text, known) {
+  const cases = [];
+  const problems = [];
+  String(text ?? "").split("\n").map((l) => l.trim()).filter(Boolean).forEach((line, i) => {
+    const colon = line.indexOf(":");
+    const label = colon >= 0 ? line.slice(0, colon).trim() : "";
+    const rest = colon >= 0 ? line.slice(colon + 1) : line;
+    const overrides = new Map();
+    let ok = true;
+    for (const part of rest.split(",").map((p) => p.trim()).filter(Boolean)) {
+      const m = /^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(\S+)$/.exec(part);
+      const value = m ? Number(m[2]) : NaN;
+      if (!m) { problems.push(`line ${i + 1}: "${part}" is not name = number`); ok = false; continue; }
+      if (!known.includes(m[1])) { problems.push(`line ${i + 1}: the model has no input called ${m[1]}`); ok = false; continue; }
+      if (!Number.isFinite(value)) { problems.push(`line ${i + 1}: ${m[2]} is not a number`); ok = false; continue; }
+      overrides.set(m[1], value);
+    }
+    if (ok) cases.push({ key: `case ${i + 1}: ${label}`, label: label || `case ${i + 1}`, overrides });
+  });
+  return { cases, problems };
 }
 
 function parseValues(text) {
@@ -345,7 +377,9 @@ export function drawExplore(app) {
     e.kind === "plane" ? pick("x-y", "And up", inputs.filter((n) => n !== e.x), e.y) : "",
     e.kind !== "compare" ? `<div class="field"><label for="x-target">${e.kind === "plane" ? "The line is where the answer is" : "Mark where it meets"}</label><input id="x-target" inputmode="decimal" value="${e.target === null ? "" : esc(String(e.target))}" placeholder="nothing"></div>` : "",
   ].join("");
-  const caseControls = `<div class="field"><label for="x-cases">${{ plane: "A dot for each", compare: "A bar for each", sweep: "A line for each" }[e.kind]}</label><select id="x-cases">${option("scenarios", "scenario", e.cases)}${option("values", "value of an input", e.cases)}</select></div>
+  const caseControls = `<div class="field"><label for="x-cases">${{ plane: "A dot for each", compare: "A bar for each", sweep: "A line for each" }[e.kind]}</label><select id="x-cases">${option("scenarios", "scenario", e.cases)}${option("values", "value of an input", e.cases)}${option("written", "case you write", e.cases)}</select></div>
+    ${e.cases === "written" ? `<div class="field wide"><label for="x-written">The cases, one a line</label><textarea id="x-written" class="mono" rows="4" placeholder="${esc(`brochure: ${inputs.slice(0, 2).map((n) => `${n} = …`).join(", ")}`)}">${esc(e.written ?? "")}</textarea><span class="hint">A label, a colon, then what the case changes: <code>name = number</code>, separated by commas. Each is on top of the scenario beside. A line with nothing after its colon is that scenario as it stands.${(() => { const { problems } = parseCases(e.written, inputs); return problems.length ? ` <span style="color:var(--bad)">${esc(problems.join("; "))}.</span>` : ""; })()}</span></div>
+      <div class="field"><label for="x-base">On top of the scenario</label><select id="x-base">${app.state.scenarios.map((s) => option(s.scenario, s.scenario, e.base)).join("")}</select></div>` : ""}
     ${e.cases === "values" ? `${pick("x-case-input", "Input", inputs, e.caseInput ?? "", e.caseInput ? "" : option("", "choose one", ""))}
       <div class="field"><label for="x-values">Its values</label><input id="x-values" class="mono" value="${esc(e.values ?? "")}" placeholder="${esc(e.caseInput ? valuesInFiles(app, e.caseInput).map(fmt).join(", ") : "")}"><span class="hint">Separated by commas. ${e.caseInput ? `The files give it ${esc(valuesInFiles(app, e.caseInput).map(fmt).join(", ") || "no value")}.` : ""}</span></div>
       <div class="field"><label for="x-base">On top of the scenario</label><select id="x-base">${app.state.scenarios.map((s) => option(s.scenario, s.scenario, e.base)).join("")}</select></div>` : ""}`;
@@ -385,6 +419,7 @@ function wire(app, wrap, e, chart) {
   on("x-cases", (v) => { e.cases = v; });
   on("x-case-input", (v) => { e.caseInput = v || null; if (!e.values && v) e.values = valuesInFiles(app, v).join(", "); });
   on("x-values", (v) => { e.values = v; });
+  on("x-written", (v) => { e.written = v; });
   on("x-base", (v) => { e.base = v; });
   wrap.querySelector("#x-forget")?.addEventListener("click", () => { e.typed = {}; redraw(); });
   wrap.querySelector("#x-range")?.addEventListener("click", () => {

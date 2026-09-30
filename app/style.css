@@ -363,3 +363,5 @@ ul.chart-legend .sw.s5 { background: var(--s5); }
 ul.chart-legend .sw.s6 { background: var(--s6); }
 ul.chart-legend .sw.s7 { background: var(--s7); }
 ul.chart-legend .sw.s8 { background: var(--s8); }
+.explore-controls .field.wide { grid-column: span 2; }
+@media (max-width: 720px) { .explore-controls .field.wide { grid-column: auto; } }
