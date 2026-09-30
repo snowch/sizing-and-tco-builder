@@ -1,7 +1,7 @@
 {
  "about": "A model with no nodes key.",
  "files": {
-  "model.yaml": "dsl: 1\nmodel: tiny\ntitle: No nodes\ncurrency: USD\noutputs: []\n",
+  "model.yaml": "dsl: 2\nmodel: tiny\ntitle: No nodes\ncurrency: USD\noutputs: []\n",
   "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
  },
  "id": "invalid/missing-nodes",

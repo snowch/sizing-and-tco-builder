@@ -1,6 +1,6 @@
 {
  "book": {
-  "commit": "156e02b4137e757fc040540123be741140fcfd1f",
+  "commit": "4225e27cca5bd24fcd83b9deb8b6089c3a6c8307",
   "python": "3.11",
   "repository": "https://github.com/snowch/sizing-and-tco",
   "site": "https://snowch.github.io/sizing-and-tco/"
@@ -9,6 +9,7 @@
   "reference/web_service",
   "reference/observability",
   "reference/mixed_pool",
+  "reference/sellers_tco",
   "stages/01-demand_inputs_single",
   "stages/02-demand_inputs_initial",
   "stages/03-demand_inputs_all",
@@ -43,6 +44,7 @@
   "invalid/decided-missing",
   "invalid/distribution-two-shapes",
   "invalid/dsl-missing",
+  "invalid/dsl-older",
   "invalid/dsl-other-version",
   "invalid/duplicate-node-key",
   "invalid/fact-cites-nothing",
@@ -55,6 +57,7 @@
   "invalid/formula-min-of-one",
   "invalid/formula-syntax",
   "invalid/input-no-value",
+  "invalid/key-of-another-kind",
   "invalid/measured-missing-result",
   "invalid/measured-no-result-name",
   "invalid/measured-no-summary-value",
@@ -91,6 +94,7 @@
   "invalid/shape-parameter-not-a-number",
   "invalid/source-empty",
   "invalid/source-left-empty",
+  "invalid/uniform-backwards",
   "invalid/unit-blank",
   "invalid/unit-ceiling-headroom",
   "invalid/unit-ceiling-limit",
@@ -102,9 +106,14 @@
   "invalid/unit-mixed-operands",
   "invalid/unit-offset",
   "invalid/unit-rounds-in-wrong-unit",
+  "invalid/unknown-correlation-key",
   "invalid/unknown-kind",
+  "invalid/unknown-model-key",
+  "invalid/unknown-node-key",
   "invalid/unknown-output",
+  "invalid/unknown-provenance-key",
   "invalid/unknown-reference",
+  "invalid/unknown-scenario-key",
   "invalid/unknown-unit",
   "invalid/value-not-a-number",
   "invalid/yaml-syntax",
@@ -120,6 +129,7 @@
   "edge/max-with-zero",
   "edge/measured-book-result",
   "edge/measured-no-sd-key",
+  "edge/measured-unit-spelled-differently",
   "edge/multiline-formula",
   "edge/not-yet-measured",
   "edge/number-to-a-power",
@@ -127,6 +137,7 @@
   "edge/percent-plus-one",
   "edge/percent-unit",
   "edge/plus-zero-keeps-units",
+  "edge/price-in-another-currency",
   "edge/scenario-edges",
   "edge/scenario-overrides-measured",
   "edge/shape-in-a-longer-word",
@@ -137,7 +148,7 @@
   "edge/unit-conversions",
   "edge/value-and-shape"
  ],
- "dsl": 1,
+ "dsl": 2,
  "fixture_format": 1,
  "rules": {
   "causes": [
@@ -316,6 +327,7 @@
   "refusals": [
    "load.yaml",
    "load.not-a-mapping",
+   "load.unknown-key",
    "load.dsl-version",
    "load.duplicate-key",
    "load.not-a-number",

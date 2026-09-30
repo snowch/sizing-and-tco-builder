@@ -147,8 +147,17 @@ async function boot() {
     const modelPath = Object.keys(textByPath).find((p) => /(^|\/)model\.ya?ml$/.test(p)) ?? Object.keys(textByPath).find((p) => /^\s*nodes:/m.test(textByPath[p]));
     if (!modelPath) return { error: "None of these is a model file: a model file has a nodes: section." };
     let model;
+    let upgradedFrom = null;
+    let text = textByPath[modelPath];
+    // A file written for an earlier version of the rules is read under the current ones, and the
+    // checks say so; whatever the current rules refuse in it is refused as usual.
+    const older = /^dsl:[ \t]*(\d+)[ \t]*$/m.exec(text);
+    if (older && Number(older[1]) < DSL_VERSION) {
+      upgradedFrom = Number(older[1]);
+      text = text.replace(older[0], `dsl: ${DSL_VERSION}`);
+    }
     try {
-      model = loadModel(textByPath[modelPath], { registry: ctx.registry, results: ctx.results, where: modelPath });
+      model = loadModel(text, { registry: ctx.registry, results: ctx.results, where: modelPath });
     } catch (error) {
       return { error: `The book would refuse ${modelPath}: ${error.message}` };
     }
@@ -177,6 +186,7 @@ async function boot() {
     }
     if (!state.scenarios.some((s) => s.scenario === "reference")) state.scenarios.unshift(reference());
     state.seen = ["sources", "measure"];
+    if (upgradedFrom !== null) state.upgradedFrom = upgradedFrom;
     return { state };
   }
 

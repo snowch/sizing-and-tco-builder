@@ -146,6 +146,296 @@
     "span": 0.0
    }
   ],
+  "cache_fill": [
+   {
+    "base": 0.42391747078089426,
+    "high": 1.0340373246408192,
+    "high_input": 1.6,
+    "kind": "input",
+    "label": "annual growth factor",
+    "low": 0.1737906531523825,
+    "low_input": 1.12,
+    "node": "annual_growth",
+    "span": 0.8602466714884367
+   },
+   {
+    "base": 0.42391747078089426,
+    "high": 0.6807616235489103,
+    "high_input": 0.06129171306613029,
+    "kind": "input",
+    "label": "share of records touched in a busy hour",
+    "low": 0.24248786089285626,
+    "low_input": 0.02183215956619923,
+    "node": "hot_fraction",
+    "span": 0.4382737626560541
+   },
+   {
+    "base": 0.42391747078089426,
+    "high": 0.4429956955302859,
+    "high_input": 0.14901613323034066,
+    "kind": "input",
+    "label": "memory the operating system keeps",
+    "low": 0.4106152329427628,
+    "low_input": 0.08190890230020664,
+    "node": "os_reserve",
+    "span": 0.032380462587523084
+   },
+   {
+    "base": 0.42391747078089426,
+    "high": 0.42391747078089426,
+    "high_input": 0.20999999999999996,
+    "kind": "input",
+    "label": "electricity price",
+    "low": 0.42391747078089426,
+    "low_input": 0.08499999999999996,
+    "node": "electricity_price",
+    "span": 0.0
+   },
+   {
+    "base": 0.42391747078089426,
+    "high": 0.42391747078089426,
+    "high_input": 9499.999999999995,
+    "kind": "input",
+    "label": "price of a new host",
+    "low": 0.42391747078089426,
+    "low_input": 4500.000000000001,
+    "node": "host_price",
+    "span": 0.0
+   },
+   {
+    "base": 0.42391747078089426,
+    "high": 0.42391747078089426,
+    "high_input": 1.4838104996137775,
+    "kind": "input",
+    "label": "index overhead",
+    "low": 0.42391747078089426,
+    "low_input": 1.2321583836257748,
+    "node": "index_overhead",
+    "span": 0.0
+   },
+   {
+    "base": 0.42391747078089426,
+    "high": 0.42391747078089426,
+    "high_input": 159.99999999999994,
+    "kind": "input",
+    "label": "licence per core per year",
+    "low": 0.42391747078089426,
+    "low_input": 39.99999999999998,
+    "node": "licence_per_core",
+    "span": 0.0
+   },
+   {
+    "base": 0.42391747078089426,
+    "high": 0.42391747078089426,
+    "high_input": 371.01020514433645,
+    "kind": "input",
+    "label": "power per new host",
+    "low": 0.42391747078089426,
+    "low_input": 260.0,
+    "node": "new_host_power",
+    "span": 0.0
+   },
+   {
+    "base": 0.42391747078089426,
+    "high": 0.42391747078089426,
+    "high_input": 15483.364083745513,
+    "kind": "input",
+    "label": "peak request rate, day one",
+    "low": 0.42391747078089426,
+    "low_input": 5915.47594742265,
+    "node": "peak_request_rate_t0",
+    "span": 0.0
+   },
+   {
+    "base": 0.42391747078089426,
+    "high": 0.42391747078089426,
+    "high_input": 1.5950806661517034,
+    "kind": "input",
+    "label": "PUE",
+    "low": 0.42391747078089426,
+    "low_input": 1.259544511501033,
+    "node": "pue",
+    "span": 0.0
+   },
+   {
+    "base": 0.42391747078089426,
+    "high": 0.42391747078089426,
+    "high_input": 3.5839391810428465,
+    "kind": "measured",
+    "label": "record compression ratio",
+    "low": 0.42391747078089426,
+    "low_input": 3.58174841145361,
+    "node": "record_compression",
+    "span": 0.0
+   },
+   {
+    "base": 0.42391747078089426,
+    "high": 0.42391747078089426,
+    "high_input": 0.016901613323034068,
+    "kind": "input",
+    "label": "CPU time per request",
+    "low": 0.42391747078089426,
+    "low_input": 0.010190890230020665,
+    "node": "service_demand",
+    "span": 0.0
+   },
+   {
+    "base": 0.42391747078089426,
+    "high": 0.42391747078089426,
+    "high_input": 0.1522511261489768,
+    "kind": "input",
+    "label": "support rate on new hosts",
+    "low": 0.42391747078089426,
+    "low_input": 0.09097617696340304,
+    "node": "support_rate",
+    "span": 0.0
+   }
+  ],
+  "disk_fill": [
+   {
+    "base": 0.5566131270034167,
+    "high": 1.35771415046033,
+    "high_input": 1.6,
+    "kind": "input",
+    "label": "annual growth factor",
+    "low": 0.2281910172678677,
+    "low_input": 1.12,
+    "node": "annual_growth",
+    "span": 1.1295231331924624
+   },
+   {
+    "base": 0.5566131270034167,
+    "high": 0.6162610794505394,
+    "high_input": 1.4838104996137775,
+    "kind": "input",
+    "label": "index overhead",
+    "low": 0.5117440911389283,
+    "low_input": 1.2321583836257748,
+    "node": "index_overhead",
+    "span": 0.10451698831161116
+   },
+   {
+    "base": 0.5566131270034167,
+    "high": 0.5564430053788564,
+    "high_input": 3.5839391810428465,
+    "kind": "measured",
+    "label": "record compression ratio",
+    "low": 0.5567833526825444,
+    "low_input": 3.58174841145361,
+    "node": "record_compression",
+    "span": 0.0003403473036880378
+   },
+   {
+    "base": 0.5566131270034167,
+    "high": 0.5566131270034167,
+    "high_input": 0.20999999999999996,
+    "kind": "input",
+    "label": "electricity price",
+    "low": 0.5566131270034167,
+    "low_input": 0.08499999999999996,
+    "node": "electricity_price",
+    "span": 0.0
+   },
+   {
+    "base": 0.5566131270034167,
+    "high": 0.5566131270034167,
+    "high_input": 9499.999999999995,
+    "kind": "input",
+    "label": "price of a new host",
+    "low": 0.5566131270034167,
+    "low_input": 4500.000000000001,
+    "node": "host_price",
+    "span": 0.0
+   },
+   {
+    "base": 0.5566131270034167,
+    "high": 0.5566131270034167,
+    "high_input": 0.06129171306613029,
+    "kind": "input",
+    "label": "share of records touched in a busy hour",
+    "low": 0.5566131270034167,
+    "low_input": 0.02183215956619923,
+    "node": "hot_fraction",
+    "span": 0.0
+   },
+   {
+    "base": 0.5566131270034167,
+    "high": 0.5566131270034167,
+    "high_input": 159.99999999999994,
+    "kind": "input",
+    "label": "licence per core per year",
+    "low": 0.5566131270034167,
+    "low_input": 39.99999999999998,
+    "node": "licence_per_core",
+    "span": 0.0
+   },
+   {
+    "base": 0.5566131270034167,
+    "high": 0.5566131270034167,
+    "high_input": 371.01020514433645,
+    "kind": "input",
+    "label": "power per new host",
+    "low": 0.5566131270034167,
+    "low_input": 260.0,
+    "node": "new_host_power",
+    "span": 0.0
+   },
+   {
+    "base": 0.5566131270034167,
+    "high": 0.5566131270034167,
+    "high_input": 0.14901613323034066,
+    "kind": "input",
+    "label": "memory the operating system keeps",
+    "low": 0.5566131270034167,
+    "low_input": 0.08190890230020664,
+    "node": "os_reserve",
+    "span": 0.0
+   },
+   {
+    "base": 0.5566131270034167,
+    "high": 0.5566131270034167,
+    "high_input": 15483.364083745513,
+    "kind": "input",
+    "label": "peak request rate, day one",
+    "low": 0.5566131270034167,
+    "low_input": 5915.47594742265,
+    "node": "peak_request_rate_t0",
+    "span": 0.0
+   },
+   {
+    "base": 0.5566131270034167,
+    "high": 0.5566131270034167,
+    "high_input": 1.5950806661517034,
+    "kind": "input",
+    "label": "PUE",
+    "low": 0.5566131270034167,
+    "low_input": 1.259544511501033,
+    "node": "pue",
+    "span": 0.0
+   },
+   {
+    "base": 0.5566131270034167,
+    "high": 0.5566131270034167,
+    "high_input": 0.016901613323034068,
+    "kind": "input",
+    "label": "CPU time per request",
+    "low": 0.5566131270034167,
+    "low_input": 0.010190890230020665,
+    "node": "service_demand",
+    "span": 0.0
+   },
+   {
+    "base": 0.5566131270034167,
+    "high": 0.5566131270034167,
+    "high_input": 0.1522511261489768,
+    "kind": "input",
+    "label": "support rate on new hosts",
+    "low": 0.5566131270034167,
+    "low_input": 0.09097617696340304,
+    "node": "support_rate",
+    "span": 0.0
+   }
+  ],
   "failure_headroom": [
    {
     "base": 0.7096123238292926,

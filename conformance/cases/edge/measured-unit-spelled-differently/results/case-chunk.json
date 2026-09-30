@@ -1,0 +1,16 @@
+{
+ "kind": "measurement",
+ "target": "corpus",
+ "name": "case-chunk",
+ "produced_by": {
+  "stack": "a stack named for this case"
+ },
+ "units": {
+  "value": "terabyte",
+  "sd": "terabyte"
+ },
+ "summary": {
+  "value": 2.0,
+  "sd": 0.1
+ }
+}

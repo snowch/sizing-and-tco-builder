@@ -1,0 +1,5 @@
+about: >-
+  A model that answers in dollars, with a price quoted in euros converted by a rate that is an
+  input of its own. Only an answer must be in the model's currency.
+expect:
+  - valid

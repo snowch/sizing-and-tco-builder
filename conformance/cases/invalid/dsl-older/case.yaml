@@ -1,0 +1,5 @@
+about: >-
+  A model file written for dsl 1, the version before this one. The loader refuses it: the rules
+  changed, and a file says which ones it was written against.
+expect:
+  - load.dsl-version

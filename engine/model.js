@@ -31,7 +31,51 @@ import { DuplicateKey, YamlError, readYaml } from "./yaml.js";
 export const KINDS = ["input", "derived", "measured", "ceiling"];
 
 /* The rules this engine reads, as sizing.dsl.DSL_VERSION; a model file says it on its first line. */
-export const DSL_VERSION = 1;
+export const DSL_VERSION = 2;
+
+/* The keys each place in a file may hold, as sizing/dsl.py lists them. Any other is refused. */
+export const MODEL_KEYS = ["dsl", "model", "title", "description", "currency", "nodes", "outputs", "correlations"];
+export const NODE_KEYS = {
+  input: ["decided", "provenance", "value", "distribution", "range"],
+  derived: ["formula"],
+  measured: ["result"],
+  ceiling: ["of", "limit", "headroom", "because"],
+};
+export const COMMON_NODE_KEYS = ["kind", "unit", "label", "note"];
+export const PROVENANCE_KEYS = ["kind", "source"];
+export const CORRELATION_KEYS = ["a", "b", "rho", "because"];
+export const SCENARIO_KEYS = ["scenario", "title", "because", "overrides", "samples", "seed"];
+
+/* How alike two words are, as difflib's ratio measures it: twice the matching characters over both lengths. */
+function likeness(a, b) {
+  const matching = (x, y) => {
+    if (!x.length || !y.length) return 0;
+    let best = { i: 0, j: 0, n: 0 };
+    for (let i = 0; i < x.length; i += 1) {
+      for (let j = 0; j < y.length; j += 1) {
+        let n = 0;
+        while (i + n < x.length && j + n < y.length && x[i + n] === y[j + n]) n += 1;
+        if (n > best.n) best = { i, j, n };
+      }
+    }
+    if (!best.n) return 0;
+    return best.n + matching(x.slice(0, best.i), y.slice(0, best.j)) + matching(x.slice(best.i + best.n), y.slice(best.j + best.n));
+  };
+  return (2 * matching(a, b)) / (a.length + b.length);
+}
+
+/* dsl._known: refuse a key the loader does not read, naming the nearest one it does. */
+function known(mapping, allowed, where, node = undefined) {
+  for (const key of mapping.keys()) {
+    if (typeof key === "string" && allowed.includes(key)) continue;
+    const near = [...allowed].map((k) => [likeness(str(key), k), k]).filter(([r]) => r >= 0.6).sort((x, y) => y[0] - x[0])[0];
+    throw new LoadError(
+      "load.unknown-key",
+      `${where}: ${repr(key)} is not a key this file may hold${near ? `; did you mean '${near[1]}'?` : "."} Expected one of ${allowed.join(", ")}.`,
+      node === undefined ? {} : { node },
+    );
+  }
+}
 export const PROVENANCE_KINDS = ["fact", "vendor_claim", "assumption"];
 export const DECIDED_BY = ["you", "outside", "definition"];
 
@@ -99,6 +143,7 @@ function nodeFrom(name, spec, where, registry, results) {
   if (!KINDS.includes(kind)) {
     throw new LoadError("load.unknown-kind", `${at} has kind ${str(kind)}; expected one of ${KINDS.join(", ")}`, { node: name });
   }
+  known(spec, [...COMMON_NODE_KEYS, ...NODE_KEYS[kind]], at, name);
   const unit = strip(textOf(spec, "unit"));
   if (!unit) {
     throw new LoadError(
@@ -119,6 +164,7 @@ function nodeFrom(name, spec, where, registry, results) {
 
   if (kind === "input") {
     const provenance = truthy(get(spec, "provenance", null)) ? spec.get("provenance") : new Map();
+    if (isDict(provenance)) known(provenance, PROVENANCE_KEYS, `${at} provenance`, name);
     const distribution = get(spec, "distribution", null);
     if (isDict(distribution)) {
       for (const [shape, parameters] of distribution) {
@@ -183,6 +229,9 @@ function nodeFrom(name, spec, where, registry, results) {
 export function loadModel(text, { registry, results = {}, where = "model.yaml" } = {}) {
   const raw = readModelYaml(text, where);
   if (!isDict(raw)) throw new LoadError("load.not-a-mapping", `${where}: is not a mapping`);
+  known(raw, MODEL_KEYS, where);
+  const pairs = get(raw, "correlations", null);
+  for (const pair of iterate(truthy(pairs) ? pairs : [])) if (isDict(pair)) known(pair, CORRELATION_KEYS, `${where}: a correlation`);
   if (raw.has("dsl") && !isVersion(raw.get("dsl"))) {
     throw new LoadError("load.dsl-version", `${where}: is written for dsl ${repr(raw.get("dsl"))}, and this toolkit reads dsl ${DSL_VERSION}`);
   }
@@ -322,6 +371,7 @@ export function measuredSd(node) {
 export function loadScenario(source, where = "scenario.yaml") {
   const raw = readModelYaml(source, where);
   if (!isDict(raw)) throw new LoadError("load.not-a-mapping", `${where}: is not a mapping`);
+  known(raw, SCENARIO_KEYS, where);
   const name = str(require(raw, "scenario", where));
   const given = get(raw, "overrides", null);
   const overrides = new Map();

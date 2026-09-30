@@ -212,7 +212,7 @@ def book_modules():
 PROBLEMS: tuple[tuple[str, str, str], ...] = (
     ("dsl.not-declared", "0", r"does not say which rules it is written against\. "),
     ("currency.unknown", "0", r"declares currency .*; expected an ISO code the registry defines: "),
-    ("currency.another", "0", r"node '(?P<node>[^']+)' counts money in "),
+    ("currency.another", "0", r"output '(?P<node>[^']+)' is in '[^']*', and the model declares `currency: "),
     ("units.does-not-typecheck", "1", r"node '(?P<node>[^']+)'(?P<part> limit| headroom)? does not typecheck\. `"),
     ("units.declared-vs-produced", "1", r"node '(?P<node>[^']+)'(?P<part> limit| headroom)? declares '[^']*', an? [a-z ]+, but `"),
     ("units.mixed-operands", "1", r"node '(?P<node>[^']+)'(?P<part> limit| headroom)? (?:adds|subtracts|takes the (?:min|max) of) quantities in "),
@@ -250,7 +250,7 @@ CAUSES: tuple[tuple[str, str], ...] = (
     # A measured node whose stamped result has no `summary.value`: the book reads it and gets a
     # KeyError, whose text is just the key.
     ("no-measured-value", r"does not evaluate — 'value'$"),
-    ("distribution", r"_ppf\(\) (?:got an unexpected keyword argument|missing \d+ required positional argument)|triangular needs|lognormal needs|normal needs|a distribution declares exactly one shape"),
+    ("distribution", r"_ppf\(\) (?:got an unexpected keyword argument|missing \d+ required positional argument)|uniform needs|triangular needs|lognormal needs|normal needs|a distribution declares exactly one shape"),
     # A pair missing `a`, `b` or `rho`: the book indexes it and gets a KeyError, whose text is the key.
     ("correlation", r"does not evaluate — '(?:a|b|rho)'$|correlation names|correlation between .* is .*outside|not mutually consistent|correlation matrix is"),
     # The sampler drew values that are not finite; the histogram of them refuses its range.
@@ -261,6 +261,7 @@ CAUSES: tuple[tuple[str, str], ...] = (
 #: Why the loader refused a file, by exception type and text.
 REFUSALS: tuple[tuple[str, str], ...] = (
     ("load.not-a-mapping", r": is not a mapping$"),
+    ("load.unknown-key", r": (?P<key>.*) is not a key this file may hold"),
     ("load.dsl-version", r": is written for dsl .*, and this toolkit reads dsl \d+$"),
     ("load.duplicate-key", r": line \d+: (?P<key>.*) is written twice in the same mapping"),
     ("load.not-a-number", r": (?P<field>value|range|samples|seed|override '[^']*'|\w+ \w+) is .*, which is not a number$"),
@@ -387,17 +388,19 @@ class LocalResults:
         self.local = local
         book_load, book_exists, _ = self.original
 
-        def load(name):
-            return json.loads(json.dumps(self.local[name])) if name in self.local else book_load(name)
+        # The book's readers take the model's folder too, to look in its own results/ first; a
+        # case's results are the book's kind, found before the book's own directory.
+        def load(name, *beside):
+            return json.loads(json.dumps(self.local[name])) if name in self.local else book_load(name, *beside)
 
-        def exists(name):
-            return name in self.local or book_exists(name)
+        def exists(name, *beside):
+            return name in self.local or book_exists(name, *beside)
 
         self.dsl.load_result, self.dsl.result_exists, self.verify.load_result = load, exists, load
 
 
 #: The book's full models, each a case read in place.
-REFERENCE = ("web_service", "observability", "mixed_pool")
+REFERENCE = ("web_service", "observability", "mixed_pool", "sellers_tco")
 
 
 def case_sources() -> list[tuple[str, Path, bool]]:
@@ -886,6 +889,7 @@ def examples() -> list[dict]:
         ("web_service", CHECKOUT / "models" / "web_service", "the_sizing_model"),
         ("observability", CHECKOUT / "models" / "observability", "regime_changes"),
         ("mixed_pool", CHECKOUT / "models" / "mixed_pool", "bandwidth_and_the_binding_constraint"),
+        ("sellers_tco", CHECKOUT / "models" / "sellers_tco", "the_sellers_tco"),
     ]
     out = []
     for name, directory, chapter in picks:

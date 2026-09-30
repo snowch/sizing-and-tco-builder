@@ -1,4 +1,4 @@
 about: >-
-  A model file written for dsl 2. The loader refuses it: this toolkit reads dsl 1.
+  A model file written for dsl 3. The loader refuses it: this toolkit reads dsl 2.
 expect:
   - load.dsl-version

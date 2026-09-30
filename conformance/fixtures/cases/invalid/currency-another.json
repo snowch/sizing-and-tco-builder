@@ -1,7 +1,7 @@
 {
  "about": "A model priced in dollars with one node counting euros. A rate between two currencies is a node of its own.",
  "files": {
-  "model.yaml": "dsl: 1\nmodel: tiny\ntitle: Two currencies\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  licence:\n    kind: input\n    decided: outside\n    unit: EUR/month\n    value: 400\n    provenance: {kind: assumption, source: \"the quoted price, as stated for this case\"}\n\n  licence_per_core:\n    kind: derived\n    unit: EUR/month/core\n    formula: licence / cores\n\noutputs:\n  - utilisation\n  - licence_per_core\n",
+  "model.yaml": "dsl: 2\nmodel: tiny\ntitle: Two currencies\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  licence:\n    kind: input\n    decided: outside\n    unit: EUR/month\n    value: 400\n    provenance: {kind: assumption, source: \"the quoted price, as stated for this case\"}\n\n  licence_per_core:\n    kind: derived\n    unit: EUR/month/core\n    formula: licence / cores\n\noutputs:\n  - utilisation\n  - licence_per_core\n",
   "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
  },
  "id": "invalid/currency-another",
@@ -193,14 +193,7 @@
   "problems": [
    {
     "code": "currency.another",
-    "message": "_builder_conformance/currency-another/model.yaml: node 'licence' counts money in 'EUR/month', and the model declares `currency: USD`. A model prices in one currency; a rate between two is a node of its own, with a source.",
-    "node": "licence",
-    "part": null,
-    "rule": "0"
-   },
-   {
-    "code": "currency.another",
-    "message": "_builder_conformance/currency-another/model.yaml: node 'licence_per_core' counts money in 'EUR/month/core', and the model declares `currency: USD`. A model prices in one currency; a rate between two is a node of its own, with a source.",
+    "message": "_builder_conformance/currency-another/model.yaml: output 'licence_per_core' is in 'EUR/month/core', and the model declares `currency: USD`. A model answers in its own currency. A price quoted in another is an input, converted by a rate that is an input too.",
     "node": "licence_per_core",
     "part": null,
     "rule": "0"

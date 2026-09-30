@@ -1,7 +1,7 @@
 {
  "about": "A file that is not YAML at all.",
  "files": {
-  "model.yaml": "dsl: 1\nmodel: tiny\nnodes:\n  request_rate: {kind: input, unit: [request\n",
+  "model.yaml": "dsl: 2\nmodel: tiny\nnodes:\n  request_rate: {kind: input, unit: [request\n",
   "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
  },
  "id": "invalid/yaml-syntax",

@@ -90,7 +90,7 @@
    "number": 4,
    "page": "peak-mean-and-growth.html",
    "part": "Part I — What you are sizing",
-   "question": "Which number in a demand curve sizes you, and what is a five-year growth rate actually a claim about?",
+   "question": "Which number in a demand curve sizes the fleet, and what is a five-year growth rate actually a claim about?",
    "slug": "peak_mean_and_growth",
    "title": "Peak, mean and growth"
   },
@@ -259,6 +259,15 @@
   {
    "label": "ch23",
    "number": 23,
+   "page": "the-sellers-tco.html",
+   "part": "Part VII — Presenting an interval",
+   "question": "You are selling a system too large to size in detail, to a customer whose workload you cannot see. What can a TCO built from a benchmark and an assumed usage honestly claim?",
+   "slug": "the_sellers_tco",
+   "title": "The seller's TCO"
+  },
+  {
+   "label": "ch24",
+   "number": 24,
    "page": "what-the-model-got-wrong.html",
    "part": "Part VIII — Afterwards",
    "question": "The design failed. Can the model say why, and what can it never say?",

@@ -370,12 +370,28 @@ test("on a phone, the question and its buttons fit the screen, and the label fit
 
 test("it opens the book's own models and agrees with the book about them", async () => {
   const r = await Reader.start();
-  for (const id of ["demand", "web_service", "observability"]) {
+  for (const id of ["demand", "web_service", "observability", "mixed_pool", "sellers_tco"]) {
     await r.page.evaluate(() => builder.startOver());
     await r.page.click(`[data-example="${id}"]`);
     const checks = await r.checks();
     assert.equal(checks[0].level, "pass", `${id}: ${JSON.stringify(checks.slice(0, 3))}`);
   }
+  assert.deepEqual(r.errors, []);
+  await r.context.close();
+});
+
+test("a file written for an earlier version of the rules opens under the current ones, and says so", async () => {
+  const r = await Reader.start();
+  const p = r.page;
+  const text = readFileSync(new URL("../conformance/cases/edge/percent-unit/model.yaml", import.meta.url), "utf8").replace(/^dsl: \d+$/m, "dsl: 1");
+  await p.setInputFiles("#openfile", { name: "model.yaml", mimeType: "text/yaml", buffer: Buffer.from(text) });
+  await p.waitForFunction(() => builder.state.doc.nodes.length > 0);
+  const checks = await r.checks();
+  assert.ok(checks.some((c) => c.level === "warn" && /written for dsl 1/.test(c.text)), JSON.stringify(checks));
+  const files = await r.files();
+  assert.match(files["model.yaml"], /^dsl: 2\n/);
+  const verdict = book(files);
+  if (verdict) assert.ok(verdict.ok, JSON.stringify(verdict.problems));
   assert.deepEqual(r.errors, []);
   await r.context.close();
 });

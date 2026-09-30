@@ -1,0 +1,244 @@
+{
+ "about": "A measured node declared in TB whose stamped result says terabyte. The same unit, so the verifier accepts it.",
+ "files": {
+  "model.yaml": "dsl: 2\nmodel: tiny\ntitle: Two spellings\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  chunk:\n    kind: measured\n    unit: TB\n    result: case-chunk\n\n  chunk_per_core:\n    kind: derived\n    unit: TB/core\n    formula: chunk / cores\n\n  knee:\n    kind: ceiling\n    unit: dimensionless\n    of: utilisation\n    limit: 0.9\n    headroom: 0.1\n    because: \"past it, waiting grows faster than load\"\n\noutputs:\n  - utilisation\n  - chunk_per_core\n  - knee\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "edge/measured-unit-spelled-differently",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "conditional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "chunk",
+   "cores",
+   "chunk_per_core",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "utilisation",
+   "knee"
+  ],
+  "outputs": [
+   "utilisation",
+   "chunk_per_core",
+   "knee"
+  ],
+  "title": "Two spellings",
+  "unit_problems": 0,
+  "unmeasured": []
+ },
+ "nodes": {
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "chunk": {
+   "dimensionality": {
+    "[information]": 1.0
+   },
+   "kind": "measured",
+   "magnitude": 2.0,
+   "measured": true,
+   "measured_sd": 0.1,
+   "measured_value": 2.0,
+   "result": "case-chunk",
+   "stack": "a stack named for this case",
+   "unit": "TB"
+  },
+  "chunk_per_core": {
+   "dimensionality": {
+    "[core]": -1.0,
+    "[information]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "chunk",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.125,
+   "unit": "TB/core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "knee": {
+   "because": "past it, waiting grows faster than load",
+   "declares_headroom": true,
+   "dimensionality": {},
+   "factor": 1.0,
+   "factor_headroom": 1.0,
+   "factor_limit": 1.0,
+   "headroom": {
+    "op": "const",
+    "value": 0.1
+   },
+   "kind": "ceiling",
+   "limit": {
+    "op": "const",
+    "value": 0.9
+   },
+   "magnitude": 0.25,
+   "of": {
+    "name": "utilisation",
+    "op": "ref"
+   },
+   "unit": "dimensionless"
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.25,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/measured-unit-spelled-differently/model.yaml",
+ "results": {
+  "case-chunk": {
+   "kind": "measurement",
+   "name": "case-chunk",
+   "produced_by": {
+    "stack": "a stack named for this case"
+   },
+   "summary": {
+    "sd": 0.1,
+    "value": 2.0
+   },
+   "target": "corpus",
+   "units": {
+    "sd": "terabyte",
+    "value": "terabyte"
+   }
+  }
+ },
+ "scenarios": {
+  "reference": {
+   "ceilings": {
+    "knee": {
+     "allowed": 0.81,
+     "because": "past it, waiting grows faster than load",
+     "headroom": 0.1,
+     "headroom_text": "0.1",
+     "limit": 0.9,
+     "limit_text": "0.9",
+     "value": 0.25,
+     "verdict": "ok"
+    }
+   },
+   "overrides": {},
+   "point": {
+    "busy_cores": 4.0,
+    "chunk": 2.0,
+    "chunk_per_core": 0.125,
+    "cores": 16.0,
+    "knee": 0.25,
+    "request_rate": 200.0,
+    "service_demand": 0.02,
+    "utilisation": 0.25
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": true,
+  "problems": []
+ }
+}

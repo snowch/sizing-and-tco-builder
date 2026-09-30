@@ -117,6 +117,9 @@ export function oneShape(spec) {
 
 /* The shape's own checks, which mc makes before it draws anything. */
 export function checkShape(shape, p) {
+  if (shape === "uniform" && !(p.minimum <= p.maximum)) {
+    throw new PyError("ValueError", `uniform needs minimum <= maximum, got ${p.minimum}, ${p.maximum}`);
+  }
   if (shape === "triangular" && !(p.minimum <= p.likely && p.likely <= p.maximum)) {
     throw new PyError("ValueError", `triangular needs min <= likely <= max, got ${p.minimum}, ${p.likely}, ${p.maximum}`);
   }
@@ -442,7 +445,7 @@ function causeOf(error) {
   if (error instanceof EvaluationError) return /neither a value nor a distribution/.test(error.message) ? "no-value" : "typecheck";
   if (error instanceof PyError) {
     if (error.type === "KeyError" && error.message === "'value'") return "no-measured-value";
-    if (/triangular needs|lognormal needs|normal needs|exactly one shape|parameters|takes |is not a number|not iterable/.test(error.message)) return "distribution";
+    if (/uniform needs|triangular needs|lognormal needs|normal needs|exactly one shape|parameters|takes |is not a number|not iterable/.test(error.message)) return "distribution";
     return "arithmetic";
   }
   return "arithmetic";

@@ -1,0 +1,223 @@
+{
+ "about": "A model that answers in dollars, with a price quoted in euros converted by a rate that is an input of its own. Only an answer must be in the model's currency.",
+ "files": {
+  "model.yaml": "dsl: 2\nmodel: tiny\ntitle: A quoted price\ncurrency: USD\n\nnodes:\n\n  request_rate:\n    kind: input\n    decided: outside\n    unit: request/second\n    value: 200\n    provenance: {kind: assumption, source: \"the busy hour, as stated for this case\"}\n\n  service_demand:\n    kind: input\n    decided: outside\n    unit: core*second/request\n    value: 0.02\n    provenance: {kind: assumption, source: \"processor time per request, as stated for this case\"}\n\n  cores:\n    kind: input\n    decided: you\n    unit: core\n    value: 16\n    provenance: {kind: assumption, source: \"the fleet chosen for this case\"}\n\n  busy_cores:\n    kind: derived\n    unit: core\n    formula: request_rate * service_demand\n\n  utilisation:\n    kind: derived\n    unit: dimensionless\n    formula: busy_cores / cores\n\n  licence_eur:\n    kind: input\n    decided: outside\n    unit: EUR/month\n    value: 400\n    provenance: {kind: assumption, source: \"the quoted price, as stated for this case\"}\n\n  usd_per_eur:\n    kind: input\n    decided: outside\n    unit: USD/EUR\n    value: 1.1\n    provenance: {kind: assumption, source: \"the rate on the day of the quote, as stated for this case\"}\n\n  licence_per_core:\n    kind: derived\n    unit: USD/month/core\n    formula: licence_eur * usd_per_eur / cores\n\noutputs:\n  - utilisation\n  - licence_per_core\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "edge/price-in-another-currency",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "definitional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "",
+  "name": "tiny",
+  "order": [
+   "cores",
+   "licence_eur",
+   "request_rate",
+   "service_demand",
+   "busy_cores",
+   "usd_per_eur",
+   "licence_per_core",
+   "utilisation"
+  ],
+  "outputs": [
+   "utilisation",
+   "licence_per_core"
+  ],
+  "title": "A quoted price",
+  "unit_problems": 0,
+  "unmeasured": []
+ },
+ "nodes": {
+  "busy_cores": {
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "request_rate",
+      "op": "ref"
+     },
+     {
+      "name": "service_demand",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 4.0,
+   "unit": "core"
+  },
+  "cores": {
+   "decided": "you",
+   "dimensionality": {
+    "[core]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 16.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the fleet chosen for this case"
+   },
+   "range": null,
+   "unit": "core",
+   "value": 16.0
+  },
+  "licence_eur": {
+   "decided": "outside",
+   "dimensionality": {
+    "[currency_eur]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 400.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the quoted price, as stated for this case"
+   },
+   "range": null,
+   "unit": "EUR/month",
+   "value": 400.0
+  },
+  "licence_per_core": {
+   "dimensionality": {
+    "[core]": -1.0,
+    "[currency_usd]": 1.0,
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "licence_eur",
+        "op": "ref"
+       },
+       {
+        "name": "usd_per_eur",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 27.500000000000004,
+   "unit": "USD/month/core"
+  },
+  "request_rate": {
+   "decided": "outside",
+   "dimensionality": {
+    "[request]": 1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 200.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the busy hour, as stated for this case"
+   },
+   "range": null,
+   "unit": "request/second",
+   "value": 200.0
+  },
+  "service_demand": {
+   "decided": "outside",
+   "dimensionality": {
+    "[core]": 1.0,
+    "[request]": -1.0,
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 0.02,
+   "provenance": {
+    "kind": "assumption",
+    "source": "processor time per request, as stated for this case"
+   },
+   "range": null,
+   "unit": "core*second/request",
+   "value": 0.02
+  },
+  "usd_per_eur": {
+   "decided": "outside",
+   "dimensionality": {
+    "[currency_eur]": -1.0,
+    "[currency_usd]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 1.1,
+   "provenance": {
+    "kind": "assumption",
+    "source": "the rate on the day of the quote, as stated for this case"
+   },
+   "range": null,
+   "unit": "USD/EUR",
+   "value": 1.1
+  },
+  "utilisation": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "busy_cores",
+      "op": "ref"
+     },
+     {
+      "name": "cores",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 0.25,
+   "unit": "dimensionless"
+  }
+ },
+ "path": "_builder_conformance/price-in-another-currency/model.yaml",
+ "results": {},
+ "scenarios": {
+  "reference": {
+   "ceilings": {},
+   "overrides": {},
+   "point": {
+    "busy_cores": 4.0,
+    "cores": 16.0,
+    "licence_eur": 400.0,
+    "licence_per_core": 27.500000000000004,
+    "request_rate": 200.0,
+    "service_demand": 0.02,
+    "usd_per_eur": 1.1,
+    "utilisation": 0.25
+   },
+   "samples": 1000,
+   "seed": 20260916,
+   "title": "Reference"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": true,
+  "problems": []
+ }
+}

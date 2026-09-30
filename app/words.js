@@ -283,6 +283,31 @@ export const PATTERNS = [
     hosts: "generations",
     routing: "equal",
   },
+  // The seller's TCO (models/sellers_tco): a benchmark discounted by how much of it carries over.
+  {
+    formula: "benchmark_advantage * transfer_factor",
+    words: "A vendor's benchmark gain, discounted by how much of it carries over to this workload",
+    units: { benchmark_advantage: "dimensionless", transfer_factor: "dimensionless" },
+    chapters: ["the_sellers_tco"],
+  },
+  {
+    formula: "usage_hosts / effective_advantage",
+    words: "The hosts the same work needs on the faster platform",
+    units: { usage_hosts: "host", effective_advantage: "dimensionless" },
+    chapters: ["the_sellers_tco"],
+  },
+  {
+    formula: "usage_hosts * current_cost_per_host * horizon",
+    words: "What the customer spends today, over the horizon",
+    units: { usage_hosts: "host", current_cost_per_host: "{currency}/host/year", horizon: "year" },
+    chapters: ["the_sellers_tco"],
+  },
+  {
+    formula: "current_total - proposed_total",
+    words: "What switching saves: today's cost less the proposed one",
+    units: { current_total: "{currency}", proposed_total: "{currency}" },
+    chapters: ["the_sellers_tco", "comparing_two_tcos"],
+  },
   {
     formula: "hosts * host_price + hosts * running_cost_per_host_year * horizon",
     words: "What you pay up front, plus what it costs to run, over the horizon",

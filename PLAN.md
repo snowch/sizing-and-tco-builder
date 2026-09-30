@@ -53,8 +53,9 @@ a decision I have taken provisionally; say if you want it the other way.
    reports. The interface may ask for more, and where it does it says it is the builder asking,
    not the build. (The mock-up's "a pair that moves together has no reason" was once such a case;
    the book has checked it since 156e02b, BOOK-REQUESTS 7.)
-6. **Measured nodes offer the book's results or "not yet measured".** A reader's own measurement
-   cannot be carried in the book's format today (BOOK-REQUESTS 12). The builder offers the book's
+6. **Measured nodes offer the book's results or "not yet measured".** Since 4225e27 the book reads
+   a reader's own measurements from a `results/` folder beside the model (BOOK-REQUESTS 12); the
+   builder does not write one yet, which is its next step. Until then it offers the book's
    four stamped constants with the implementation each was measured on, or a result name nobody
    has taken, which the book accepts and treats as not yet measured.
 7. **The reader chooses the currency.** The book's registry has had 21 currencies since 156e02b
@@ -126,9 +127,11 @@ Done when: every case and probe passes; CI is green on both jobs; every model th
 written back out and read again, by the engine and by the book's toolkit, to the same nodes,
 fields, outputs, correlations, scenarios, point values and build-check verdicts.
 
-The engine checks the book's format version (`dsl: 1`, from 156e02b): it refuses a file written for
-another, and reports one that does not say, as the book does. The builder writes the line first in
-every model it makes.
+The engine checks the book's format version (`dsl: 2` since 4225e27; it was 1 from 156e02b): it
+refuses a file written for another, and reports one that does not say, as the book does. The
+builder writes the line first in every model it makes. A model saved in the browser, or a file
+opened, that was written for an earlier version is read under the current rules, and the checks
+say so.
 
 ### 2. The answer-first interface
 
@@ -184,24 +187,24 @@ tolerance written next to the test.
 
 ### Milestone 1: done, and checked
 
-- `book.lock.json` pins the book at `156e02b4137e757fc040540123be741140fcfd1f` (its `main` on
-  2026-09-27, the commit that closed eleven of this repository's requests). It is the only place
-  the pin lives.
+- `book.lock.json` pins the book at `4225e27cca5bd24fcd83b9deb8b6089c3a6c8307` (its `main` on
+  2026-09-30: `dsl: 2`, unknown keys refused, a model's own results, and ch23, *The seller's
+  TCO*). It is the only place the pin lives.
 - `conformance/generate.py` checks the book out at that commit, builds an environment from the
   book's `requirements.txt` (numpy 2.4.6, Pint 0.25.3, PyYAML 6.0.1 on Python 3.11), and writes
-  130 cases: the three reference models (web service, observability, mixed pool), all 15 stages,
-  85 hand-written invalid models (one or more for every refusal the loader and `verify-models.py`
-  know) and 27 edge cases; plus 190 unit probes, 143 formula probes, 70 YAML probes (each read by
+  141 cases: the four reference models (web service, observability, mixed pool, the seller's
+  TCO), all 15 stages, 93 hand-written invalid models (one or more for every refusal the loader
+  and `verify-models.py` know) and 29 edge cases; plus 190 unit probes, 143 formula probes, 70 YAML probes (each read by
   PyYAML and by the book's model reader, which refuses a key written twice), the
   measured-result catalogue (four constants) and the outline. `--check` regenerates and compares, numbers to a part in a trillion (the book's own
   point values differ in the last bit between processors; CI found that).
 - Each hand-written case declares what it is for, and the generator refuses to write fixtures if
   the book does not say it. It stopped three times while the cases were written, each time
   correctly: a failure it had no code for, and one case whose expectation was mine and wrong.
-- `npm test`: 268 passing, none failing (after the move to 156e02b). Every case and every probe agrees with the book; every
+- `npm test`: 293 passing, none failing (after the move to 4225e27). Every case and every probe agrees with the book; every
   model the book loads round-trips through the engine's writer; the comparison itself is tested
   against altered answers; the vendored YAML package is checked against the pinned install.
-- `python3 conformance/roundtrip.py`: the book's toolkit reads all 86 writable models, as written
+- `python3 conformance/roundtrip.py`: the book's toolkit reads all 90 writable models, as written
   by the engine, exactly as it reads the originals. Altering one written value, one scenario
   override or one `decided:` makes it fail, as it should.
 - CI runs all of it on every push.
@@ -309,8 +312,9 @@ nothing changed in it comes back: each sheet says the model file is the source o
 3. **Refine before the tree is complete.** The design leaves it open. I plan the mock-up's rule:
    refinements unlock when nothing is left to define, because measuring first on half a model
    misleads.
-4. **A reader's own measurements** (BOOK-REQUESTS 12, still open). Until the book has a place for
-   them, the builder offers only the book's constants or *not yet measured*.
+4. **A reader's own measurements.** The book now has a place for them (BOOK-REQUESTS 12): a
+   `results/` folder beside the model, held to an `estate` result's disclosure. The builder does
+   not write one yet; it is the next thing to build.
 5. **Licence.** Settled: MIT (`LICENSE`). The vendored YAML package keeps its own ISC licence.
 6. **The decision the answer feeds.** Settled: it stays in the model's `description`. The models
    the builder writes are the reader's, not the book's, so the format needs no field of its own

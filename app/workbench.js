@@ -250,6 +250,9 @@ export function verdict(state, context) {
 /* One line per build check, in words, from the engine's report. */
 export function checks(state, judged) {
   const out = [];
+  if (state.upgradedFrom) {
+    out.push({ level: "warn", text: `This model was written for dsl ${state.upgradedFrom}. The builder now writes dsl ${state.doc.dsl}, and holds the model to that version's rules.`, chapter: null });
+  }
   if (state.pending.length) {
     out.push({ level: "todo", text: `Still to define: ${state.pending.map((p) => p.name).join(", ")}`, chapter: "point_estimates", why: "The file cannot be checked until every name in it is defined." });
     return out;

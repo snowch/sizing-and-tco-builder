@@ -1,0 +1,609 @@
+{
+ "about": "",
+ "files": {
+  "model.yaml": "dsl: 2\nmodel: sellers_tco\ntitle: The seller's TCO\ncurrency: USD\n\ndescription: >-\n  A TCO built by the seller of a system, not by its buyer. The seller cannot see the customer's\n  workload or its bill, so the model starts from the customer's spend per host and scales it\n  three ways: by how many hosts the customer runs, by the share of that spend that moves with\n  the number of hosts, and by the product's benchmark advantage, discounted for how much of it\n  carries over to this customer's work. It is top down and linear in hosts. It has no measured\n  constant and no ceiling, so it is a definitional model: what a seller can honestly build\n  before a customer opens their books (ch23).\n\nnodes:\n  # -- the customer, as the seller has to guess them -------------------------------------------------\n\n  horizon:\n    kind: input\n    decided: you\n    unit: year\n    value: 5\n    label: horizon\n    provenance:\n      kind: assumption\n      source: \"The web service model's horizon (ch02), the refresh cycle the fleet is bought\n        against\"\n    range: [3, 8]\n\n  usage_hosts:\n    kind: input\n    decided: outside\n    unit: host\n    label: hosts the customer runs today\n    value: 50\n    note: >-\n      One number: a count, which the customer can give the seller by asking. The chapter's answer\n      about customer size is the break-even usage below, and a band here would only blur it.\n    provenance:\n      kind: assumption\n      source: >-\n        The seller's picture of a customer in its market, not a count of any one customer's\n        hosts. The customer can replace it with a count, and then it is the customer's figure,\n        not the seller's.\n    range: [5, 300]\n\n  current_cost_per_host:\n    kind: input\n    decided: outside\n    unit: USD/host/year\n    label: customer's spend per host-year, everything in\n    distribution: {lognormal: {p10: 5000, p90: 11000}}\n    provenance:\n      kind: assumption\n      source: >-\n        What the seller supposes a customer spends a year for each host it runs, staff included:\n        the whole bill divided by the hosts. Lognormal, because a spend cannot be zero or less and\n        its high side runs further than its low. The customer knows this figure; the seller\n        does not.\n    range: [2000, 20000]\n\n  scaling_share:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    label: share of the spend that moves with hosts\n    distribution: {triangular: {minimum: 0.3, likely: 0.5, maximum: 0.8}}\n    provenance:\n      kind: assumption\n      source: >-\n        How much of that spend goes away when a host does. Hardware, power, licences and support\n        move with the host count; staff and anything bought per site largely do not. A brochure\n        that scales the whole bill has set this to one without saying so. Triangular, because it\n        is a lowest, most likely and highest guess, and a share has hard ends.\n    range: [0.1, 1]\n\n  # -- the product, as the seller describes it -------------------------------------------------------\n\n  benchmark_advantage:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    value: 4\n    label: benchmark advantage per host\n    note: >-\n      One number: the vendor publishes one figure, and a range here would put words in its\n      mouth. The doubt about it lives in the transfer factor.\n    provenance:\n      kind: vendor_claim\n      source: >-\n        The seller's own benchmark: how much more work one proposed host did than one of the\n        customer's current hosts, on the benchmark's workload. Here it is the ratio of the two\n        hosts' cores in ch22 (sixty-four against sixteen), standing in for a published result.\n    range: [1, 10]\n\n  transfer_factor:\n    kind: input\n    decided: outside\n    unit: dimensionless\n    label: share of the benchmark advantage that carries over\n    distribution: {triangular: {minimum: 0.4, likely: 0.75, maximum: 1.0}}\n    provenance:\n      kind: assumption\n      source: >-\n        How much of the benchmark's advantage survives on this customer's work rather than on the\n        benchmark's. Nobody has measured it for any customer: that would take running the\n        customer's own workload on both hosts. One means the benchmark is the customer's workload.\n        Triangular, because it is a lowest, most likely and highest guess, and a seller who\n        claimed a more precise shape would be inventing it.\n    range: [0.2, 1.2]\n\n  proposed_cost_per_host:\n    kind: input\n    decided: outside\n    unit: USD/host/year\n    value: 12747.123866259795\n    label: proposed spend per host-year, staff and move excluded\n    note: >-\n      One number: the seller's own price, which it states as one figure.\n    provenance:\n      kind: vendor_claim\n      source: >-\n        The seller's price for running one proposed host for a year: the host spread over the\n        horizon, its licence, support and power, and no staff. Here it is the challenger's quote\n        in ch22, worked out per host-year; tests/the_sellers_tco and bench/run_seller.py check\n        it against the stamped result.\n    range: [5000, 30000]\n\n  move_cost:\n    kind: input\n    decided: outside\n    unit: USD\n    value: 250000\n    label: cost of the move\n    note: >-\n      One number: ch22's estimate of the move, held as ch22 holds it, so the two chapters\n      price the same move.\n    provenance:\n      kind: assumption\n      source: \"The challenger's migration cost in ch22: the one-off cost of moving to the\n        proposed system\"\n    range: [50000, 1000000]\n\n  # -- the arithmetic ----------------------------------------------------------------------------------\n\n  effective_advantage:\n    kind: derived\n    unit: dimensionless\n    label: advantage on the customer's work\n    formula: benchmark_advantage * transfer_factor\n\n  proposed_hosts:\n    kind: derived\n    unit: host\n    label: proposed hosts, capacity-equivalent\n    note: >-\n      Not rounded up. A top-down model counts capacity, not boxes, and rounding here would make\n      the break-evens approximate instead of exact.\n    formula: usage_hosts / effective_advantage\n\n  current_total:\n    kind: derived\n    unit: USD\n    label: customer's spend over the horizon, as it is\n    formula: usage_hosts * current_cost_per_host * horizon\n\n  proposed_total:\n    kind: derived\n    unit: USD\n    label: customer's spend over the horizon, with the product\n    formula: current_total * (1 - scaling_share) + proposed_hosts * proposed_cost_per_host * horizon + move_cost\n\n  saving:\n    kind: derived\n    unit: USD\n    label: saving over the horizon\n    formula: current_total - proposed_total\n\n  margin_per_host_year:\n    kind: derived\n    unit: USD/host/year\n    label: saving per current host-year, before the move\n    note: >-\n      What each host the customer runs today saves a year, before the move is paid for. If it\n      is zero or less, no amount of usage pays for the move.\n    formula: current_cost_per_host * scaling_share - proposed_cost_per_host / effective_advantage\n\n  break_even_transfer:\n    kind: derived\n    unit: dimensionless\n    label: transfer factor at which the saving is zero\n    note: >-\n      A break-even only while the part of the spend that scales is larger than the cost of the\n      move. Below that no transfer factor pays, and the figure is negative.\n    formula: usage_hosts * proposed_cost_per_host * horizon / (benchmark_advantage * (current_total * scaling_share - move_cost))\n\n  break_even_usage:\n    kind: derived\n    unit: host\n    label: hosts at which the saving is zero\n    note: >-\n      A break-even only while the margin per host-year is positive. Otherwise no usage pays, and\n      the figure is negative.\n    formula: move_cost / (horizon * margin_per_host_year)\n\noutputs:\n  - saving\n  - current_total\n  - proposed_total\n  - proposed_hosts\n  - margin_per_host_year\n  - break_even_transfer\n  - break_even_usage\n",
+  "scenarios/brochure.yaml": "scenario: brochure\ntitle: The brochure\nbecause: >-\n  The same model with the two assumptions a brochure makes without writing them down: the\n  benchmark carries over whole, and every dollar the customer spends moves with the host count.\nsamples: 100000\nseed: 20260916\noverrides:\n  transfer_factor: 1\n  scaling_share: 1\n",
+  "scenarios/ch22_customer.yaml": "scenario: ch22_customer\ntitle: The seller's model, on ch22's customer\nbecause: >-\n  The two figures a seller can learn by asking, pinned to ch22's incumbent: the hosts it runs and\n  what it spends per host-year, everything in, at the point estimates. The share that scales and\n  the transfer factor stay the seller's guesses, so the result can be set beside ch22's bottom-up\n  comparison of the same customer.\nsamples: 100000\nseed: 20260916\noverrides:\n  usage_hosts: 54\n  current_cost_per_host: 7415.122854685757\n",
+  "scenarios/reference.yaml": "scenario: reference\ntitle: The seller's honest model\nbecause: >-\n  Every guess about the customer is left as the seller's, and the benchmark is discounted\n  by a transfer factor nobody has measured. Every figure the book quotes for this model comes\n  from here unless it says otherwise.\nsamples: 100000\nseed: 20260916\noverrides: {}\n"
+ },
+ "id": "reference/sellers_tco",
+ "load": {
+  "ok": true
+ },
+ "model": {
+  "classification": "definitional",
+  "correlations": [],
+  "currency": "USD",
+  "description": "A TCO built by the seller of a system, not by its buyer. The seller cannot see the customer's workload or its bill, so the model starts from the customer's spend per host and scales it three ways: by how many hosts the customer runs, by the share of that spend that moves with the number of hosts, and by the product's benchmark advantage, discounted for how much of it carries over to this customer's work. It is top down and linear in hosts. It has no measured constant and no ceiling, so it is a definitional model: what a seller can honestly build before a customer opens their books (ch23).",
+  "name": "sellers_tco",
+  "order": [
+   "benchmark_advantage",
+   "current_cost_per_host",
+   "horizon",
+   "move_cost",
+   "proposed_cost_per_host",
+   "scaling_share",
+   "transfer_factor",
+   "effective_advantage",
+   "margin_per_host_year",
+   "break_even_usage",
+   "usage_hosts",
+   "current_total",
+   "break_even_transfer",
+   "proposed_hosts",
+   "proposed_total",
+   "saving"
+  ],
+  "outputs": [
+   "saving",
+   "current_total",
+   "proposed_total",
+   "proposed_hosts",
+   "margin_per_host_year",
+   "break_even_transfer",
+   "break_even_usage"
+  ],
+  "title": "The seller's TCO",
+  "unit_problems": 0,
+  "unmeasured": []
+ },
+ "nodes": {
+  "benchmark_advantage": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 4.0,
+   "provenance": {
+    "kind": "vendor_claim",
+    "source": "The seller's own benchmark: how much more work one proposed host did than one of the customer's current hosts, on the benchmark's workload. Here it is the ratio of the two hosts' cores in ch22 (sixty-four against sixteen), standing in for a published result."
+   },
+   "range": [
+    1.0,
+    10.0
+   ],
+   "unit": "dimensionless",
+   "value": 4.0
+  },
+  "break_even_transfer": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "name": "usage_hosts",
+          "op": "ref"
+         },
+         {
+          "name": "proposed_cost_per_host",
+          "op": "ref"
+         }
+        ],
+        "op": "*"
+       },
+       {
+        "name": "horizon",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     },
+     {
+      "args": [
+       {
+        "name": "benchmark_advantage",
+        "op": "ref"
+       },
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "name": "current_total",
+            "op": "ref"
+           },
+           {
+            "name": "scaling_share",
+            "op": "ref"
+           }
+          ],
+          "op": "*"
+         },
+         {
+          "name": "move_cost",
+          "op": "ref"
+         }
+        ],
+        "op": "-"
+       }
+      ],
+      "op": "*"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 1.0981518832839776,
+   "unit": "dimensionless"
+  },
+  "break_even_usage": {
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "move_cost",
+      "op": "ref"
+     },
+     {
+      "args": [
+       {
+        "name": "horizon",
+        "op": "ref"
+       },
+       {
+        "name": "margin_per_host_year",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": -100.10875119040993,
+   "unit": "host"
+  },
+  "current_cost_per_host": {
+   "decided": "outside",
+   "dimensionality": {
+    "[currency_usd]": 1.0,
+    "[host]": -1.0,
+    "[time]": -1.0
+   },
+   "distribution": {
+    "lognormal": {
+     "p10": 5000,
+     "p90": 11000
+    }
+   },
+   "kind": "input",
+   "magnitude": 7416.198487095666,
+   "provenance": {
+    "kind": "assumption",
+    "source": "What the seller supposes a customer spends a year for each host it runs, staff included: the whole bill divided by the hosts. Lognormal, because a spend cannot be zero or less and its high side runs further than its low. The customer knows this figure; the seller does not."
+   },
+   "range": [
+    2000.0,
+    20000.0
+   ],
+   "unit": "USD/host/year",
+   "value": null
+  },
+  "current_total": {
+   "dimensionality": {
+    "[currency_usd]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "usage_hosts",
+        "op": "ref"
+       },
+       {
+        "name": "current_cost_per_host",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     },
+     {
+      "name": "horizon",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 1854049.6217739163,
+   "unit": "USD"
+  },
+  "effective_advantage": {
+   "dimensionality": {},
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "benchmark_advantage",
+      "op": "ref"
+     },
+     {
+      "name": "transfer_factor",
+      "op": "ref"
+     }
+    ],
+    "op": "*"
+   },
+   "kind": "derived",
+   "magnitude": 2.8961481396815723,
+   "unit": "dimensionless"
+  },
+  "horizon": {
+   "decided": "you",
+   "dimensionality": {
+    "[time]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 5.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "The web service model's horizon (ch02), the refresh cycle the fleet is bought against"
+   },
+   "range": [
+    3.0,
+    8.0
+   ],
+   "unit": "year",
+   "value": 5.0
+  },
+  "margin_per_host_year": {
+   "dimensionality": {
+    "[currency_usd]": 1.0,
+    "[host]": -1.0,
+    "[time]": -1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "name": "current_cost_per_host",
+        "op": "ref"
+       },
+       {
+        "name": "scaling_share",
+        "op": "ref"
+       }
+      ],
+      "op": "*"
+     },
+     {
+      "args": [
+       {
+        "name": "proposed_cost_per_host",
+        "op": "ref"
+       },
+       {
+        "name": "effective_advantage",
+        "op": "ref"
+       }
+      ],
+      "op": "/"
+     }
+    ],
+    "op": "-"
+   },
+   "kind": "derived",
+   "magnitude": -499.4568347466293,
+   "unit": "USD/host/year"
+  },
+  "move_cost": {
+   "decided": "outside",
+   "dimensionality": {
+    "[currency_usd]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 250000.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "The challenger's migration cost in ch22: the one-off cost of moving to the proposed system"
+   },
+   "range": [
+    50000.0,
+    1000000.0
+   ],
+   "unit": "USD",
+   "value": 250000.0
+  },
+  "proposed_cost_per_host": {
+   "decided": "outside",
+   "dimensionality": {
+    "[currency_usd]": 1.0,
+    "[host]": -1.0,
+    "[time]": -1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 12747.123866259795,
+   "provenance": {
+    "kind": "vendor_claim",
+    "source": "The seller's price for running one proposed host for a year: the host spread over the horizon, its licence, support and power, and no staff. Here it is the challenger's quote in ch22, worked out per host-year; tests/the_sellers_tco and bench/run_seller.py check it against the stamped result."
+   },
+   "range": [
+    5000.0,
+    30000.0
+   ],
+   "unit": "USD/host/year",
+   "value": 12747.123866259795
+  },
+  "proposed_hosts": {
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "usage_hosts",
+      "op": "ref"
+     },
+     {
+      "name": "effective_advantage",
+      "op": "ref"
+     }
+    ],
+    "op": "/"
+   },
+   "kind": "derived",
+   "magnitude": 17.264310245365223,
+   "unit": "host"
+  },
+  "proposed_total": {
+   "dimensionality": {
+    "[currency_usd]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "args": [
+       {
+        "args": [
+         {
+          "name": "current_total",
+          "op": "ref"
+         },
+         {
+          "args": [
+           {
+            "op": "const",
+            "value": 1.0
+           },
+           {
+            "name": "scaling_share",
+            "op": "ref"
+           }
+          ],
+          "op": "-"
+         }
+        ],
+        "op": "*"
+       },
+       {
+        "args": [
+         {
+          "args": [
+           {
+            "name": "proposed_hosts",
+            "op": "ref"
+           },
+           {
+            "name": "proposed_cost_per_host",
+            "op": "ref"
+           }
+          ],
+          "op": "*"
+         },
+         {
+          "name": "horizon",
+          "op": "ref"
+         }
+        ],
+        "op": "*"
+       }
+      ],
+      "op": "+"
+     },
+     {
+      "name": "move_cost",
+      "op": "ref"
+     }
+    ],
+    "op": "+"
+   },
+   "kind": "derived",
+   "magnitude": 2228913.8304605735,
+   "unit": "USD"
+  },
+  "saving": {
+   "dimensionality": {
+    "[currency_usd]": 1.0
+   },
+   "factor": 1.0,
+   "formula": {
+    "args": [
+     {
+      "name": "current_total",
+      "op": "ref"
+     },
+     {
+      "name": "proposed_total",
+      "op": "ref"
+     }
+    ],
+    "op": "-"
+   },
+   "kind": "derived",
+   "magnitude": -374864.20868665725,
+   "unit": "USD"
+  },
+  "scaling_share": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": {
+    "triangular": {
+     "likely": 0.5,
+     "maximum": 0.8,
+     "minimum": 0.3
+    }
+   },
+   "kind": "input",
+   "magnitude": 0.5261387212474169,
+   "provenance": {
+    "kind": "assumption",
+    "source": "How much of that spend goes away when a host does. Hardware, power, licences and support move with the host count; staff and anything bought per site largely do not. A brochure that scales the whole bill has set this to one without saying so. Triangular, because it is a lowest, most likely and highest guess, and a share has hard ends."
+   },
+   "range": [
+    0.1,
+    1.0
+   ],
+   "unit": "dimensionless",
+   "value": null
+  },
+  "transfer_factor": {
+   "decided": "outside",
+   "dimensionality": {},
+   "distribution": {
+    "triangular": {
+     "likely": 0.75,
+     "maximum": 1.0,
+     "minimum": 0.4
+    }
+   },
+   "kind": "input",
+   "magnitude": 0.7240370349203931,
+   "provenance": {
+    "kind": "assumption",
+    "source": "How much of the benchmark's advantage survives on this customer's work rather than on the benchmark's. Nobody has measured it for any customer: that would take running the customer's own workload on both hosts. One means the benchmark is the customer's workload. Triangular, because it is a lowest, most likely and highest guess, and a seller who claimed a more precise shape would be inventing it."
+   },
+   "range": [
+    0.2,
+    1.2
+   ],
+   "unit": "dimensionless",
+   "value": null
+  },
+  "usage_hosts": {
+   "decided": "outside",
+   "dimensionality": {
+    "[host]": 1.0
+   },
+   "distribution": null,
+   "kind": "input",
+   "magnitude": 50.0,
+   "provenance": {
+    "kind": "assumption",
+    "source": "The seller's picture of a customer in its market, not a count of any one customer's hosts. The customer can replace it with a count, and then it is the customer's figure, not the seller's."
+   },
+   "range": [
+    5.0,
+    300.0
+   ],
+   "unit": "host",
+   "value": 50.0
+  }
+ },
+ "path": "models/sellers_tco/model.yaml",
+ "results": {},
+ "scenarios": {
+  "brochure": {
+   "ceilings": {},
+   "overrides": {
+    "scaling_share": 1.0,
+    "transfer_factor": 1.0
+   },
+   "point": {
+    "benchmark_advantage": 4.0,
+    "break_even_transfer": 0.4966774286946142,
+    "break_even_usage": 11.82195887667432,
+    "current_cost_per_host": 7416.198487095666,
+    "current_total": 1854049.6217739163,
+    "effective_advantage": 4.0,
+    "horizon": 5.0,
+    "margin_per_host_year": 4229.4175205307165,
+    "move_cost": 250000.0,
+    "proposed_cost_per_host": 12747.123866259795,
+    "proposed_hosts": 12.5,
+    "proposed_total": 1046695.2416412372,
+    "saving": 807354.3801326791,
+    "scaling_share": 1.0,
+    "transfer_factor": 1.0,
+    "usage_hosts": 50.0
+   },
+   "samples": 100000,
+   "seed": 20260916,
+   "title": "The brochure"
+  },
+  "ch22_customer": {
+   "ceilings": {},
+   "overrides": {
+    "current_cost_per_host": 7415.122854685757,
+    "usage_hosts": 54.0
+   },
+   "point": {
+    "benchmark_advantage": 4.0,
+    "break_even_transfer": 1.071022237036114,
+    "break_even_usage": -99.99544688585581,
+    "current_cost_per_host": 7415.122854685757,
+    "current_total": 2002083.1707651543,
+    "effective_advantage": 2.8961481396815723,
+    "horizon": 5.0,
+    "margin_per_host_year": -500.0227666073106,
+    "move_cost": 250000.0,
+    "proposed_cost_per_host": 12747.123866259795,
+    "proposed_hosts": 18.64545506499444,
+    "proposed_total": 2387089.3177491287,
+    "saving": -385006.1469839744,
+    "scaling_share": 0.5261387212474169,
+    "transfer_factor": 0.7240370349203931,
+    "usage_hosts": 54.0
+   },
+   "samples": 100000,
+   "seed": 20260916,
+   "title": "The seller's model, on ch22's customer"
+  },
+  "reference": {
+   "ceilings": {},
+   "overrides": {},
+   "point": {
+    "benchmark_advantage": 4.0,
+    "break_even_transfer": 1.0981518832839776,
+    "break_even_usage": -100.10875119040993,
+    "current_cost_per_host": 7416.198487095666,
+    "current_total": 1854049.6217739163,
+    "effective_advantage": 2.8961481396815723,
+    "horizon": 5.0,
+    "margin_per_host_year": -499.4568347466293,
+    "move_cost": 250000.0,
+    "proposed_cost_per_host": 12747.123866259795,
+    "proposed_hosts": 17.264310245365223,
+    "proposed_total": 2228913.8304605735,
+    "saving": -374864.20868665725,
+    "scaling_share": 0.5261387212474169,
+    "transfer_factor": 0.7240370349203931,
+    "usage_hosts": 50.0
+   },
+   "samples": 100000,
+   "seed": 20260916,
+   "title": "The seller's honest model"
+  }
+ },
+ "verify": {
+  "crashed": null,
+  "ok": true,
+  "problems": []
+ }
+}

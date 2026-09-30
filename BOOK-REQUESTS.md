@@ -10,36 +10,35 @@ Every finding below was checked against the book's own toolkit at the commit in
 
 ## Open
 
-### 2. The book publishes the conformance suite
-
-Until it does, `conformance/generate.py` here is the source, pinned to a commit. When the book
-publishes the suite, the generator's cases, codes and fixture layout are offered as a starting
-point, and the builder switches to reading the published fixtures.
-
-### 12. A reader's own measurement has nowhere to go
-
-A `measured` node reads a stamped result from the book's own `bench/results/`. That is right for
-the book. A reader modelling their own system has measurements of their own (spans per request is
-the book's example of one only the reader can take), and the format gives them two options: name a
-result that does not exist, so the chain is *not yet measured*; or declare an `input` with
-provenance `fact`, which makes the model definitional when it is not.
-
-*Why it matters:* the builder may offer only the book's stamped results (the builder's rules say
-so, and they are right to). A reader's model therefore can reach *conditional* only through the
-book's own constants or a ceiling.
-*Suggested:* a way for a model to carry a result beside it (for example `results/` next to
-`scenarios/`, read before `bench/results/`), held to the same disclosure rules as an `estate`
-result. The builder would then write one.
+None. Every request below has been closed by the book.
 
 ## Closed by the book
 
-All eleven at `156e02b` ("Close the holes the model builder's conformance suite found"). Each is
+The last two at `4225e27`:
+
+- **2. The book publishes the conformance suite.** It does, in its own `conformance/` folder, from
+  this repository's cases, codes and fixture layout. The builder still generates its own, pinned,
+  so it can add a case the day it finds a gap; reading the book's instead is a later step.
+- **12. A reader's own measurement has nowhere to go.** A model may carry a `results/` folder beside
+  its `scenarios/`, read before the book's own results and held to an `estate` result's disclosure
+  (system, window, date, and the implementation it was taken on). The builder does not write one
+  yet; it is its next step.
+
+The same commit moved the format to `dsl: 2`: a key the loader does not read is refused, naming
+the nearest one it does (`invalid/unknown-model-key`, `invalid/unknown-node-key`,
+`invalid/key-of-another-kind`, `invalid/unknown-provenance-key`, `invalid/unknown-correlation-key`,
+`invalid/unknown-scenario-key`); a uniform range whose minimum is above its maximum is refused
+(`invalid/uniform-backwards`); only an answer must be in the model's currency, so a price quoted
+in another is converted by a rate (`edge/price-in-another-currency`); and a measurement's unit is
+compared by what it means, not how it is spelled (`edge/measured-unit-spelled-differently`).
+
+The first eleven at `156e02b` ("Close the holes the model builder's conformance suite found"). Each is
 now a case the book's toolkit is asked about on every run, so a rule that loosens again fails the
 generator.
 
 | | Request | What the book does now | Case |
 |---|---|---|---|
-| 1 | A `dsl:` format version | `DSL_VERSION = 1`. The loader refuses another version; `verify-models.py` reports a file that does not say. The builder writes `dsl: 1` first. | `invalid/dsl-other-version`, `invalid/dsl-missing` |
+| 1 | A `dsl:` format version | `DSL_VERSION` (1 then, 2 since `4225e27`). The loader refuses another version; `verify-models.py` reports a file that does not say. The builder writes the line first. | `invalid/dsl-other-version`, `invalid/dsl-missing` |
 | 3 | Bytes are dimensionless | `bit` is `[information]`, so terabytes are a dimension of their own. | `invalid/bytes-are-information`, `invalid/plus-two-with-units` |
 | 4 | Only one currency | 21 ISO currencies, each its own dimension. A model's `currency:` must be one of them, and money in another is refused. | `edge/currency-euro`, `invalid/currency-unknown`, `invalid/currency-another` |
 | 5 | Offset and logarithmic units load | A unit that is not a ratio scale is refused. | `invalid/unit-offset`, `invalid/unit-logarithmic` |

@@ -1,0 +1,5 @@
+about: >-
+  A uniform whose minimum is above its maximum. The sampler refuses it, so the scenario does not
+  evaluate.
+expect:
+  - scenario.does-not-evaluate

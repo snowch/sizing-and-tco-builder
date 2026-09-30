@@ -1,0 +1,251 @@
+{
+ "case": "reference/sellers_tco",
+ "outputs": {
+  "break_even_transfer": [
+   {
+    "base": 1.0981518832839776,
+    "high": 0.6656425491334526,
+    "high_input": 10999.999999999998,
+    "kind": "input",
+    "label": "customer's spend per host-year, everything in",
+    "low": 1.954248765296025,
+    "low_input": 5000.000000000004,
+    "node": "current_cost_per_host",
+    "span": 1.2886062161625724
+   },
+   {
+    "base": 1.0981518832839776,
+    "high": 0.7918129854356785,
+    "high_input": 0.6775255128608412,
+    "kind": "input",
+    "label": "share of the spend that moves with hosts",
+    "low": 1.6205514153516196,
+    "low_input": 0.4,
+    "node": "scaling_share",
+    "span": 0.8287384299159412
+   },
+   {
+    "base": 1.0981518832839776,
+    "high": 1.0981518832839776,
+    "high_input": 0.8775255128608411,
+    "kind": "input",
+    "label": "share of the benchmark advantage that carries over",
+    "low": 1.0981518832839776,
+    "low_input": 0.5449137674618945,
+    "node": "transfer_factor",
+    "span": 0.0
+   }
+  ],
+  "break_even_usage": [
+   {
+    "base": -100.10875119040993,
+    "high": 184.91428376399978,
+    "high_input": 0.8775255128608411,
+    "kind": "input",
+    "label": "share of the benchmark advantage that carries over",
+    "low": -25.690025444829867,
+    "low_input": 0.5449137674618945,
+    "node": "transfer_factor",
+    "span": 210.60430920882965
+   },
+   {
+    "base": -100.10875119040993,
+    "high": 80.22364295580392,
+    "high_input": 0.6775255128608412,
+    "kind": "input",
+    "label": "share of the spend that moves with hosts",
+    "low": -34.84498719969352,
+    "low_input": 0.4,
+    "node": "scaling_share",
+    "span": 115.06863015549744
+   },
+   {
+    "base": -100.10875119040993,
+    "high": 36.07191529591418,
+    "high_input": 10999.999999999998,
+    "kind": "input",
+    "label": "customer's spend per host-year, everything in",
+    "low": -28.237222215873366,
+    "low_input": 5000.000000000004,
+    "node": "current_cost_per_host",
+    "span": 64.30913751178755
+   }
+  ],
+  "current_total": [
+   {
+    "base": 1854049.6217739163,
+    "high": 2749999.9999999995,
+    "high_input": 10999.999999999998,
+    "kind": "input",
+    "label": "customer's spend per host-year, everything in",
+    "low": 1250000.000000001,
+    "low_input": 5000.000000000004,
+    "node": "current_cost_per_host",
+    "span": 1499999.9999999986
+   },
+   {
+    "base": 1854049.6217739163,
+    "high": 1854049.6217739163,
+    "high_input": 0.6775255128608412,
+    "kind": "input",
+    "label": "share of the spend that moves with hosts",
+    "low": 1854049.6217739163,
+    "low_input": 0.4,
+    "node": "scaling_share",
+    "span": 0.0
+   },
+   {
+    "base": 1854049.6217739163,
+    "high": 1854049.6217739163,
+    "high_input": 0.8775255128608411,
+    "kind": "input",
+    "label": "share of the benchmark advantage that carries over",
+    "low": 1854049.6217739163,
+    "low_input": 0.5449137674618945,
+    "node": "transfer_factor",
+    "span": 0.0
+   }
+  ],
+  "margin_per_host_year": [
+   {
+    "base": -499.4568347466293,
+    "high": 1386.1199104574143,
+    "high_input": 10999.999999999998,
+    "kind": "input",
+    "label": "customer's spend per host-year, everything in",
+    "low": -1770.712417027084,
+    "low_input": 5000.000000000004,
+    "node": "current_cost_per_host",
+    "span": 3156.8323274844984
+   },
+   {
+    "base": -499.4568347466293,
+    "high": 270.39555291365923,
+    "high_input": 0.8775255128608411,
+    "kind": "input",
+    "label": "share of the benchmark advantage that carries over",
+    "low": -1946.2806725270302,
+    "low_input": 0.5449137674618945,
+    "node": "transfer_factor",
+    "span": 2216.6762254406894
+   },
+   {
+    "base": -499.4568347466293,
+    "high": 623.2576601831151,
+    "high_input": 0.6775255128608412,
+    "kind": "input",
+    "label": "share of the spend that moves with hosts",
+    "low": -1434.9266284259038,
+    "low_input": 0.4,
+    "node": "scaling_share",
+    "span": 2058.184288609019
+   }
+  ],
+  "proposed_hosts": [
+   {
+    "base": 17.264310245365223,
+    "high": 14.244600090598462,
+    "high_input": 0.8775255128608411,
+    "kind": "input",
+    "label": "share of the benchmark advantage that carries over",
+    "low": 22.939409400908776,
+    "low_input": 0.5449137674618945,
+    "node": "transfer_factor",
+    "span": 8.694809310310314
+   },
+   {
+    "base": 17.264310245365223,
+    "high": 17.264310245365223,
+    "high_input": 10999.999999999998,
+    "kind": "input",
+    "label": "customer's spend per host-year, everything in",
+    "low": 17.264310245365223,
+    "low_input": 5000.000000000004,
+    "node": "current_cost_per_host",
+    "span": 0.0
+   },
+   {
+    "base": 17.264310245365223,
+    "high": 17.264310245365223,
+    "high_input": 0.6775255128608412,
+    "kind": "input",
+    "label": "share of the spend that moves with hosts",
+    "low": 17.264310245365223,
+    "low_input": 0.4,
+    "node": "scaling_share",
+    "span": 0.0
+   }
+  ],
+  "proposed_total": [
+   {
+    "base": 2228913.8304605735,
+    "high": 2653470.0223856457,
+    "high_input": 10999.999999999998,
+    "kind": "input",
+    "label": "customer's spend per host-year, everything in",
+    "low": 1942678.104256772,
+    "low_input": 5000.000000000004,
+    "node": "current_cost_per_host",
+    "span": 710791.9181288737
+   },
+   {
+    "base": 2228913.8304605735,
+    "high": 2036450.7335455017,
+    "high_input": 0.8775255128608411,
+    "kind": "input",
+    "label": "share of the benchmark advantage that carries over",
+    "low": 2590619.789905674,
+    "low_input": 0.5449137674618945,
+    "node": "transfer_factor",
+    "span": 554169.0563601721
+   },
+   {
+    "base": 2228913.8304605735,
+    "high": 1948235.2067281376,
+    "high_input": 0.6775255128608412,
+    "kind": "input",
+    "label": "share of the spend that moves with hosts",
+    "low": 2462781.278880392,
+    "low_input": 0.4,
+    "node": "scaling_share",
+    "span": 514546.07215225464
+   }
+  ],
+  "saving": [
+   {
+    "base": -374864.20868665725,
+    "high": 96529.97761435388,
+    "high_input": 10999.999999999998,
+    "kind": "input",
+    "label": "customer's spend per host-year, everything in",
+    "low": -692678.104256771,
+    "low_input": 5000.000000000004,
+    "node": "current_cost_per_host",
+    "span": 789208.0818711249
+   },
+   {
+    "base": -374864.20868665725,
+    "high": -182401.11177158542,
+    "high_input": 0.8775255128608411,
+    "kind": "input",
+    "label": "share of the benchmark advantage that carries over",
+    "low": -736570.1681317575,
+    "low_input": 0.5449137674618945,
+    "node": "transfer_factor",
+    "span": 554169.0563601721
+   },
+   {
+    "base": -374864.20868665725,
+    "high": -94185.58495422127,
+    "high_input": 0.6775255128608412,
+    "kind": "input",
+    "label": "share of the spend that moves with hosts",
+    "low": -608731.6571064759,
+    "low_input": 0.4,
+    "node": "scaling_share",
+    "span": 514546.07215225464
+   }
+  ]
+ },
+ "scenario": "reference"
+}

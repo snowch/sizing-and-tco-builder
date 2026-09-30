@@ -1,0 +1,5 @@
+about: >-
+  A model file with a key the loader does not read: outptus for outputs. The loader refuses it
+  and names the nearest key it does read.
+expect:
+  - load.unknown-key

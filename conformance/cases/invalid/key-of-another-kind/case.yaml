@@ -1,0 +1,4 @@
+about: >-
+  An input carrying a formula, a key only a derived node reads.
+expect:
+  - load.unknown-key

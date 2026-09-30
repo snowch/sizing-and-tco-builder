@@ -40,8 +40,11 @@ export function load() {
     if (!raw) return null;
     const state = JSON.parse(raw);
     if (state?.version !== 1) return null;
-    // A model saved before the book declared its format version is written in that version.
-    if (state.doc && state.doc.dsl === undefined) state.doc = { dsl: DSL_VERSION, ...state.doc };
+    // A model saved under an earlier version of the rules is written in the current one, and says so.
+    if (state.doc && state.doc.dsl !== DSL_VERSION) {
+      if (typeof state.doc.dsl === "number") state.upgradedFrom = state.doc.dsl;
+      state.doc = { ...state.doc, dsl: DSL_VERSION };
+    }
     return state;
   } catch {
     return null;

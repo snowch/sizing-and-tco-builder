@@ -1,0 +1,4 @@
+about: >-
+  A derived node with a key its kind does not read: formla for formula.
+expect:
+  - load.unknown-key

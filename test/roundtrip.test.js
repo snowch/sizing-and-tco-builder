@@ -45,7 +45,7 @@ for (const id of manifest.cases) {
 test("the reference model is written in the book's layout", () => {
   const want = read("cases/reference/web_service.json");
   const written = engine.roundTrip(want.files, { results, registry })["model.yaml"];
-  assert.match(written, /^dsl: 1\nmodel: web_service\ntitle: /);
+  assert.match(written, /^dsl: 2\nmodel: web_service\ntitle: /);
   assert.match(written, /\n {2}peak_request_rate_t0:\n {4}kind: input\n {4}decided: outside\n {4}unit: request\/second\n/);
   assert.match(written, /distribution: \{triangular: \{minimum: 3000, likely: 8000, maximum: 20000\}\}/);
 });

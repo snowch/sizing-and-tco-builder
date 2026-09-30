@@ -1,0 +1,5 @@
+about: >-
+  A measured node declared in TB whose stamped result says terabyte. The same unit, so the
+  verifier accepts it.
+expect:
+  - valid

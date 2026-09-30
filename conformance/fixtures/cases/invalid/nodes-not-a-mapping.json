@@ -1,7 +1,7 @@
 {
  "about": "The nodes key holds a list rather than a mapping of names to nodes.",
  "files": {
-  "model.yaml": "dsl: 1\nmodel: tiny\ntitle: Listed nodes\ncurrency: USD\nnodes:\n  - request_rate\n  - cores\noutputs: []\n",
+  "model.yaml": "dsl: 2\nmodel: tiny\ntitle: Listed nodes\ncurrency: USD\nnodes:\n  - request_rate\n  - cores\noutputs: []\n",
   "scenarios/reference.yaml": "scenario: reference\ntitle: Reference\nbecause: the model as declared\nsamples: 1000\nseed: 20260916\noverrides: {}\n"
  },
  "id": "invalid/nodes-not-a-mapping",

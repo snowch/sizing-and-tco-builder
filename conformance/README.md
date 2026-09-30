@@ -4,8 +4,10 @@ The builder's rules engine is JavaScript and the book's is Python. This director
 each other. Every case here is a model file the book's own toolkit has been asked about, and the
 engine must give the same answer, or CI fails.
 
-The book will publish this suite itself (design, *Repository*). Until it does, this directory is
-the source, pinned to the book commit in [`../book.lock.json`](../book.lock.json). That file is the
+The book now publishes a copy of this suite in its own `conformance/` folder. This directory is
+still the builder's source, pinned to the book commit in [`../book.lock.json`](../book.lock.json),
+so the builder can add a case the day it finds a gap; reading the book's published fixtures
+instead is a later step. That file is the
 only place the pin lives: the generator reads it, the fixtures record it, and the runner checks
 the two agree.
 
@@ -99,7 +101,7 @@ A message is classified by pattern into a code, so the engine is compared on *wh
 than on the wording. A message that matches no pattern, or more than one, stops the generator: a
 rule the book adds must arrive as a failure here, not be filed under "other".
 
-Loader refusals: `load.yaml`, `load.not-a-mapping`, `load.dsl-version`, `load.duplicate-key`,
+Loader refusals: `load.yaml`, `load.not-a-mapping`, `load.unknown-key`, `load.dsl-version`, `load.duplicate-key`,
 `load.not-a-number`, `load.no-unit`, `load.not-ratio-scale`, `load.formula-arity`,
 `load.missing-field`, `load.node-not-a-mapping`, `load.unknown-kind`, `load.unknown-unit`,
 `load.formula-syntax`, `load.formula-function`, `load.formula-keywords`, `load.formula-constant`,

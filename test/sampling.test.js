@@ -13,10 +13,13 @@
  * of the same quantity, so their difference has a standard deviation of about sd × √2. A figure
  * passes when
  *
- *     |builder − book| ≤ 6 × √2 × sd + (greatest − least) + step
+ *     |builder − book| ≤ 6 × √2 × sd + (greatest − least) + step + 10⁻⁹ × |book|
  *
  * where step is 1 for a quantity that only takes whole values (a host count after ceil, whose
- * percentile can sit exactly on a boundary and did not move in 17 runs) and 0 otherwise. Six
+ * percentile can sit exactly on a boundary and did not move in 17 runs) and 0 otherwise. The
+ * last term is rounding: a figure that does not vary at all (the seller's model with both its
+ * uncertain inputs pinned) has an sd of nought, and a mean of 100,000 equal numbers comes out a
+ * few parts in a trillion apart when numpy adds them in pairs and the builder adds them in turn. Six
  * standard deviations make a chance failure about one in five hundred million per figure; the
  * range term covers a spread the 16 reseeds underestimate. A wrong shape, a wrong correlation
  * step or a wrong formula moves figures by far more than this, and the correlated-sum case is
@@ -41,7 +44,7 @@ export const SIGMAS = 6;
 const STATISTICS = ["p5", "p25", "p50", "p75", "p95", "mean"];
 
 export function tolerance(entry, whole) {
-  return SIGMAS * Math.SQRT2 * entry.sd + (entry.high - entry.low) + (whole ? 1 : 0);
+  return SIGMAS * Math.SQRT2 * entry.sd + (entry.high - entry.low) + (whole ? 1 : 0) + 1e-9 * Math.abs(entry.value);
 }
 
 const files = readdirSync(new URL("sampling/", FIXTURES), { recursive: true }).filter((f) => f.endsWith(".json"));

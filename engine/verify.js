@@ -59,7 +59,9 @@ export function checkModel(model, registry, problems, units = checkUnits(model, 
   if (model.dsl === null) problems.push(problem("dsl.not-declared"));
   if (!registry.currencies.includes(model.currency)) problems.push(problem("currency.unknown"));
   const own = `[currency_${model.currency.toLowerCase()}]`;
-  for (const name of sorted(model.nodes.keys())) {
+  // What the model answers in is its own currency; a price quoted in another is converted by a rate.
+  for (const name of model.outputs) {
+    if (!model.nodes.has(name)) continue;
     const { dimensionality } = registry.describe(registry.parse(model.nodes.get(name).unit));
     if (Object.keys(dimensionality).some((d) => d.startsWith("[currency_") && d !== own)) {
       problems.push(problem("currency.another", { node: name }));
@@ -94,7 +96,7 @@ export function checkModel(model, registry, problems, units = checkUnits(model, 
         if (!Object.hasOwn(summary, "value")) problems.push(problem("measured.no-summary-value", { node: name }));
         else if (!(Number(summary.sd ?? 0) > 0)) problems.push(problem("measured.no-uncertainty", { node: name }));
         const unit = payload.units?.value;
-        if (unit && unit !== node.unit) problems.push(problem("measured.unit-differs", { node: name }));
+        if (unit && !sameUnit(registry, unit, node.unit)) problems.push(problem("measured.unit-differs", { node: name }));
       }
     }
 
@@ -177,6 +179,18 @@ function declaredShape(spec) {
     return pairs && hashable ? declared[0] : null;
   }
   return null;
+}
+
+/* Two spellings of one unit (terabyte and TB) are the same unit; one that does not parse is compared as text. */
+function sameUnit(registry, a, b) {
+  try {
+    const x = registry.parse(String(a));
+    const y = registry.parse(String(b));
+    const keys = new Set([...Object.keys(x), ...Object.keys(y)]);
+    return [...keys].every((k) => x[k] === y[k]);
+  } catch {
+    return a === b;
+  }
 }
 
 /* check_scenarios: every scenario file, sorted by name; each override names a real input. */
