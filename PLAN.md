@@ -354,6 +354,38 @@ the book's chapters taken out (`plain` in `app/ui.js`). `test/site.test.js` fail
 page shows says "book" or cites a chapter by number. The repository's own documents still say
 where the method comes from.
 
+### v2: the solution builder
+
+A second page at `/v2/`, on the same engine and file format, for a presales engineer who has
+never seen a model file. Its order is customer → requirements → options → answer rather than
+structure → inputs → calculation → answer, and its pieces are:
+
+- **Parts as model files** (`v2/templates/`): infrastructure bought or rented, business software,
+  managed services, each with every customer and option figure blank and an `included` switch a
+  scenario can set to nought. Choosing several merges them by prefix into one model with a grand
+  total (`v2/app/parts.js`), so nothing downstream knows the solution was assembled.
+- **Candidates before inputs** (`engine/candidates.js`): every number in the notes is a
+  candidate, scored against every input by the words near it, confident only when one input
+  fits clearly and its words sit by the number. The engineer confirms each; the sentence it came
+  from becomes its evidence.
+- **The interpreter, optional** (`v2/app/interpret.js`, `v2/app/webllm.js`): a small model over
+  WebGPU, downloaded once when asked for, that reads what the finder cannot ("half a petabyte")
+  and returns candidates in the same shape, marked as its own. The flow stands a fixed reply in
+  for it; the page works in full without it.
+- **Needed and optional** worked out by walking the answer's formulas, so a sizing question
+  never asks for a price, and a figure an option lacks is required until typed or marked the
+  same as ours.
+- **Results, Explain, files**: the answer plainly, the comparisons signed, what-ifs as copies;
+  the tree with each line's origin and evidence, what would flip a comparison, sensitivity, the
+  toolkit's verdict on the files, and the files themselves, one model and one scenario per option.
+
+`flows/v2.flow.test.js` drives it in Chromium and hands the files to the book's toolkit, which
+accepts them and agrees on the total. What it does not do yet: a scenario cannot say a figure is
+unknown for that option (the file format has no way to), so such an option is held back on the
+page until the figure is typed or marked the same as ours; and the merged parts share only the
+period and the definitions, so a customer figure two parts both need (a growth rate, an admin's
+pay) is entered once per part.
+
 ### Known gaps
 
 - **A failure only rare draws produce.** The builder's random stream is not the book's, so a
