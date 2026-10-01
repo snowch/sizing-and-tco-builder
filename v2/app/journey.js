@@ -275,8 +275,8 @@ function drawCustomer(app, el) {
     <p class="hint">Paste customer notes, requirements, quotes, emails or other information.</p>
     <textarea class="notes" id="notes2" aria-label="Customer notes">${esc(state.notes)}</textarea>
     <div class="actions">
-      <button type="button" class="ghost" id="refind">Find candidate inputs</button>
-      <button type="button" class="ai" id="use-ai">Interpret the notes on this device <span class="badge">Optional</span></button>
+      <button type="button" class="ghost" id="refind">Find candidate inputs${app.interpreter.loaded() ? " (with the on-device model)" : ""}</button>
+      ${app.interpreter.loaded() ? "" : `<button type="button" class="ai" id="use-ai">Load the on-device model to read the notes in full <span class="badge">Optional</span></button>`}
     </div>
     <div class="notice" id="ai-notice" hidden></div>
     ${cands.length ? `
@@ -293,8 +293,8 @@ function drawCustomer(app, el) {
     ${nextButton("customer")}`;
   const find = (id) => state.candidates.find((c) => c.id === id);
   el.querySelector("#notes2").oninput = (e) => { state.notes = e.target.value; app.save(); };
-  el.querySelector("#refind").onclick = () => { runFinder(app); app.save(); drawBuild(app); };
-  el.querySelector("#use-ai").onclick = () => app.interpretNotes(el.querySelector("#ai-notice"));
+  el.querySelector("#refind").onclick = () => { runFinder(app); app.save(); drawBuild(app); app.offerModel(); };
+  el.querySelector("#use-ai")?.addEventListener("click", () => app.interpretNotes(el.querySelector("#ai-notice")));
   el.querySelector("#confirm-all")?.addEventListener("click", () => { for (const c of state.candidates) if (c.status === "pending" && c.confidence === "confident") confirmCandidate(app, c); app.save(); drawBuild(app); });
   for (const s of el.querySelectorAll("[data-map]")) s.onchange = () => {
     const c = find(s.dataset.map);

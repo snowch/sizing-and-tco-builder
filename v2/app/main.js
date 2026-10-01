@@ -126,6 +126,16 @@ async function main() {
   $("go-find").onclick = () => {
     if (!app.state.notes.trim()) { $("start-note").textContent = "Paste some notes first, or skip and enter values yourself."; return; }
     begin(app, { find: true }); app.save(); app.show("build");
+    app.offerModel();
+  };
+  /* After a find: run the model if it is loaded; offer the download if it could be, unless declined. */
+  app.offerModel = async () => {
+    const notice = document.querySelector("#ai-notice");
+    if (!notice) return;
+    if (app.interpreter.loaded()) { app.interpretNotes(notice); return; }
+    if (app.state.modelDeclined) return;
+    const status = await app.interpreter.status();
+    if (status.available) app.interpretNotes(notice);
   };
   $("go-skip").onclick = () => { begin(app, { find: false }); app.save(); app.show("build"); };
   $("go-results").onclick = () => app.show("results");
@@ -140,9 +150,11 @@ async function main() {
     notice.hidden = false;
     const status = await app.interpreter.status();
     if (!status.available) { notice.textContent = status.reason; return; }
-    if (!notice.dataset.agreed) {
-      notice.innerHTML = `The on-device model is ${esc(status.size ?? "a download")}. It runs in this browser; the notes never leave this device. It only suggests candidates, each with the sentence it came from, and nothing reaches the model until you confirm it. <button type="button" class="ghost" id="ai-go">Download and interpret</button>`;
+    if (!notice.dataset.agreed && !app.interpreter.loaded()) {
+      // The download is asked for once, in plain terms; "not now" is remembered for this answer.
+      notice.innerHTML = `<strong>Read the notes with a model on this device?</strong> It is ${esc(status.size ?? "a download")}. It runs in this browser; the notes never leave this device. It only suggests candidates, each with the sentence it came from, and nothing reaches the model until you confirm it. <span class="row" style="margin-top:8px"><button type="button" class="primary" id="ai-go">Download and read the notes</button><button type="button" class="ghost" id="ai-later">Not now</button></span>`;
       notice.querySelector("#ai-go").onclick = () => { notice.dataset.agreed = "1"; app.interpretNotes(notice); };
+      notice.querySelector("#ai-later").onclick = () => { app.state.modelDeclined = true; app.save(); notice.hidden = true; };
       return;
     }
     notice.innerHTML = `<span id="ai-text">Starting…</span><progress id="ai-progress" max="1" value="0"></progress>`;

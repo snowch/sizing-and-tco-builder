@@ -23,6 +23,8 @@ const NUMBER = /(?<![\p{L}\d.])(£|\$|€)?\s?(\d[\d,]*(?:\.\d+)?|\b(?:one|two|t
 const PREFIXES = ["", "K", "M", "G", "T", "P", "E"];
 const DATA_UNIT = /(?:^|[^A-Za-z])([KMGTPE]?)(i?)B(?![A-Za-z])/;
 const dataUnitOf = (unit) => { const m = DATA_UNIT.exec(unit ?? ""); return m ? { prefix: m[1].toUpperCase(), binary: m[2] === "i" } : null; };
+/* PB and TB are the magnitudes of stored data; GB and GiB of memory. */
+const sameMagnitude = (a, b) => { const x = dataUnitOf(a), y = dataUnitOf(b); return Boolean(x && y) && (["T", "P", "E"].includes(x.prefix) === ["T", "P", "E"].includes(y.prefix)); };
 export function inUnitOf(value, writtenUnit, inputUnit) {
   const from = dataUnitOf(writtenUnit), to = dataUnitOf(inputUnit);
   if (!from || !to) return value;
@@ -79,14 +81,16 @@ export function findCandidates(text, inputs, { current = "current" } = {}) {
       const near = s.text.slice(Math.max(0, at - 4), at + len + 14);
       const wider = s.text.slice(Math.max(0, at - 24), at + len + 24);
       const scored = pool.map((i) => {
-        if (!i.re || !fits(i, kind) || !i.re.test(s.text)) return { key: i.key, score: 0 };
+        // A data unit written on the number (3PB, 512GiB) is evidence on its own for an input in a
+        // data unit, key word or none; one in the same magnitude (PB and TB; GB and GiB) more so.
+        const dataMatch = writtenUnit && dataUnitOf(writtenUnit) && dataUnitOf(i.unit) ? (sameMagnitude(writtenUnit, i.unit) ? 3 : 2) : 0;
+        if (!i.re || !fits(i, kind) || (!i.re.test(s.text) && !dataMatch)) return { key: i.key, score: 0 };
         if (i.scope !== "shared" && i.scope !== current) return { key: i.key, score: 0 };
         if (i.scope === current && !today) return { key: i.key, score: 0 };
-        let score = 2, strong = false;
+        let score = i.re.test(s.text) ? 2 : 0, strong = false;
         if (i.re.test(near)) { score += 3; strong = true; }
         if (i.re.test(wider)) { score += 1; strong = true; }
-        // A data unit written on the number (3PB, 512GiB) is strong evidence for an input in a data unit.
-        if (writtenUnit && dataUnitOf(writtenUnit) && dataUnitOf(i.unit)) { score += 2; strong = true; }
+        if (dataMatch) { score += dataMatch; strong = true; }
         if (i.context && i.context.test(s.text)) score += 1;
         if (i.scope === current) score += 1;
         return { key: i.key, score, strong };

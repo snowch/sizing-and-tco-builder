@@ -150,15 +150,13 @@ test("a competitive TCO from notes: candidates confirmed, numbers typed, origins
   // Nothing has reached the model yet: every requirement is still blank.
   assert.match(await e.summary("requirements"), /^0 of/);
 
-  // Confirm the confident candidates; the interpreter adds one the finder could not read.
+  // Confirm the confident candidates. With the model loaded, Find already asked it: it adds one the finder could not read.
+  await page.waitForSelector('.cand .conf:has-text("interpreter")');
   await page.click("#confirm-all");
   assert.match(await e.summary("requirements"), /^\d+ of 10 known/);
-  await page.click("#use-ai");
-  await page.click("#ai-go");
-  await page.waitForSelector('.cand .conf:has-text("interpreter")');
   const ai = page.locator(".cand", { hasText: "interpreter" });
   assert.match(await ai.locator("select").evaluate((s) => s.selectedOptions[0].textContent), /Current environment: support/);
-  await ai.locator("[data-confirm]").click();
+  assert.match(await ai.innerText(), /Confirmed/, "the model's confident suggestion was among those confirmed, marked as the model's");
   // The rest are ambiguous or unmatched (12 servers, 7 years): rejected, they stay out of the model.
   for (const b of await page.$$("[data-reject]")) await b.click();
   assert.match(await e.summary("customer"), /confirmed$/);
@@ -343,4 +341,28 @@ test("the interview asks for what is missing, one question at a time, and each a
   if (await page.$("#iv-same")) { await page.click("#iv-same"); await page.waitForSelector(".iv"); }
   assert.deepEqual(e.errors, []);
   await e.context.close();
+});
+
+test("with WebGPU but no model loaded, the first find offers the download once, and 'not now' is remembered", async () => {
+  const context = await browser.newContext({ viewport: { width: 1400, height: 950 } });
+  await context.addInitScript(() => { Object.defineProperty(navigator, "gpu", { value: {}, configurable: true }); });
+  const page = await context.newPage();
+  const errors = [];
+  page.on("pageerror", (x) => errors.push(x.message));
+  await page.goto(base);
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.waitForFunction(() => /available/.test(document.getElementById("engine-chip").textContent));
+  await page.fill("#notes", NOTES);
+  await page.click("#go-find");
+  await page.waitForSelector("#ai-go");
+  assert.match(await page.$eval("#ai-notice", (x) => x.textContent), /Read the notes with a model on this device\?/);
+  await page.click("#ai-later");
+  assert.equal(await page.$eval("#ai-notice", (x) => x.hidden), true);
+  await page.click("#refind");
+  await page.waitForSelector(".cands");
+  assert.equal(await page.$eval("#ai-notice", (x) => x.hidden), true, "declined once, not asked again");
+  assert.ok(await page.$("#use-ai"), "the optional button is still there to change one's mind");
+  assert.deepEqual(errors, []);
+  await context.close();
 });

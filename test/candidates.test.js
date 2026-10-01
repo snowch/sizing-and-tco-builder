@@ -89,3 +89,13 @@ test("a number followed straight by its unit is found, a digit inside a word is 
   assert.equal(inUnitOf(1.5, "PB", "TB"), 1500);
   assert.equal(inUnitOf(5, "", "TB"), 5);
 });
+
+test("a data unit on the number is enough to propose the data inputs, even with no key word in the sentence", () => {
+  const found = findCandidates("Customer has 3PB on the S3 tier - need to explore TCO by migrating.", INPUTS);
+  const c = found.find((x) => x.text === "3PB");
+  assert.equal(c.target, "shared|data_today", "PB leans to the input in TB, not to memory in GiB");
+  assert.equal(c.value, 3000);
+  const m = findCandidates("Boxes have 256GB and that is all we know.", INPUTS).find((x) => x.text === "256GB");
+  assert.equal(m.target, "shared|memory", "GB leans to memory in GiB");
+  assert.equal(m.value, 256);
+});
