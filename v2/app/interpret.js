@@ -1,10 +1,10 @@
 /*
  * Interpreting notes with a language model, on this device, as an optional accelerator.
  *
- * Whatever runs here produces candidates in the finder's own shape (engine/candidates.js) and
+ * Whatever runs here produces candidates in one shape (the Customer step's cards) and
  * nothing else: value, the input it maps to, the sentence it came from, and whether the model
- * was sure. A candidate becomes an input only when the engineer confirms it, exactly as one the
- * finder found. The page works in full with no interpreter at all.
+ * was sure. A candidate becomes an input only when the engineer confirms it. The page works in
+ * full with no interpreter at all.
  *
  * The backend is pluggable: `createInterpreter({ backend })` takes anything with `status()` and
  * `complete(prompt, schema, onProgress)`, so a test can stand one in. The default backend is

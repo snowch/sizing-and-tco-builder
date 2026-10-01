@@ -26,7 +26,6 @@ const FILES = [
   "data/outline.json",
   "data/results.json",
   "data/units.json",
-  "engine/candidates.js",
   "engine/describe.js",
   "engine/evaluate.js",
   "engine/explore.js",

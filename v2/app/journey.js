@@ -7,9 +7,8 @@
  * Every value on this screen is typed or confirmed by the engineer. The page never fills one in.
  */
 
-import { findCandidates, findWritten, inUnitOf } from "../../engine/candidates.js";
 import { $, esc, fmt, lower, n, unitWords } from "./ui.js";
-import { ORIGINS, QUESTIONS, ROLE_NAMES, WRITTEN_PATTERNS, SAMPLE_NOTES, evidenceOf, originOf, provenanceFor, questionById } from "./questions.js";
+import { ORIGINS, QUESTIONS, ROLE_NAMES, evidenceOf, originOf, provenanceFor, questionById } from "./questions.js";
 import { merge } from "./parts.js";
 import { newOption, optionsFor } from "./state.js";
 import { answerLabel, answerNode, blocker, byName, coversPart, docFor, evaluateOption, isBlank, missing, neededFor, optionById, ours, partOf, valueOf } from "./evaluate.js";
@@ -91,7 +90,7 @@ export function addCostLine(app, name, when) {
   fixTotal(state);
 }
 
-// -- the inputs the finder and the interpreter can fill --------------------------------------------
+// -- the inputs an interpreter can fill, with the words that name each --------------------------------
 
 export function finderInputs(app) {
   const { state, ctx } = app;
@@ -121,17 +120,6 @@ export const targetLabel = (app, key) => {
   if (!nd) return key;
   return where === "shared" ? inputName(app, nd) : `${optionById(app.state, where)?.name ?? where}: ${lower(inputName(app, nd))}`;
 };
-
-export function runFinder(app) {
-  const { state } = app;
-  const inputs = finderInputs(app);
-  const current = state.options.find((o) => o.role === "current");
-  const found = findCandidates(state.notes, inputs, { current: current?.id ?? "current" });
-  const written = findWritten(state.notes, WRITTEN_PATTERNS).map((w, k) => ({ id: `w${k}`, kind: "note", category: w.category, sentence: w.sentence, confidence: "confident", target: `note|${w.category}`, alternatives: [], status: "pending", text: "" }));
-  const keep = state.candidates.filter((c) => c.status === "confirmed");
-  const fresh = [...found, ...written].filter((c) => !keep.some((x) => x.sentence === c.sentence && x.at === c.at && x.kind === c.kind));
-  state.candidates = [...keep, ...fresh];
-}
 
 export function confirmCandidate(app, c) {
   const { state } = app;
@@ -186,11 +174,8 @@ export function begin(app, { find }) {
   state.candidates = [];
   state.written = {};
   state.whatIfs = [];
-  if (find) {
-    runFinder(app);
-    // A confirmed customer figure in a part not yet chosen would be lost, so every part the notes mention is offered.
-    state.open = ["customer"];
-  } else state.open = ["requirements"];
+  // With notes, the Customer step opens so the on-device model or an assistant can read them; nothing reads them by matching words.
+  state.open = find ? ["customer"] : ["requirements"];
 }
 
 // -- the build view ----------------------------------------------------------------------------------
@@ -208,7 +193,7 @@ function stepSummary(app, id) {
   const { state } = app;
   if (id === "customer") {
     const c = state.candidates;
-    if (!c.length) return state.notes ? "No candidates yet" : "No notes: values entered by hand";
+    if (!c.length) return state.notes ? "Notes kept; no candidates yet" : "No notes: values entered by hand";
     const done = c.filter((x) => x.status === "confirmed").length, left = c.filter((x) => x.status === "pending").length;
     return `${done} confirmed${left ? ` · ${left} to check` : ""}`;
   }
@@ -303,11 +288,10 @@ function drawCustomer(app, el) {
     : `<span class="status"><button type="button" class="ok" data-confirm="${c.id}" ${c.target ? "" : "disabled"}>Confirm</button><button type="button" data-reject="${c.id}">Reject</button></span>`);
   const confident = cands.filter((c) => c.status === "pending" && c.confidence === "confident").length;
   el.innerHTML = `
-    <p class="hint">Paste customer notes, requirements, quotes, emails or other information.</p>
+    <p class="hint">Paste customer notes, requirements, quotes, emails or other information. They are kept with the answer. Nothing here reads them by matching words: a model on this device can, or an assistant linked through the server${app.remote ? "" : " (see the project's README)"}.</p>
     <textarea class="notes" id="notes2" aria-label="Customer notes">${esc(state.notes)}</textarea>
     <div class="actions">
-      <button type="button" class="ghost" id="refind">Find candidate inputs${app.interpreter.loaded() ? " (with the on-device model)" : ""}</button>
-      ${app.interpreter.loaded() ? "" : `<button type="button" class="ai" id="use-ai">Load the on-device model to read the notes in full <span class="badge">Optional</span></button>`}
+      ${app.interpreter.loaded() ? `<button type="button" class="ghost" id="refind">Read the notes with the on-device model</button>` : `<button type="button" class="ai" id="use-ai">Load the on-device model to read the notes <span class="badge">Optional</span></button>`}
     </div>
     <div class="notice" id="ai-notice" hidden></div>
     ${cands.length ? `
@@ -320,18 +304,16 @@ function drawCustomer(app, el) {
       ${cands.map((c) => `<div class="cand ${c.status}">${options(c)}
         <span class="valcell">${c.kind === "note" ? "text" : `<input type="number" step="any" value="${c.value}" data-cval="${c.id}" aria-label="Value" ${c.status !== "pending" ? "disabled" : ""}><span class="unit">${unit(c)}</span>`}</span>
         ${conf(c)}${status(c)}<div class="quote">Found in: “${mark(c)}”</div></div>`).join("")}
-    </div>` : `<p class="callout">No candidates yet. Paste notes and choose “Find candidate inputs”, or go straight on and enter the requirements yourself.</p>`}
+    </div>` : `<p class="callout">No candidates yet. Go on and enter the requirements yourself, or have the notes read: by the on-device model, or by an assistant linked through the server.</p>`}
     ${nextButton("customer")}`;
   const find = (id) => state.candidates.find((c) => c.id === id);
   el.querySelector("#notes2").oninput = (e) => { state.notes = e.target.value; app.save(); };
-  el.querySelector("#refind").onclick = () => { runFinder(app); app.save(); drawBuild(app); app.offerModel(); };
+  el.querySelector("#refind")?.addEventListener("click", () => app.interpretNotes(el.querySelector("#ai-notice")));
   el.querySelector("#use-ai")?.addEventListener("click", () => app.interpretNotes(el.querySelector("#ai-notice")));
   el.querySelector("#confirm-all")?.addEventListener("click", () => { for (const c of state.candidates) if (c.status === "pending" && c.confidence === "confident") confirmCandidate(app, c); app.save(); drawBuild(app); });
   for (const s of el.querySelectorAll("[data-map]")) s.onchange = () => {
     const c = find(s.dataset.map);
     c.target = s.value;
-    // A figure written in one data unit is read into the chosen input's: 3 PB into TB is 3000.
-    if (c.writtenUnit && c.target) c.value = inUnitOf(c.written, c.writtenUnit, byName(state.doc).get(c.target.split("|")[1])?.unit);
     app.save(); drawBuild(app);
   };
   for (const v of el.querySelectorAll("[data-cval]")) v.oninput = () => { find(v.dataset.cval).value = v.value.trim() === "" ? NaN : Number(v.value); app.save(); };

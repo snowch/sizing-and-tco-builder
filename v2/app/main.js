@@ -59,8 +59,8 @@ async function main() {
   };
   app.interpreter.status().then((st) => {
     if (app.interpreter.loaded()) app.setChip("loaded", "On-device model: ready", "A model is loaded in this browser. It reads pasted notes and interview answers into candidates you confirm.");
-    else if (st.available) app.setChip("ready", "WebGPU: available · model not loaded", `This browser can run a small model on its GPU. Loading it is ${st.size ?? "a download"}; ask for it in the Customer step with “Interpret the notes on this device”. Until then, numbers are read by the plain finder.`);
-    else app.setChip("off", "On-device model: not available", `${st.reason} The finder and the interview still work: they read plain numbers.`);
+    else if (st.available) app.setChip("ready", "WebGPU: available · model not loaded", `This browser can run a small model on its GPU. Loading it is ${st.size ?? "a download"}; ask for it in the Customer step. Until then, nothing reads the notes; the interview reads plain numbers you type.`);
+    else app.setChip("off", "On-device model: not available", `${st.reason} The interview still reads plain numbers you type, and an assistant linked through the server can read the notes.`);
   });
   app.chipProgress = (p) => {
     if (typeof p?.progress === "number" && p.progress < 1) app.setChip("loading", `Loading model… ${Math.round(p.progress * 100)}%`);
@@ -166,7 +166,7 @@ async function main() {
   $("notes").oninput = (e) => { app.state.notes = e.target.value; app.save(); };
   $("sample-notes").onclick = () => { app.state.notes = SAMPLE_NOTES; $("notes").value = SAMPLE_NOTES; $("notes").focus(); app.save(); };
   $("go-find").onclick = () => {
-    if (!app.state.notes.trim()) { $("start-note").textContent = "Paste some notes first, or skip and enter values yourself."; return; }
+    if (!app.state.notes.trim()) { $("start-note").textContent = "Paste some notes first, or start without any and enter values yourself."; return; }
     begin(app, { find: true }); app.save(); app.show("build");
     app.offerModel();
   };
@@ -209,8 +209,8 @@ async function main() {
       const n2 = document.querySelector("#ai-notice");
       if (n2) { n2.hidden = false; n2.textContent = `${found.length} candidate${found.length === 1 ? "" : "s"} suggested by the interpreter, marked as such. Confirm each one you agree with.`; }
     } catch (error) {
-      notice.textContent = `The interpreter could not run: ${error.message}. The candidate finder still works without it.`;
-      app.setChip("off", "On-device model: failed to load", `${error.message}. The finder and the interview still read plain numbers.`);
+      notice.textContent = `The interpreter could not run: ${error.message}. Enter the figures yourself, or have an assistant read the notes through the server.`;
+      app.setChip("off", "On-device model: failed to load", `${error.message}. The interview still reads plain numbers you type.`);
     }
   };
 

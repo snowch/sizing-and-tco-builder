@@ -5,8 +5,9 @@
  * book's own toolkit.
  *
  * The interpreter is a stand-in that returns one fixed reply, so no model is downloaded: what
- * the flow checks is that a suggestion arrives as a candidate, marked as the interpreter's, and
- * reaches the model only when confirmed. Before any number field is filled, the flow checks it
+ * the flow checks is that each suggestion arrives as a candidate, marked as the interpreter's,
+ * and reaches the model only when confirmed. Nothing on the page reads the notes by matching
+ * words; the candidates are the stand-in's and nobody else's. Before any number field is filled, the flow checks it
  * is empty, so a screen that filled a number in would fail here.
  *
  *     npm run flows            (needs Chromium; Python 3.11 for the book's side)
@@ -52,8 +53,22 @@ before(async () => {
 });
 after(async () => { await browser?.close(); server?.close(); });
 
-/* The stand-in interpreter: one reply, for one phrase the finder cannot read. */
-const REPLY = { candidates: [{ input: "o0|support_rate", value: 0.2, quote: "Support runs at a fifth of the hardware price each year", sure: true }] };
+/* The stand-in interpreter's one reply: every customer figure in the notes, two of the current environment's, and one it is not sure of. */
+const REPLY = { candidates: [
+  { input: "shared|data_today", value: 500, quote: "Customer has 500 TB of usable data today", sure: true },
+  { input: "shared|growth", value: 0.3, quote: "growing by about 30% per year", sure: true },
+  { input: "shared|horizon", value: 5, quote: "over 5 years", sure: true },
+  { input: "shared|cores", value: 500, quote: "Peak load is about 500 cores", sure: true },
+  { input: "shared|memory", value: 4000, quote: "4,000 GB of memory", sure: true },
+  { input: "shared|fill_limit", value: 0.7, quote: "kept below 70% full", sure: true },
+  { input: "shared|sites", value: 2, quote: "mirrored across two sites", sure: true },
+  { input: "shared|power_price", value: 0.25, quote: "Power costs them £0.25 per kWh", sure: true },
+  { input: "shared|pue", value: 1.4, quote: "the data centre runs at a PUE of 1.4", sure: true },
+  { input: "shared|admin_cost", value: 60000, quote: "An admin costs them about £60k a year", sure: true },
+  { input: "o0|unit_tb", value: 100, quote: "12 servers with 100 TB raw storage each", sure: true },
+  { input: "o0|support_rate", value: 0.2, quote: "Support runs at a fifth of the hardware price each year", sure: true },
+  { input: "o0|protection", value: 12, quote: "They currently run 12 servers", sure: false },
+] };
 
 /* A presales engineer at the keyboard. */
 class Engineer {
@@ -150,14 +165,16 @@ test("a competitive TCO from notes: candidates confirmed, numbers typed, origins
   // Nothing has reached the model yet: every requirement is still blank.
   assert.match(await e.summary("requirements"), /^0 of/);
 
-  // Confirm the confident candidates. With the model loaded, Find already asked it: it adds one the finder could not read.
+  // With the model loaded, starting with notes asked it: every candidate is the model's, marked as such.
   await page.waitForSelector('.cand .conf:has-text("interpreter")');
+  assert.equal((await page.$$(".cand:not(.head)")).length, REPLY.candidates.length, "the candidates are the model's and nobody else's");
   await page.click("#confirm-all");
-  assert.match(await e.summary("requirements"), /^\d+ of 10 known/);
-  const ai = page.locator(".cand", { hasText: "interpreter" });
+  assert.match(await e.summary("requirements"), /^10 of 10 known/);
+  const ai = page.locator(".cand", { hasText: "Support runs at a fifth" });
   assert.match(await ai.locator("select").evaluate((s) => s.selectedOptions[0].textContent), /Current environment: support/);
   assert.match(await ai.innerText(), /Confirmed/, "the model's confident suggestion was among those confirmed, marked as the model's");
-  // The rest are ambiguous or unmatched (12 servers, 7 years): rejected, they stay out of the model.
+  // The one it was not sure of (12 servers as a protection factor) is ambiguous: rejected, it stays out of the model.
+  assert.equal((await page.$$("[data-reject]")).length, 1);
   for (const b of await page.$$("[data-reject]")) await b.click();
   assert.match(await e.summary("customer"), /confirmed$/);
 
@@ -178,7 +195,7 @@ test("a competitive TCO from notes: candidates confirmed, numbers typed, origins
   await e.next("inputs");
   for (const [k, v] of Object.entries(OURS)) await e.number(`[data-opt="o1"][data-in="${k}"]`, v);
   for (const [k, v] of Object.entries(CURRENT)) await e.number(`[data-opt="o0"][data-in="${k}"]`, v);
-  assert.equal(await page.inputValue('[data-opt="o0"][data-in="unit_tb"]'), "100", "from the notes, confirmed");
+  assert.equal(await page.inputValue('[data-opt="o0"][data-in="unit_tb"]'), "100", "from the notes, read by the model, confirmed");
   assert.equal(await page.inputValue('[data-opt="o0"][data-in="support_rate"]'), "0.2", "from the interpreter, confirmed");
   for (const [k, v] of Object.entries(RIVAL)) await e.number(`[data-opt="o2"][data-in="${k}"]`, v);
   // Origins: two set one at a time, the rest of each column in one go, and one left as the customer's own figure.
@@ -226,7 +243,7 @@ test("a competitive TCO from notes: candidates confirmed, numbers typed, origins
   // The files the page wrote, held to the book's own toolkit at the pinned commit.
   const files = await e.files();
   assert.deepEqual(Object.keys(files).sort(), ["model.yaml", "scenarios/o0.yaml", "scenarios/o2.yaml", "scenarios/reference.yaml"]);
-  assert.match(files["model.yaml"], /Customer: “Customer has 500 TB of usable data today/);
+  assert.match(files["model.yaml"].replace(/\s+/g, " "), /Customer: “Customer has 500 TB of usable data today[^”]*” \(suggested by the on-device interpreter\)/);
   assert.match(files["model.yaml"], /Quote: our quote Q-1042\b/);
   assert.match(files["model.yaml"], /Quote: our quote Q-1042, fixed price/, "a figure said one at a time keeps its own evidence");
   assert.match(files["scenarios/o2.yaml"], /migration: Assumption: nobody has priced it/);
@@ -343,7 +360,7 @@ test("the interview asks for what is missing, one question at a time, and each a
   await e.context.close();
 });
 
-test("with WebGPU but no model loaded, the first find offers the download once, and 'not now' is remembered", async () => {
+test("with WebGPU but no model loaded, starting with notes offers the download once; declined, nothing reads the notes", async () => {
   const context = await browser.newContext({ viewport: { width: 1400, height: 950 } });
   await context.addInitScript(() => { Object.defineProperty(navigator, "gpu", { value: {}, configurable: true }); });
   const page = await context.newPage();
@@ -359,10 +376,14 @@ test("with WebGPU but no model loaded, the first find offers the download once, 
   assert.match(await page.$eval("#ai-notice", (x) => x.textContent), /Read the notes with a model on this device\?/);
   await page.click("#ai-later");
   assert.equal(await page.$eval("#ai-notice", (x) => x.hidden), true);
-  await page.click("#refind");
-  await page.waitForSelector(".cands");
-  assert.equal(await page.$eval("#ai-notice", (x) => x.hidden), true, "declined once, not asked again");
+  // Declined: no candidate appears from anywhere, the notes are kept, and the optional button is still there to change one's mind.
+  assert.equal(await page.$(".cands"), null, "nothing read the notes by matching words");
+  assert.match(await page.$eval('[data-sum="customer"]', (x) => x.textContent), /Notes kept; no candidates yet/);
+  assert.equal(await page.inputValue("#notes2"), NOTES);
   assert.ok(await page.$("#use-ai"), "the optional button is still there to change one's mind");
+  await page.reload();
+  await page.waitForSelector("#body-customer");
+  assert.equal(await page.$eval("#ai-notice", (x) => x.hidden), true, "declined once, not asked again");
   assert.deepEqual(errors, []);
   await context.close();
 });

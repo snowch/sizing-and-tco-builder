@@ -158,7 +158,7 @@ test("the page shows the assistant's suggestions as unconfirmed, the engineer de
   const verdict = book(w.files);
   if (verdict) {
     assert.equal(verdict.ok, true, JSON.stringify(verdict.problems));
-    assert.ok(close(verdict.scenarios.reference.point.total_cost, ours), "the book's total is the server's");
+    assert.ok(close(verdict.points.reference.total_cost, ours), "the book's total is the server's");
   }
   assert.deepEqual(errors, []);
   await context.close();

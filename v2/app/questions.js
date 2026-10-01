@@ -54,11 +54,4 @@ export function evidenceOf(provenance) {
   return source.startsWith(prefix) ? source.slice(prefix.length) : source;
 }
 
-/* Written requirements the finder can spot: no number, recorded with the answer. */
-export const WRITTEN_PATTERNS = {
-  Availability: "active|passive|availability|uptime|failover|\\bRPO\\b|\\bRTO\\b|disaster|recovery",
-  Retention: "retention|retain|backups? (for|kept)",
-  Workloads: "workloads?|databases?|virtual machines|\\bVMs?\\b|applications?",
-};
-
 export const SAMPLE_NOTES = "Customer has 500 TB of usable data today, growing by about 30% per year. They currently run 12 servers with 100 TB raw storage each, mirrored across two sites (active/passive). Peak load is about 500 cores and 4,000 GB of memory, and they want every resource kept below 70% full. They need to keep backups for 7 years. They want to compare their current environment with our solution over 5 years. Power costs them £0.25 per kWh and the data centre runs at a PUE of 1.4. An admin costs them about £60k a year.";

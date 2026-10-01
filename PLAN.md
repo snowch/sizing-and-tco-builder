@@ -364,14 +364,14 @@ structure → inputs → calculation → answer, and its pieces are:
   managed services, each with every customer and option figure blank and an `included` switch a
   scenario can set to nought. Choosing several merges them by prefix into one model with a grand
   total (`v2/app/parts.js`), so nothing downstream knows the solution was assembled.
-- **Candidates before inputs** (`engine/candidates.js`): every number in the notes is a
-  candidate, scored against every input by the words near it, confident only when one input
-  fits clearly and its words sit by the number. The engineer confirms each; the sentence it came
-  from becomes its evidence.
+- **Candidates before inputs**: a figure read from the notes is a candidate, with the sentence
+  it came from, until the engineer confirms it; the sentence becomes its evidence. A finder
+  that matched words near each number (`engine/candidates.js`, retired) read them first; it was
+  too often wrong to keep, so nothing on the page reads the notes by matching words now.
 - **The interpreter, optional** (`v2/app/interpret.js`, `v2/app/webllm.js`): a small model over
-  WebGPU, downloaded once when asked for, that reads what the finder cannot ("half a petabyte")
-  and returns candidates in the same shape, marked as its own. The flow stands a fixed reply in
-  for it; the page works in full without it.
+  WebGPU, downloaded once when asked for, that reads the notes into candidates marked as its
+  own. The flow stands a fixed reply in for it; the page works in full without it. The
+  interview reads the plain number in a typed answer when no model is loaded.
 - **Needed and optional** worked out by walking the answer's formulas, so a sizing question
   never asks for a price, and a figure an option lacks is required until typed or marked the
   same as ours.

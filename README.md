@@ -39,16 +39,17 @@ To run the site locally, serve the repository's root as static files (for exampl
 
 A second page, at [`/v2/`](https://snowch.github.io/sizing-and-tco-builder/v2/), for a presales
 engineer who has never seen a model file. It starts from the question (a competitive TCO, a
-sizing, a business case) and the customer's notes, finds candidate inputs in the notes for the
-engineer to confirm, and builds the answer as customer → requirements → options → answer. Every
-number keeps its origin, every result has a *Why?*, and the files it writes are the same model
-files as v1, checked by the same toolkit.
+sizing, a business case) and the customer's notes, and builds the answer as customer →
+requirements → options → answer. Every number keeps its origin, every result has a *Why?*, and
+the files it writes are the same model files as v1, checked by the same toolkit.
 
-The notes can be read by a small language model on the device (WebLLM over WebGPU, downloaded
-once when asked for) as an optional accelerator. It only proposes candidates, each with the
-sentence it came from; nothing reaches the model until the engineer confirms it, and the page
-works in full without it. For what the notes do not give, the page asks one question at a time,
-in its own fixed words, and reads each answer the same way. [prompts/model-from-notes.md](prompts/model-from-notes.md) does the
+Nothing on the page reads the notes by matching words: that was tried and was too often wrong.
+The notes are kept with the answer, and can be read by a small language model on the device
+(WebLLM over WebGPU, downloaded once when asked for) or by an assistant linked through the
+server below. Either only proposes candidates, each with the sentence it came from; nothing
+reaches the model until the engineer confirms it, and the page works in full without both. For
+what the notes do not give, the page asks one question at a time, in its own fixed words, and
+reads the plain number in each answer. [prompts/model-from-notes.md](prompts/model-from-notes.md) does the
 same job in any Claude chat, writing a whole model file for the builder to check.
 
 ### With an assistant: the builder as a service
