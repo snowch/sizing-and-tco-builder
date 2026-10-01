@@ -134,6 +134,13 @@ test("a competitive TCO from notes: candidates confirmed, numbers typed, origins
   const e = await Engineer.start();
   const { page } = e;
 
+  // The header says what the on-device model is doing; with the stand-in loaded, it is ready.
+  await page.waitForFunction(() => /ready|available|not available/.test(document.getElementById("engine-chip").textContent));
+  assert.match(await e.text("#engine-chip"), /On-device model: ready/);
+  await page.click("#engine-chip");
+  assert.match(await e.text("#engine-note"), /reads pasted notes and interview answers/);
+  await page.click("#engine-note .close");
+
   // The question, then the customer's notes.
   await page.click('[data-type="competitive"]');
   await page.fill("#notes", NOTES);

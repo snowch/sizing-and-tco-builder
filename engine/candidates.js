@@ -13,7 +13,23 @@
  */
 
 const WORDS = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, twelve: 12 };
-const NUMBER = /(£|\$|€)?\s?(\d[\d,]*(?:\.\d+)?|\b(?:one|two|three|four|five|six|seven|eight|nine|ten|twelve)\b)\s?(k|m|bn)?\b\s?(%|per ?cent)?/gi;
+const NUMBER = /(?<![\p{L}\d.])(£|\$|€)?\s?(\d[\d,]*(?:\.\d+)?|\b(?:one|two|three|four|five|six|seven|eight|nine|ten|twelve)\b)\s?(?:(k|m|bn)(?![\p{L}])|(?![\d,]))\s?(%|per ?cent|[KMGTPE]i?B|[kMGTPE]B)?(?![\p{L}\d])/giu;
+/*
+ * Data units, so a figure written in one can be read into an input declared in another. Across
+ * prefixes (3 PB into TB) the figure is scaled by the input's own base, decimal or binary. With
+ * the same prefix (GB into GiB) it is taken as written: spec sheets and people say GB and mean
+ * GiB, and a seven per cent correction nobody asked for would be the finder's claim, not theirs.
+ */
+const PREFIXES = ["", "K", "M", "G", "T", "P", "E"];
+const DATA_UNIT = /(?:^|[^A-Za-z])([KMGTPE]?)(i?)B(?![A-Za-z])/;
+const dataUnitOf = (unit) => { const m = DATA_UNIT.exec(unit ?? ""); return m ? { prefix: m[1].toUpperCase(), binary: m[2] === "i" } : null; };
+export function inUnitOf(value, writtenUnit, inputUnit) {
+  const from = dataUnitOf(writtenUnit), to = dataUnitOf(inputUnit);
+  if (!from || !to) return value;
+  const steps = PREFIXES.indexOf(from.prefix) - PREFIXES.indexOf(to.prefix);
+  return value * (to.binary ? 1024 : 1000) ** steps;
+}
+
 const TODAY = /current|currently|today|existing|they run|they have|at present|now/i;
 
 /* The notes as sentences, each with its offset into the text. */
@@ -30,7 +46,7 @@ export function sentences(text) {
 
 /* What kind of figure a number is, from what is written around it. */
 function kindOf(m) {
-  if (m[4]) return "%";
+  if (m[4] && /^(%|per ?cent)$/i.test(m[4])) return "%";
   if (m[1]) return "money";
   return "count";
 }
@@ -57,6 +73,7 @@ export function findCandidates(text, inputs, { current = "current" } = {}) {
       let value = WORDS[m[2].toLowerCase()] ?? Number(m[2].replace(/,/g, ""));
       if (m[3]) value *= { k: 1e3, m: 1e6, bn: 1e9 }[m[3].toLowerCase()];
       const kind = kindOf(m);
+      const writtenUnit = m[4] && kind !== "%" ? m[4].replace(/^k/, "K") : "";
       const lead = m[0].length - m[0].trimStart().length;
       const at = m.index + lead, len = m[0].trim().length;
       const near = s.text.slice(Math.max(0, at - 4), at + len + 14);
@@ -78,6 +95,7 @@ export function findCandidates(text, inputs, { current = "current" } = {}) {
         // A percentage in the notes is a share in the model: 30% is 0.3 of something.
         value: kind === "%" ? value / 100 : value,
         written: value,
+        writtenUnit,
         kind,
         sentence: s.text,
         at,
@@ -99,6 +117,7 @@ export function findCandidates(text, inputs, { current = "current" } = {}) {
     c.confidence = !top ? "none" : ties.length > 1 || !top.strong ? "ambiguous" : "confident";
     c.target = c.confidence === "confident" ? top.key : "";
     c.alternatives = scored.slice(0, 4).map((x) => x.key);
+    if (c.writtenUnit && c.target) c.value = inUnitOf(c.written, c.writtenUnit, pool.find((i) => i.key === c.target)?.unit);
     if (c.target) taken.add(c.target);
     delete c.scored;
   }

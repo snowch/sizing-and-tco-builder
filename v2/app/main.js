@@ -43,6 +43,36 @@ async function main() {
   };
   app.interpreter = createInterpreter(globalThis.__v2Interpreter ?? { loadBackend: (onProgress) => import("./webllm.js").then((m) => m.load(onProgress)) });
 
+  // -- the chip in the header: whether a model can run here, and what it is doing ---------------------
+  const chip = $("engine-chip");
+  let chipState = { state: "checking", text: "On-device model: checking…", detail: "" };
+  app.setChip = (state, text, detail = chipState.detail) => {
+    chipState = { state, text, detail };
+    chip.className = `engine-chip ${state}`;
+    chip.textContent = text;
+  };
+  app.interpreter.status().then((st) => {
+    if (app.interpreter.loaded()) app.setChip("loaded", "On-device model: ready", "A model is loaded in this browser. It reads pasted notes and interview answers into candidates you confirm.");
+    else if (st.available) app.setChip("ready", "WebGPU: available · model not loaded", `This browser can run a small model on its GPU. Loading it is ${st.size ?? "a download"}; ask for it in the Customer step with “Interpret the notes on this device”. Until then, numbers are read by the plain finder.`);
+    else app.setChip("off", "On-device model: not available", `${st.reason} The finder and the interview still work: they read plain numbers.`);
+  });
+  app.chipProgress = (p) => {
+    if (typeof p?.progress === "number" && p.progress < 1) app.setChip("loading", `Loading model… ${Math.round(p.progress * 100)}%`);
+    else if (p?.text) app.setChip(app.interpreter.loaded() ? "busy" : "loading", app.interpreter.loaded() ? "On-device model: reading…" : "Loading model…");
+  };
+  app.chipDone = () => { if (app.interpreter.loaded()) app.setChip("loaded", "On-device model: ready", "A model is loaded in this browser. It reads pasted notes and interview answers into candidates you confirm."); };
+  chip.onclick = () => {
+    let note = document.getElementById("engine-note");
+    if (note) { note.remove(); return; }
+    note = document.createElement("div");
+    note.id = "engine-note"; note.className = "engine-note"; note.setAttribute("role", "dialog");
+    note.innerHTML = `<strong>${esc(chipState.text)}</strong><span>${esc(chipState.detail)}</span><span class="note">Nothing the model suggests reaches the model file until you confirm it, and the notes never leave this device.</span><button type="button" class="close">Close</button>`;
+    document.body.append(note);
+    const r = chip.getBoundingClientRect();
+    note.style.top = `${r.bottom + 6}px`; note.style.left = `${Math.max(12, Math.min(r.left, innerWidth - 372))}px`;
+    note.querySelector(".close").onclick = () => note.remove();
+  };
+
   // -- the toolkit's verdict on the files, off the page's thread where the browser allows ------------
   let worker = null;
   try { worker = new Worker(new URL("../../app/worker.js", import.meta.url), { type: "module" }); worker.postMessage({ type: "init", results, units }); } catch { worker = null; }
@@ -117,7 +147,8 @@ async function main() {
     }
     notice.innerHTML = `<span id="ai-text">Starting…</span><progress id="ai-progress" max="1" value="0"></progress>`;
     try {
-      const found = await app.interpreter.interpret(app.state.notes, finderInputs(app), (p) => { const t = notice.querySelector("#ai-text"), pr = notice.querySelector("#ai-progress"); if (t) t.textContent = p.text ?? ""; if (pr && typeof p.progress === "number") pr.value = p.progress; });
+      const found = await app.interpreter.interpret(app.state.notes, finderInputs(app), (p) => { app.chipProgress(p); const t = notice.querySelector("#ai-text"), pr = notice.querySelector("#ai-progress"); if (t) t.textContent = p.text ?? ""; if (pr && typeof p.progress === "number") pr.value = p.progress; });
+      app.chipDone();
       const keep = app.state.candidates.filter((c) => c.status !== "pending" || c.by !== "ai");
       app.state.candidates = [...keep, ...found.filter((c) => !keep.some((k) => k.status === "confirmed" && k.target === c.target))];
       app.save(); drawBuild(app);
@@ -125,6 +156,7 @@ async function main() {
       if (n2) { n2.hidden = false; n2.textContent = `${found.length} candidate${found.length === 1 ? "" : "s"} suggested by the interpreter, marked as such. Confirm each one you agree with.`; }
     } catch (error) {
       notice.textContent = `The interpreter could not run: ${error.message}. The candidate finder still works without it.`;
+      app.setChip("off", "On-device model: failed to load", `${error.message}. The finder and the interview still read plain numbers.`);
     }
   };
 

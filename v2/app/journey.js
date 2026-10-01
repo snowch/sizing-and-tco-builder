@@ -7,7 +7,7 @@
  * Every value on this screen is typed or confirmed by the engineer. The page never fills one in.
  */
 
-import { findCandidates, findWritten } from "../../engine/candidates.js";
+import { findCandidates, findWritten, inUnitOf } from "../../engine/candidates.js";
 import { $, esc, fmt, lower, n, unitWords } from "./ui.js";
 import { ORIGINS, QUESTIONS, ROLE_NAMES, WRITTEN_PATTERNS, SAMPLE_NOTES, evidenceOf, originOf, provenanceFor, questionById } from "./questions.js";
 import { merge } from "./parts.js";
@@ -296,7 +296,13 @@ function drawCustomer(app, el) {
   el.querySelector("#refind").onclick = () => { runFinder(app); app.save(); drawBuild(app); };
   el.querySelector("#use-ai").onclick = () => app.interpretNotes(el.querySelector("#ai-notice"));
   el.querySelector("#confirm-all")?.addEventListener("click", () => { for (const c of state.candidates) if (c.status === "pending" && c.confidence === "confident") confirmCandidate(app, c); app.save(); drawBuild(app); });
-  for (const s of el.querySelectorAll("[data-map]")) s.onchange = () => { const c = find(s.dataset.map); c.target = s.value; app.save(); drawBuild(app); };
+  for (const s of el.querySelectorAll("[data-map]")) s.onchange = () => {
+    const c = find(s.dataset.map);
+    c.target = s.value;
+    // A figure written in one data unit is read into the chosen input's: 3 PB into TB is 3000.
+    if (c.writtenUnit && c.target) c.value = inUnitOf(c.written, c.writtenUnit, byName(state.doc).get(c.target.split("|")[1])?.unit);
+    app.save(); drawBuild(app);
+  };
   for (const v of el.querySelectorAll("[data-cval]")) v.oninput = () => { find(v.dataset.cval).value = v.value.trim() === "" ? NaN : Number(v.value); app.save(); };
   for (const b of el.querySelectorAll("[data-confirm]")) b.onclick = () => { confirmCandidate(app, find(b.dataset.confirm)); app.save(); drawBuild(app); };
   for (const b of el.querySelectorAll("[data-reject]")) b.onclick = () => { find(b.dataset.reject).status = "rejected"; app.save(); drawBuild(app); };

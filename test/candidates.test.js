@@ -6,7 +6,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { findCandidates, findWritten, sentences } from "../engine/candidates.js";
+import { findCandidates, findWritten, inUnitOf, sentences } from "../engine/candidates.js";
 
 const INPUTS = [
   { key: "shared|data_today", name: "usable data today", unit: "TB", keys: "usable|data|hold|storage", scope: "shared" },
@@ -74,4 +74,18 @@ test("nothing is written into a model: the result is plain data", () => {
 test("written requirements are picked out by sentence", () => {
   const w = findWritten("Mirrored across two sites (active/passive). Backups kept for 7 years.", { Availability: "active|passive|failover", Retention: "backups?|retain|retention" });
   assert.deepEqual(w.map((x) => x.category), ["Availability", "Retention"]);
+});
+
+test("a number followed straight by its unit is found, a digit inside a word is not, and a data unit is converted", () => {
+  const found = findCandidates("Customer has 3PB on the S3 tier of usable data today. Memory is 512GiB.", INPUTS);
+  assert.deepEqual(found.map((c) => c.text), ["3PB", "512GiB"], "the 3 in S3 is not a figure");
+  assert.equal(found[0].writtenUnit, "PB");
+  assert.equal(found[0].target, "shared|data_today");
+  assert.equal(found[0].value, 3000, "3 PB read into an input declared in TB");
+  assert.equal(found[0].written, 3);
+  assert.equal(found[1].value, 512);
+  assert.equal(inUnitOf(2, "TB", "GiB/host"), 2048, "across prefixes, scaled by the input's base");
+  assert.equal(inUnitOf(4000, "GB", "GiB"), 4000, "the same prefix is taken as written: GB means GiB to the people who write it");
+  assert.equal(inUnitOf(1.5, "PB", "TB"), 1500);
+  assert.equal(inUnitOf(5, "", "TB"), 5);
 });

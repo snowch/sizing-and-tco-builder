@@ -77,7 +77,8 @@ export function drawInterview(app, el) {
     if (!text) return;
     const progress = el.querySelector("#iv-progress");
     progress.hidden = false; progress.textContent = "Reading…";
-    const read = await app.interpreter.interpretAnswer(t.ask, { name: label(q.node), unit: q.node.unit }, text, (p) => { progress.textContent = p.text ?? ""; });
+    const read = await app.interpreter.interpretAnswer(t.ask, { name: label(q.node), unit: q.node.unit }, text, (p) => { app.chipProgress?.(p); progress.textContent = p.text ?? ""; });
+    app.chipDone?.();
     iv.pending = { key: q.key, answer: text, ...read };
     app.save(); drawInterview(app, el);
   };

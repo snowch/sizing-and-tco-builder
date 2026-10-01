@@ -426,3 +426,14 @@ table.opts .cell .val input[type="number"] { flex: 1 1 96px; min-width: 96px; wi
 .iv-val { font-family: var(--mono); font-size: 20px; font-weight: 600; }
 .iv-origin { display: inline-flex; gap: 6px; align-items: center; }
 .iv-origin select { padding: 5px 8px; font-size: 13px; width: auto; }
+.engine-chip { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 5px 10px 5px 8px; font-size: 12.5px; font-weight: 600; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+.engine-chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
+.engine-chip.off::before { background: var(--muted); }
+.engine-chip.ready::before { background: var(--assume); }
+.engine-chip.loading::before { background: var(--accent); animation: pulse 1s infinite alternate; }
+.engine-chip.loaded::before { background: var(--good); }
+.engine-chip.busy::before { background: var(--good); animation: pulse .6s infinite alternate; }
+@keyframes pulse { from { opacity: .35; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .engine-chip.loading::before, .engine-chip.busy::before { animation: none; } }
+.engine-note { position: fixed; z-index: 30; max-width: 360px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.18); padding: 12px; font-size: 13.5px; display: grid; gap: 8px; }
+.engine-note .close { justify-self: end; border: 0; background: none; color: var(--accent); font-weight: 700; padding: 0; }
