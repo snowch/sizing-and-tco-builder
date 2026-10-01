@@ -14,7 +14,7 @@
 
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { extname, join, normalize } from "node:path";
@@ -40,9 +40,10 @@ function chromiumPath() {
 
 before(async () => {
   server = createServer((req, res) => {
-    const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^\/+/, "") || "index.html";
+    let path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^\/+/, "") || "index.html";
+    if (path.endsWith("/")) path += "index.html";
     const file = join(ROOT, path);
-    if (!file.startsWith(ROOT) || !existsSync(file)) {
+    if (!file.startsWith(ROOT) || !existsSync(file) || !statSync(file).isFile()) {
       res.writeHead(404).end();
       return;
     }

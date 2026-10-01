@@ -46,7 +46,6 @@ const FILES = [
   "engine/xlsx.js",
   "engine/yaml.js",
   "sw.js",
-  "v2/",
   "v2/index.html",
   "v2/app/evaluate.js",
   "v2/app/explain.js",
@@ -162,6 +161,7 @@ self.addEventListener("fetch", (event) => {
         caches.open(VERSION).then((cache) => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request).then((hit) => hit ?? caches.match("index.html"))),
+      // Offline: the cached file, or the page of the folder asked for (/ or /v2/), or the front page.
+      .catch(() => caches.match(event.request).then((hit) => hit ?? caches.match(new URL("index.html", event.request.url).href)).then((hit) => hit ?? caches.match("index.html"))),
   );
 });

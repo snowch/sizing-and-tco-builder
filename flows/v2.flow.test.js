@@ -14,7 +14,7 @@
 
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { extname, join, normalize } from "node:path";
@@ -43,7 +43,7 @@ before(async () => {
     let path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^\/+/, "") || "index.html";
     if (path.endsWith("/")) path += "index.html";
     const file = join(ROOT, path);
-    if (!file.startsWith(ROOT) || !existsSync(file)) { res.writeHead(404).end(); return; }
+    if (!file.startsWith(ROOT) || !existsSync(file) || !statSync(file).isFile()) { res.writeHead(404).end(); return; }
     res.writeHead(200, { "content-type": TYPES[extname(file)] ?? "application/octet-stream" }).end(readFileSync(file));
   });
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
@@ -251,5 +251,20 @@ test("a sizing question needs no prices, and the answer says which resource sets
   assert.match(await e.text(".answer"), /units needed by the end/);
   assert.match(await e.text("#cost-table"), /Set by (processor|memory|data)/);
   assert.deepEqual(e.errors, []);
+  await e.context.close();
+});
+
+test("v2 works with no network once it has loaded", async () => {
+  const e = await Engineer.start();
+  await e.page.evaluate(() => navigator.serviceWorker.ready);
+  await e.page.reload();
+  await e.page.waitForFunction(() => navigator.serviceWorker.controller !== null);
+  await e.context.setOffline(true);
+  await e.page.reload();
+  await e.page.waitForSelector("#types button");
+  await e.page.click("#go-skip");
+  await e.page.waitForSelector("#body-requirements");
+  assert.match(await e.summary("requirements"), /of 10 known/);
+  assert.deepEqual(e.errors.filter((x) => !/Failed to load resource/.test(x)), []);
   await e.context.close();
 });
