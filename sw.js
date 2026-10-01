@@ -50,6 +50,7 @@ const FILES = [
   "v2/app/evaluate.js",
   "v2/app/explain.js",
   "v2/app/interpret.js",
+  "v2/app/interview.js",
   "v2/app/journey.js",
   "v2/app/main.js",
   "v2/app/parts.js",

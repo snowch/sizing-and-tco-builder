@@ -415,3 +415,14 @@ table.opts .cell .val input[type="number"] { flex: 1 1 96px; min-width: 96px; wi
 .tree summary .tg::before { content: "▸"; display: inline-block; transition: transform .15s; }
 .tree details[open] > summary .tg::before { transform: rotate(90deg); }
 .tree summary[data-node] .t::before { content: none; }
+.iv { border: 1px solid var(--accent); border-radius: 12px; padding: 14px 16px; margin: 12px 0 4px; background: var(--accent-soft); }
+.iv-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.iv-q { margin: 6px 0 0; font-size: 18px; }
+.iv-ask { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto auto; gap: 8px; align-items: center; }
+@media (max-width: 760px) { .iv-ask { grid-template-columns: minmax(0, 1fr); } }
+.iv-ask input { padding: 9px 11px; background: var(--bg); }
+.iv-cand { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; background: var(--bg); border-radius: 8px; padding: 10px 12px; }
+.iv-cand.unknown { border: 1px dashed var(--assume); }
+.iv-val { font-family: var(--mono); font-size: 20px; font-weight: 600; }
+.iv-origin { display: inline-flex; gap: 6px; align-items: center; }
+.iv-origin select { padding: 5px 8px; font-size: 13px; width: auto; }

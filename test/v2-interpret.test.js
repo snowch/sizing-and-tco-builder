@@ -62,3 +62,40 @@ test("a stand-in backend is used as a real one would be, and status never loads 
   const none = createInterpreter({});
   assert.equal((await none.status()).available, false);
 });
+
+// -- the interview: one question, one answer ------------------------------------------------------
+import { answerFromReply, promptForOne, readAnswer } from "../v2/app/interpret.js";
+
+test("the typed reader takes a number in the unit's sense, and knows when there is none", () => {
+  const tb = { name: "usable data held today", unit: "TB" };
+  assert.deepEqual(readAnswer("about 500, they said 480 last quarter", tb), { value: 500, unknown: false, sure: false, by: "typed" });
+  assert.deepEqual(readAnswer("500 TB", tb), { value: 500, unknown: false, sure: true, by: "typed" });
+  assert.equal(readAnswer("£60k a year", { name: "admin", unit: "GBP/count/year" }).value, 60000);
+  assert.equal(readAnswer("30%", { name: "growth", unit: "dimensionless" }).value, 0.3, "a percentage of a share");
+  assert.equal(readAnswer("30%", { name: "support", unit: "1/year" }).value, 0.3);
+  assert.equal(readAnswer("70%", { name: "cores", unit: "core" }).value, 70, "not a share: the number stays");
+  for (const text of ["don't know", "no idea", "not sure yet", "", "what do you mean?"]) assert.equal(readAnswer(text, tb).unknown, true, text);
+});
+
+test("the per-question prompt names the input, its unit and the answer, and forbids guessing", () => {
+  const p = promptForOne("What is the customer's usable data held today?", { name: "usable data held today", unit: "TB" }, "half a petabyte");
+  assert.ok(p.includes("Input: usable data held today (unit: TB)"));
+  assert.ok(p.includes('Answer: """half a petabyte"""'));
+  assert.ok(p.includes("Never estimate"));
+});
+
+test("a reply is a value or nothing, never prose", () => {
+  assert.deepEqual(answerFromReply('{"value": 500, "unknown": false, "sure": true}'), { value: 500, unknown: false, sure: true, by: "ai" });
+  assert.deepEqual(answerFromReply('{"value": null, "unknown": true, "sure": false}'), { value: null, unknown: true, sure: false, by: "ai" });
+  assert.equal(answerFromReply('{"value": "lots", "sure": true}').unknown, true);
+  assert.equal(answerFromReply("I think it is about 500").unknown, true);
+});
+
+test("without a model, interpretAnswer is the typed reader; with one, the reply is read", async () => {
+  const none = createInterpreter({});
+  assert.equal((await none.interpretAnswer("q", { name: "x", unit: "TB" }, "500 TB")).value, 500);
+  const backend = { status: async () => ({ available: true }), complete: async (prompt) => (prompt.includes('Answer: """half a petabyte"""') ? '{"value": 500, "unknown": false, "sure": true}' : "{}") };
+  const it = createInterpreter({ backend });
+  const r = await it.interpretAnswer("q", { name: "x", unit: "TB" }, "half a petabyte");
+  assert.deepEqual(r, { value: 500, unknown: false, sure: true, by: "ai" });
+});

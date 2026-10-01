@@ -94,6 +94,54 @@ function sentenceAround(text, at) {
   return text.slice(start, end < 0 ? text.length : end + 1).trim();
 }
 
+/*
+ * One question, one answer: the interview. The app asks about one input it knows; the model
+ * only reads the answer into that input's unit, or says the answer gives no figure. A much
+ * smaller task than reading a page of notes, and one a small model gets right.
+ */
+const ANSWER_SCHEMA = {
+  type: "object",
+  properties: { value: { type: ["number", "null"] }, unknown: { type: "boolean" }, sure: { type: "boolean" } },
+  required: ["value", "unknown", "sure"],
+};
+export function promptForOne(question, input, answer) {
+  return `A presales engineer was asked about one input to a cost or sizing model and typed an answer. Read the answer into a number in the input's unit.
+
+Input: ${input.name} (unit: ${input.unit})
+Question: ${question}
+Answer: """${answer}"""
+
+Rules:
+- Report only a figure the answer states. Never estimate, never fill a gap.
+- Give the value in the unit named. A percentage of something is a share: 30% is 0.3. "£60k" is 60000. "half a petabyte" of data is 500 TB. "a third" is 0.33.
+- If the answer gives no figure ("don't know", "not yet", a question back), set unknown true and value null.
+- "sure" is true only when the answer clearly gives this figure.
+
+Reply with JSON only: {"value": number or null, "unknown": boolean, "sure": boolean}.`;
+}
+/* Words that mean no figure, for the reader that has no model. */
+const UNKNOWN = /\b(don'?t know|do not know|dunno|unknown|no idea|not sure|no figure|not yet|tbc|tbd|n\/a|\?)\s*$/i;
+/* Read a typed answer without a model: the first number in it, in the unit's sense. */
+export function readAnswer(answer, input) {
+  const text = String(answer ?? "").trim();
+  if (!text || UNKNOWN.test(text)) return { value: null, unknown: true, sure: false, by: "typed" };
+  const m = /(£|\$|€)?\s?(-?\d[\d,]*(?:\.\d+)?)\s?(k|m|bn)?\b\s?(%|per ?cent)?/i.exec(text);
+  if (!m) return { value: null, unknown: true, sure: false, by: "typed" };
+  let value = Number(m[2].replace(/,/g, ""));
+  if (m[3]) value *= { k: 1e3, m: 1e6, bn: 1e9 }[m[3].toLowerCase()];
+  const percent = Boolean(m[4]);
+  const share = /^(dimensionless|1\/)/.test(input.unit ?? "");
+  if (percent && share) value /= 100;
+  // A plain number with words around it is read; whether it is the right figure is the engineer's call.
+  return { value, unknown: false, sure: /^\s*(£|\$|€)?\s?-?[\d,.]+\s?(k|m|bn)?\s?(%|per ?cent)?\s*([A-Za-z/]+\s*)?$/i.test(text), by: "typed" };
+}
+export function answerFromReply(reply) {
+  let parsed;
+  try { parsed = typeof reply === "string" ? JSON.parse(reply) : reply; } catch { return { value: null, unknown: true, sure: false, by: "ai" }; }
+  const value = typeof parsed?.value === "number" && Number.isFinite(parsed.value) ? parsed.value : null;
+  return { value, unknown: value === null || Boolean(parsed?.unknown), sure: Boolean(parsed?.sure) && value !== null, by: "ai" };
+}
+
 export function createInterpreter({ backend = null, loadBackend = null } = {}) {
   let engine = backend;
   return {
@@ -112,6 +160,22 @@ export function createInterpreter({ backend = null, loadBackend = null } = {}) {
       }
       const reply = await engine.complete(promptFor(notes, inputs), OUTPUT_SCHEMA, onProgress);
       return candidatesFromReply(reply, notes, inputs);
+    },
+    /* Whether a model is loaded and ready to read answers. Never loads one. */
+    loaded() { return Boolean(engine); },
+    /*
+     * One answer to one question, read into that input's unit. The model reads it only when one is
+     * already loaded (the engineer asked for it in the Customer step); otherwise the typed reader
+     * does, and a model failing mid-answer falls back to it too.
+     */
+    async interpretAnswer(question, input, answer, onProgress = () => {}) {
+      if (!engine) return readAnswer(answer, input);
+      try {
+        const reply = await engine.complete(promptForOne(question, input, answer), ANSWER_SCHEMA, onProgress);
+        return answerFromReply(reply);
+      } catch {
+        return readAnswer(answer, input);
+      }
     },
   };
 }

@@ -66,7 +66,17 @@ class Engineer {
   static async start() {
     const context = await browser.newContext({ viewport: { width: 1400, height: 950 } });
     await context.addInitScript((reply) => {
-      globalThis.__v2Interpreter = { backend: { status: async () => ({ available: true, reason: "", size: "a stand-in" }), complete: async () => JSON.stringify(reply) } };
+      globalThis.__v2Interpreter = { backend: { status: async () => ({ available: true, reason: "", size: "a stand-in" }), complete: async (prompt) => {
+        // The interview's one-question prompt: read "half a petabyte" and plain numbers; anything else is no figure.
+        const m = /Answer: \"\"\"([\s\S]*?)\"\"\"/.exec(prompt);
+        if (m) {
+          const text = m[1];
+          if (/half a petabyte/i.test(text)) return JSON.stringify({ value: 500, unknown: false, sure: true });
+          const num = /(\d[\d,]*(?:\.\d+)?)/.exec(text);
+          return JSON.stringify(num ? { value: Number(num[1].replace(/,/g, "")), unknown: false, sure: true } : { value: null, unknown: true, sure: false });
+        }
+        return JSON.stringify(reply);
+      } } };
     }, REPLY);
     const page = await context.newPage();
     const e = new Engineer(page);
@@ -266,5 +276,64 @@ test("v2 works with no network once it has loaded", async () => {
   await e.page.waitForSelector("#body-requirements");
   assert.match(await e.summary("requirements"), /of 10 known/);
   assert.deepEqual(e.errors.filter((x) => !/Failed to load resource/.test(x)), []);
+  await e.context.close();
+});
+
+test("the interview asks for what is missing, one question at a time, and each answer is confirmed before it goes in", async () => {
+  const e = await Engineer.start();
+  const { page } = e;
+  await page.click('[data-type="sizing"]');
+  await page.click("#go-skip");
+  await page.waitForSelector("#body-requirements");
+  await e.next("options");
+  await e.next("inputs");
+  await e.next("missing");
+  const before = await e.text("#body-missing");
+  assert.match(before, /Required \d+/);
+  await page.click("#iv-start");
+  await page.waitForSelector(".iv-q");
+  // The first question is a customer requirement, in fixed words from the model.
+  assert.match(await e.text(".iv-q"), /^What is the customer's/);
+  // An answer in the engineer's words is read by the stand-in model into a figure, shown, and confirmed.
+  await page.fill("#iv-answer", "half a petabyte, maybe a bit more");
+  await page.click("#iv-go");
+  await page.waitForSelector("#iv-confirm");
+  assert.match(await e.text(".iv-cand"), /500 TB.*read from “half a petabyte, maybe a bit more” by the on-device model/);
+  await page.click("#iv-confirm");
+  await page.waitForSelector(".iv-q");
+  // The requirement now holds the figure, from the customer, with the answer as evidence.
+  assert.equal(await page.evaluate(() => globalThis.__v2.state.doc.nodes.find((n) => n.name === "data_today").value), 500);
+  assert.match(await page.evaluate(() => globalThis.__v2.state.doc.nodes.find((n) => n.name === "data_today").provenance.source), /^Customer: “half a petabyte/);
+  // "Don't know" leaves the blank and moves on; nothing is filled in.
+  const asked = await e.text(".iv-q");
+  await page.click("#iv-unknown");
+  await page.waitForSelector(".iv-q");
+  assert.notEqual(await e.text(".iv-q"), asked);
+  // An answer with no figure is not a figure.
+  await page.fill("#iv-answer", "they couldn't say");
+  await page.click("#iv-go");
+  await page.waitForSelector("#iv-blank");
+  assert.match(await e.text(".iv-cand"), /No figure in that answer/);
+  await page.click("#iv-blank");
+  await page.waitForSelector(".iv-q");
+  // Enter answers too; a plain number is read and confirmed with the Enter key path.
+  await page.fill("#iv-answer", "30%");
+  await page.press("#iv-answer", "Enter");
+  await page.waitForSelector("#iv-confirm");
+  await page.click("#iv-confirm");
+  await page.waitForSelector(".iv-q");
+  // An option's figure can be marked the same as ours instead of answered.
+  for (let k = 0; k < 40; k += 1) {
+    const q = await e.text(".iv-q");
+    if (/^For /.test(q) && (await page.$("#iv-same"))) break;
+    await page.fill("#iv-answer", "12");
+    await page.click("#iv-go");
+    await page.waitForSelector("#iv-confirm");
+    await page.click("#iv-confirm");
+    await page.waitForSelector(".iv");
+    if (!(await page.$(".iv-q"))) break;
+  }
+  if (await page.$("#iv-same")) { await page.click("#iv-same"); await page.waitForSelector(".iv"); }
+  assert.deepEqual(e.errors, []);
   await e.context.close();
 });

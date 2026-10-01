@@ -13,6 +13,7 @@ import { ORIGINS, QUESTIONS, ROLE_NAMES, WRITTEN_PATTERNS, SAMPLE_NOTES, evidenc
 import { merge } from "./parts.js";
 import { newOption, optionsFor } from "./state.js";
 import { answerLabel, answerNode, blocker, byName, coversPart, docFor, evaluateOption, isBlank, missing, neededFor, optionById, ours, partOf, valueOf } from "./evaluate.js";
+import { drawInterview } from "./interview.js";
 
 // -- the model as the chosen parts make it -----------------------------------------------------------
 
@@ -494,11 +495,13 @@ function drawMissing(app, el) {
   const item = (x) => `<li><span>${esc(inputName(app, x.node))}<span class="why2">${esc(where(x))}${x.scope !== "shared" && !x.option.ours ? " · or mark it the same as ours" : ""}</span></span><button type="button" class="link" data-goto="${x.scope}|${x.name}">Enter</button></li>`;
   el.innerHTML = `
     <p class="note" style="margin:0">Nothing is filled in for you. A required value is one the calculation cannot do without; an optional one it can.</p>
+    <div id="interview"></div>
     <div class="missing" style="margin-top:10px">
       <div><h4>Required <span class="badge needed">${req.length}</span></h4>${req.length ? `<ul>${req.map(item).join("")}</ul>` : `<p class="none">Nothing required is missing.</p>`}</div>
       <div><h4>Optional <span class="badge">${opt.length}</span></h4>${opt.length ? `<ul>${opt.map(item).join("")}</ul>` : `<p class="none">Nothing optional is missing.</p>`}</div>
     </div>
     ${nextButton("missing")}`;
+  drawInterview(app, el.querySelector("#interview"));
   for (const b of el.querySelectorAll("[data-goto]")) b.onclick = () => goTo(app, b.dataset.goto);
   wireNext(app, el);
 }
@@ -527,6 +530,7 @@ function drawAnswerStep(app, el) {
 }
 
 /* Summaries, the aside and anything that depends on values, without redrawing the fields being typed in. */
+export function redrawBuild(app) { drawBuild(app); }
 export function refresh(app) {
   const { state } = app;
   app.invalidate();

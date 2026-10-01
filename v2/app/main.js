@@ -30,6 +30,7 @@ async function main() {
 
   const app = { ctx, state: load() ?? emptyState(), verdict: { id: 0, report: null }, cache: new Map() };
   app.save = () => save(app.state);
+  app.redrawBuild = () => drawBuild(app);
   app.invalidate = () => { app.cache.clear(); askVerdict(); };
   app.evaluate = (option) => {
     if (!app.cache.has(option.id)) app.cache.set(option.id, evaluateOption(app.state, option, { registry, results }));
