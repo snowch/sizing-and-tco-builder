@@ -35,8 +35,11 @@ export function rebuildDoc(app) {
   }
   for (const n of state.doc.nodes) if (n.kind === "input" && !n.provenance) n.provenance = { kind: "", source: "" };
   if (!oldDoc) return;
-  // Carry values across by (part, local name), so a part ticked later keeps what was entered.
-  const keyOf = (map, name) => { const m = map[name]; return m ? `${m.part}|${m.local}` : `?|${name}`; };
+  // Carry values across by (part, local name), so a part ticked later keeps what was entered. A
+  // name every part shares (the period, the definitions) belongs to no part, so it carries across
+  // whichever part happened to bring it in.
+  const shared = new Set(ctx.index.shared ?? []);
+  const keyOf = (map, name) => { const m = map[name]; return !m ? `?|${name}` : shared.has(m.local) ? `shared|${m.local}` : `${m.part}|${m.local}`; };
   const old = new Map(oldDoc.nodes.map((nd) => [keyOf(oldMap, nd.name), nd]));
   const renamed = new Map();
   for (const nd of state.doc.nodes) {
