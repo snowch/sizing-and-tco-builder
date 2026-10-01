@@ -47,7 +47,8 @@ files as v1, checked by the same toolkit.
 The notes can be read by a small language model on the device (WebLLM over WebGPU, downloaded
 once when asked for) as an optional accelerator. It only proposes candidates, each with the
 sentence it came from; nothing reaches the model until the engineer confirms it, and the page
-works in full without it. [prompts/model-from-notes.md](prompts/model-from-notes.md) does the
+works in full without it. For what the notes do not give, the page asks one question at a time,
+in its own fixed words, and reads each answer the same way. [prompts/model-from-notes.md](prompts/model-from-notes.md) does the
 same job in any Claude chat, writing a whole model file for the builder to check.
 
 ## Licence
