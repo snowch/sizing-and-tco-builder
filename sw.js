@@ -4,7 +4,7 @@
  * the cache's name carries the version.
  */
 
-const VERSION = "builder-2";
+const VERSION = "builder-3";
 /* Every file the page reaches. test/site.test.js fails if one is missing from this list. */
 const FILES = [
   "./",
@@ -55,9 +55,11 @@ const FILES = [
   "v2/app/main.js",
   "v2/app/parts.js",
   "v2/app/questions.js",
+  "v2/app/remote.js",
   "v2/app/results.js",
   "v2/app/state.js",
   "v2/app/style.css",
+  "v2/app/suggest.js",
   "v2/app/ui.js",
   "v2/app/webllm.js",
   "v2/templates/index.json",
@@ -154,7 +156,9 @@ self.addEventListener("activate", (event) => {
 
 /* The network first, so a reader online always has the current site; the cache when offline. */
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET" || new URL(event.request.url).origin !== self.location.origin) return;
+  const url = new URL(event.request.url);
+  // The solutions API is live state on a server, never a file to keep.
+  if (event.request.method !== "GET" || url.origin !== self.location.origin || url.pathname.includes("/api/")) return;
   event.respondWith(
     fetch(event.request)
       .then((response) => {

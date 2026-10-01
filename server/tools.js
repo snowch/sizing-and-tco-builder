@@ -15,7 +15,8 @@ import { ORIGINS, QUESTIONS, ROLE_NAMES, evidenceOf, originOf, provenanceFor, qu
 import { answerLabel, answerNode, atOption, blocker, byName, coversPart, files, missing, neededFor, optionById, ours, partOf, refsOf, valueOf } from "../v2/app/evaluate.js";
 import { categories, catTotal } from "../v2/app/results.js";
 import { questionText, questions } from "../v2/app/interview.js";
-import { Refused, addOption, checkScope, checkSuggestion, headlessApp, provenanceOf, resolveInput, resolveScope, setParts, setValue, valueFor, withSuggestions } from "./workspace.js";
+import { confirmSuggestion, provenanceOf, valueFor } from "../v2/app/suggest.js";
+import { Refused, addOption, checkScope, checkSuggestion, headlessApp, resolveInput, resolveScope, setParts, withSuggestions } from "./workspace.js";
 
 const label = (nd) => nd.label ?? nd.name.replaceAll("_", " ");
 const str = (v, what) => { const s = String(v ?? "").trim(); if (!s) throw new Refused(`${what} is required`); return s; };
@@ -213,8 +214,7 @@ export const TOOLS = [
           const s = state.suggestions?.[key];
           if (!s) throw new Refused(`no suggestion for ${key}`);
           const [scope, name] = key.split("|");
-          setValue(state, scope, name, s.value, provenanceFor(s.origin, `${s.evidence} (confirmed by ${who} through the assistant)`));
-          delete state.suggestions[key];
+          if (!confirmSuggestion(state, key, `confirmed by ${who} through the assistant`)) throw new Refused(`the suggestion for ${key} no longer points at an input`);
           done.push({ scope, input: name, value: s.value });
         }
       });

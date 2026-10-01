@@ -437,3 +437,15 @@ table.opts .cell .val input[type="number"] { flex: 1 1 96px; min-width: 96px; wi
 @media (prefers-reduced-motion: reduce) { .engine-chip.loading::before, .engine-chip.busy::before { animation: none; } }
 .engine-note { position: fixed; z-index: 30; max-width: 360px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.18); padding: 12px; font-size: 13.5px; display: grid; gap: 8px; }
 .engine-note .close { justify-self: end; border: 0; background: none; color: var(--accent); font-weight: 700; padding: 0; }
+
+/* A figure the assistant suggested over the server, waiting for the engineer. */
+.sugg { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; border: 1px dashed var(--accent); background: var(--accent-soft); border-radius: 8px; padding: 6px 10px; font-size: 13px; margin-top: 4px; }
+.sugg-head { flex-basis: 100%; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); }
+.sugg-val { font-family: var(--mono); font-weight: 600; font-size: 15px; }
+.sugg-ev { color: var(--muted); font-style: italic; flex: 1 1 160px; min-width: 0; overflow-wrap: anywhere; }
+.sugg .status { display: inline-flex; gap: 6px; }
+.sugg-banner { border: 1px solid var(--accent); background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; margin: 0 0 12px; font-size: 14px; }
+.sugg-banner .link { padding: 0 2px; }
+.engine-chip.remote.linked::before { background: var(--good); }
+.engine-chip.remote.saving::before { background: var(--accent); animation: pulse .6s infinite alternate; }
+.engine-chip.remote.offline::before { background: var(--assume); }

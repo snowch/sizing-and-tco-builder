@@ -12,12 +12,17 @@
     "conformance": "node --test test/conformance.test.js",
     "fixtures": "python3 conformance/generate.py",
     "fixtures:check": "python3 conformance/generate.py --check",
-    "flows": "node --test --test-concurrency=1 \"flows/*.test.js\""
+    "flows": "node --test --test-concurrency=1 \"flows/*.test.js\"",
+    "serve": "node bin/cli.js serve",
+    "mcp": "node bin/cli.js mcp"
   },
   "dependencies": {
     "yaml": "2.9.1"
   },
   "devDependencies": {
     "playwright": "1.63.0"
+  },
+  "bin": {
+    "sizing-and-tco-builder": "bin/cli.js"
   }
 }

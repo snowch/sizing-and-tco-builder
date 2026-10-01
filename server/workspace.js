@@ -17,7 +17,8 @@ import { loadPart } from "../v2/app/parts.js";
 import { emptyState, newOption } from "../v2/app/state.js";
 import { ORIGINS, provenanceFor, questionById } from "../v2/app/questions.js";
 import { begin, rebuildDoc } from "../v2/app/journey.js";
-import { byName, evaluateOption, isBlank, optionById, ours } from "../v2/app/evaluate.js";
+import { byName, evaluateOption, optionById, ours } from "../v2/app/evaluate.js";
+import { provenanceOf, setValue, suggestions as suggestionsOf, valueFor } from "../v2/app/suggest.js";
 
 export const ROOT = new URL("..", import.meta.url).pathname;
 export const NAME = /^[a-z0-9][a-z0-9-]{0,63}$/;
@@ -75,38 +76,7 @@ export function checkScope(state, nd, scope) {
   if (nd.decided === "you" && scope === "shared") throw new Refused(`"${nd.name}" is an option's own figure: name the option`);
 }
 
-/* Write a confirmed value where the page would: into the model for the customer or our solution, into the option's overrides otherwise. */
-export function setValue(state, scope, name, value, provenance) {
-  const nd = byName(state.doc).get(name);
-  if (scope === "shared" || optionById(state, scope)?.ours) {
-    nd.value = value; nd.distribution = null; nd.provenance = provenance;
-  } else {
-    const o = optionById(state, scope);
-    o.overrides[name] = value;
-    o.provenance[name] = provenance;
-    o.same = o.same.filter((x) => x !== name);
-  }
-}
-
-/* The value an option has for an input, confirmed only; null for a blank. */
-export function valueFor(state, scope, name) {
-  const nd = byName(state.doc).get(name);
-  if (scope === "shared") return isBlank(nd) ? null : nd.value;
-  const o = optionById(state, scope);
-  if (o.ours) return isBlank(nd) ? null : nd.value;
-  if (Object.hasOwn(o.overrides, name)) return o.overrides[name];
-  if (o.same.includes(name)) return isBlank(nd) ? null : nd.value;
-  return null;
-}
-export function provenanceOf(state, scope, name) {
-  const nd = byName(state.doc).get(name);
-  if (scope === "shared") return nd.provenance;
-  const o = optionById(state, scope);
-  if (o.ours) return nd.provenance;
-  if (Object.hasOwn(o.overrides, name)) return o.provenance[name] ?? { kind: "", source: "" };
-  if (o.same.includes(name)) return nd.provenance;
-  return { kind: "", source: "" };
-}
+export { setValue, valueFor, provenanceOf };
 
 /* A suggestion is refused without an origin the page knows and evidence somebody could check. */
 export function checkSuggestion(s) {
@@ -123,9 +93,7 @@ export function checkSuggestion(s) {
 export function withSuggestions(state) {
   const copy = structuredClone(state);
   const used = [];
-  for (const [key, s] of Object.entries(copy.suggestions ?? {})) {
-    const [scope, name] = key.split("|");
-    if (!byName(copy.doc).has(name) || (scope !== "shared" && !optionById(copy, scope))) continue;
+  for (const { scope, name, s } of suggestionsOf(copy)) {
     setValue(copy, scope, name, s.value, provenanceFor(s.origin, `${s.evidence} (suggested, unconfirmed)`));
     used.push({ scope, input: name, value: s.value, origin: s.origin });
   }

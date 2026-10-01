@@ -17,6 +17,8 @@ import { begin, drawBuild, drawStart, rebuildDoc, refresh, finderInputs } from "
 import { drawResults } from "./results.js";
 import { drawChecks, drawExplain } from "./explain.js";
 import { createInterpreter } from "./interpret.js";
+import { remoteFor } from "./remote.js";
+import { confirmSuggestion, rejectSuggestion, suggestions } from "./suggest.js";
 
 const here = new URL(".", import.meta.url);
 const data = (name) => fetch(new URL(`../../data/${name}`, here)).then((r) => r.json());
@@ -28,8 +30,12 @@ async function main() {
   const parts = await Promise.all(index.parts.map(async (meta) => loadPart(meta, await text(`../templates/${meta.file}`), { registry })));
   const ctx = { registry, results, units, index, parts, currency: parts[0]?.doc.currency ?? "GBP" };
 
-  const app = { ctx, state: load() ?? emptyState(), verdict: { id: 0, report: null }, cache: new Map() };
-  app.save = () => save(app.state);
+  // Linked to a solution on the server (?solution=NAME), the state lives there; otherwise in this browser.
+  const remote = remoteFor();
+  let remoteState = null, remoteError = "";
+  if (remote) { try { remoteState = await remote.load(); } catch (e) { remoteError = e.message; } }
+  const app = { ctx, state: remoteState ?? (remote ? emptyState() : load() ?? emptyState()), verdict: { id: 0, report: null }, cache: new Map(), remote: remoteState ? remote : null };
+  app.save = () => { if (app.remote) app.remote.save(app.state); else save(app.state); };
   app.redrawBuild = () => drawBuild(app);
   app.invalidate = () => { app.cache.clear(); askVerdict(); };
   app.evaluate = (option) => {
@@ -72,6 +78,42 @@ async function main() {
     note.style.top = `${r.bottom + 6}px`; note.style.left = `${Math.max(12, Math.min(r.left, innerWidth - 372))}px`;
     note.querySelector(".close").onclick = () => note.remove();
   };
+
+  // -- the link to the server, when there is one -------------------------------------------------------
+  const rchip = $("remote-chip");
+  if (remote) {
+    rchip.hidden = false;
+    const setLink = (status, detail = "") => {
+      const n = suggestions(app.state).length;
+      rchip.className = `engine-chip remote ${status}`;
+      rchip.textContent = status === "offline" ? `Link to ${remote.name}: lost` : status === "saving" ? `Linked to ${remote.name}: saving…` : `Linked to ${remote.name}${n ? ` · ${n} suggested` : ""}`;
+      rchip.title = status === "offline" ? `The server did not answer${detail ? ` (${detail})` : ""}. Changes stay on this page until it does.` : `This solution is kept on the server, where an assistant can read it and suggest figures. Every change here is saved there. ${n ? `${n} suggested figures wait for your confirmation.` : "Nothing is suggested at the moment."}`;
+    };
+    app.remoteChip = () => setLink(remote.lastStatus ?? "linked");
+    remote.on("status", (status, detail) => { remote.lastStatus = status; setLink(status, detail); });
+    // The assistant moved the record on: take the new state, keeping where the engineer is on the page.
+    let pending = null;
+    const typing = () => { const a = document.activeElement; return a && a !== document.body && a.matches("input, textarea, select") && !a.closest("header"); };
+    const take = (st) => {
+      const { mode, open, expert, focus } = app.state;
+      app.state = { ...emptyState(), ...st, mode: mode === "start" ? "build" : mode, open, expert, focus };
+      app.cache.clear();
+      rebuildDoc(app);
+      app.show(app.state.mode);
+      setLink("linked");
+    };
+    remote.on("change", (st) => { if (typing()) pending = st; else take(st); });
+    document.addEventListener("focusout", () => { if (pending && !typing()) { const st = pending; pending = null; take(st); } });
+    if (remoteError) document.body.insertAdjacentHTML("afterbegin", `<p class="callout warn">${esc(remoteError)} This page is working on its own, in this browser.</p>`);
+    else { setLink("linked"); remote.start(); }
+  }
+  // Confirm or reject a suggested figure, wherever it is shown.
+  document.addEventListener("click", (e) => {
+    const c = e.target.closest("[data-sugg-confirm]"), r = e.target.closest("[data-sugg-reject]");
+    if (!c && !r) return;
+    if (c) confirmSuggestion(app.state, c.dataset.suggConfirm); else rejectSuggestion(app.state, r.dataset.suggReject);
+    app.save(); app.remoteChip?.(); drawBuild(app);
+  });
 
   // -- the toolkit's verdict on the files, off the page's thread where the browser allows ------------
   let worker = null;
@@ -142,7 +184,7 @@ async function main() {
   $("m-build").onclick = () => app.show("build");
   $("m-results").onclick = () => app.show("results");
   $("m-explain").onclick = () => { app.state.focus = null; app.show("explain"); };
-  $("new").onclick = () => { clear(); app.state = emptyState(); app.cache.clear(); app.show("start"); };
+  $("new").onclick = () => { if (app.remote) { location.href = location.pathname; return; } clear(); app.state = emptyState(); app.cache.clear(); app.show("start"); };
   $("expert").onclick = () => { app.state.expert = !app.state.expert; app.save(); if (app.state.mode === "build") drawBuild(app); if (app.state.mode === "explain") $("expert-more").open = app.state.expert; app.setModes(); };
 
   // -- the interpreter, optional --------------------------------------------------------------------------

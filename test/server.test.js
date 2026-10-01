@@ -199,8 +199,8 @@ test("the files are written from confirmed figures only, and the engine's checks
   assert.equal(w.ranges?.samples, 10000, "the reference scenario was sampled as the book samples it");
   assert.ok(existsSync(join(ws.dir, "acme", "model.yaml")));
   assert.ok(existsSync(join(ws.dir, "acme", "scenarios", "o2.yaml")));
-  const model = readFileSync(join(ws.dir, "acme", "model.yaml"), "utf8");
-  assert.match(model, /confirmed by the engineer through the assistant/);
+  const model = readFileSync(join(ws.dir, "acme", "model.yaml"), "utf8").replace(/\s+/g, " ");
+  assert.match(model, /suggested by the assistant, confirmed by the engineer through the assistant/);
   assert.doesNotMatch(model, /suggested, unconfirmed/);
   assert.equal(call(ws, "describe_solution", { name: "acme" }).requirement_notes.Availability, "Mirrored across two sites.");
 });

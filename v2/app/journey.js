@@ -14,6 +14,7 @@ import { merge } from "./parts.js";
 import { newOption, optionsFor } from "./state.js";
 import { answerLabel, answerNode, blocker, byName, coversPart, docFor, evaluateOption, isBlank, missing, neededFor, optionById, ours, partOf, valueOf } from "./evaluate.js";
 import { drawInterview } from "./interview.js";
+import { suggestionFor, suggestions } from "./suggest.js";
 
 // -- the model as the chosen parts make it -----------------------------------------------------------
 
@@ -227,10 +228,36 @@ const stepDone = (app, id) => {
   return id === "customer" ? state.candidates.every((c) => c.status !== "pending") : id === "requirements" ? !m.req.some((x) => x.scope === "shared") : id === "options" ? state.options.length > 0 : id === "inputs" ? !m.req.some((x) => x.scope !== "shared") : id === "missing" ? !m.req.length : !blocker(state);
 };
 
+/*
+ * A figure the assistant suggested for this input, under the field it would fill: the value, its
+ * origin and the evidence, with Confirm and Reject. Nothing reaches the model until Confirm.
+ */
+export function suggBox(app, scope, nd) {
+  const { state } = app;
+  const s = suggestionFor(state, scope, nd.name);
+  if (!s) return "";
+  const key = `${scope}|${nd.name}`;
+  const via = ORIGINS[s.origin];
+  return `<div class="sugg" data-sugg="${esc(key)}"><span class="sugg-head">Suggested by the assistant, unconfirmed</span>
+    <span class="sugg-val">${esc(fmt(s.value, nd.unit, state.doc.currency))}</span>
+    <span class="chip ${{ customer: "customer", quote: "quote", published: "published", assumption: "assume", fact: "defn" }[s.origin] ?? "unset"}">${esc(via?.label ?? s.origin)}</span>
+    <span class="sugg-ev">“${esc(s.evidence)}”</span>
+    <span class="status"><button type="button" class="ok" data-sugg-confirm="${esc(key)}">Confirm</button><button type="button" data-sugg-reject="${esc(key)}">Reject</button></span></div>`;
+}
+/* The banner over the steps: how many suggestions wait, and where. */
+function suggBanner(app) {
+  const { state } = app;
+  const list = suggestions(state);
+  if (!list.length) return "";
+  const shared = list.filter((x) => x.scope === "shared").length, own = list.length - shared;
+  const where = [shared ? `${shared} in Requirements` : "", own ? `${own} in Inputs` : ""].filter(Boolean).join(" · ");
+  return `<div class="sugg-banner" id="sugg-banner"><strong>${list.length} ${list.length === 1 ? "figure" : "figures"} suggested by the assistant ${list.length === 1 ? "waits" : "wait"} for your confirmation.</strong> ${esc(where)}. Each shows its origin and the evidence it was read from; confirm the ones you agree with. ${shared ? `<button type="button" class="link" data-open="requirements">Requirements</button>` : ""} ${own ? `<button type="button" class="link" data-open="inputs">Inputs</button>` : ""}</div>`;
+}
+
 export function drawBuild(app) {
   const { state } = app;
   if (state.expert) state.open = STEPS.map((s) => s.id);
-  $("steps").innerHTML = STEPS.map((s, k) => {
+  $("steps").innerHTML = suggBanner(app) + STEPS.map((s, k) => {
     const open = state.open.includes(s.id);
     const done = stepDone(app, s.id) && !open;
     return `<section class="step ${open ? "open" : ""} ${done ? "done" : ""}" data-step="${s.id}">
@@ -239,6 +266,7 @@ export function drawBuild(app) {
     </section>`;
   }).join("");
   for (const b of document.querySelectorAll("[data-toggle]")) b.onclick = () => { const id = b.dataset.toggle; state.open = state.open.includes(id) ? state.open.filter((x) => x !== id) : [...state.open, id]; app.save(); drawBuild(app); };
+  for (const b of document.querySelectorAll("#sugg-banner [data-open]")) b.onclick = () => { const id = b.dataset.open; if (!state.open.includes(id)) state.open.push(id); app.save(); drawBuild(app); document.querySelector(`[data-step="${id}"]`)?.scrollIntoView({ block: "start", behavior: "smooth" }); };
   const draw = { customer: drawCustomer, requirements: drawRequirements, options: drawOptions, inputs: drawInputs, missing: drawMissing, answer: drawAnswerStep };
   for (const s of STEPS) if (state.open.includes(s.id)) draw[s.id](app, $(`body-${s.id}`));
   refresh(app);
@@ -338,7 +366,7 @@ function drawRequirements(app, el) {
   const rows = (list) => list.map((nd) => {
     const role = sharedRole(app, nd);
     return `<div class="rq ${isBlank(nd) ? "blank" : ""} ${role}" data-rq="${nd.name}"><span class="nm">${esc(inputName(app, nd))}${badge(role)}</span>
-      <span class="ctl">${numInput(nd.value, `data-shared="${nd.name}"`, inputName(app, nd))}<span class="unit">${esc(unitWords(nd.unit))}</span>${chip(`shared|${nd.name}`, nd.provenance)}</span></div>`;
+      <span class="ctl">${numInput(nd.value, `data-shared="${nd.name}"`, inputName(app, nd))}<span class="unit">${esc(unitWords(nd.unit))}</span>${chip(`shared|${nd.name}`, nd.provenance)}</span>${suggBox(app, "shared", nd)}</div>`;
   }).join("");
   const cards = ctx.index.requirements.map((c) => {
     const list = shared.filter((nd) => cat(nd) === c);
@@ -446,6 +474,7 @@ function drawInputs(app, el) {
     return `<td class="${cls(o)} ${has || same ? "" : "blank"}"><div class="cell">
       <span class="val">${numInput(same ? nd.value : v, `data-opt="${o.id}" data-in="${nd.name}" ${same ? "disabled" : ""}`, `${o.name}: ${inputName(app, nd)}`)}${chip(`${o.id}|${nd.name}`, prov ?? { kind: "", source: "" }, same)}</span>
       ${o.ours ? "" : `<label class="same"><input type="checkbox" data-same="${o.id}" data-in="${nd.name}" ${same ? "checked" : ""}> same as ${esc(ours(state).name)}</label>`}
+      ${suggBox(app, o.id, nd)}
     </div></td>`;
   };
   const body = groups.map((g) => {
@@ -501,7 +530,8 @@ function drawMissing(app, el) {
   const { state, ctx } = app;
   const { req, opt } = missing(state);
   const where = (x) => (x.scope === "shared" ? `Customer requirements · ${ctx.parts.find((p) => p.id === partOf(state, x.name))?.requirements?.[state.map[x.name]?.local] ?? ""}` : x.option.name);
-  const item = (x) => `<li><span>${esc(inputName(app, x.node))}<span class="why2">${esc(where(x))}${x.scope !== "shared" && !x.option.ours ? " · or mark it the same as ours" : ""}</span></span><button type="button" class="link" data-goto="${x.scope}|${x.name}">Enter</button></li>`;
+  const sugg = (x) => { const s = suggestionFor(state, x.scope, x.name); return s ? ` · suggested by the assistant: ${fmt(s.value, x.node.unit, state.doc.currency)}, unconfirmed` : ""; };
+  const item = (x) => `<li><span>${esc(inputName(app, x.node))}<span class="why2">${esc(where(x))}${x.scope !== "shared" && !x.option.ours ? " · or mark it the same as ours" : ""}${esc(sugg(x))}</span></span><button type="button" class="link" data-goto="${x.scope}|${x.name}">${suggestionFor(state, x.scope, x.name) ? "Review" : "Enter"}</button></li>`;
   el.innerHTML = `
     <p class="note" style="margin:0">Nothing is filled in for you. A required value is one the calculation cannot do without; an optional one it can.</p>
     <div id="interview"></div>
