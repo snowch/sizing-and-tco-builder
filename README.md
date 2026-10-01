@@ -51,6 +51,16 @@ works in full without it. For what the notes do not give, the page asks one ques
 in its own fixed words, and reads each answer the same way. [prompts/model-from-notes.md](prompts/model-from-notes.md) does the
 same job in any Claude chat, writing a whole model file for the builder to check.
 
+### With an assistant: the builder as a service
+
+`npx sizing-and-tco-builder serve` runs the engine as a local process: the page at
+`http://127.0.0.1:8765/v2/`, the solutions behind it, and an MCP server (over stdio for Claude
+Desktop or Claude Code, over HTTP for an intranet host). The assistant reads specifications,
+spreadsheets and web pages and *suggests* figures, each with its origin and evidence; a
+suggestion without them is refused, and none enters the model until the engineer confirms it in
+the page. Nothing crosses the firewall for a local client. [server/README.md](server/README.md)
+has the setup and the tools.
+
 ## Licence
 
 MIT; see [LICENSE](LICENSE). The vendored YAML package keeps its own ISC licence

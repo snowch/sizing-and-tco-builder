@@ -379,6 +379,17 @@ structure → inputs → calculation → answer, and its pieces are:
   the tree with each line's origin and evidence, what would flip a comparison, sensitivity, the
   toolkit's verdict on the files, and the files themselves, one model and one scenario per option.
 
+- **The server** (`server/`): the same engine with no page, holding solutions in a folder in the
+  page's own state shape, and the tools an assistant gets over MCP (`server/tools.js`, the
+  protocol by hand in `server/mcp.js`, stdio or HTTP). A tool can suggest a figure only with an
+  origin the page knows and evidence somebody could check, and a suggestion sits apart from the
+  model until the engineer confirms it in the page (`v2/app/suggest.js`, shared by both sides so
+  confirming means one thing). `evaluate` with `provisional: true` applies the suggestions to a
+  copy and says which; `what_if` answers from a copy; `write_files` returns the toolkit's
+  verdict. The page with `?solution=NAME` keeps its state on the server, saves with the version
+  it read, and polls for the assistant's changes (`v2/app/remote.js`).
+  `flows/server.flow.test.js` runs the assistant's side and the page together.
+
 `flows/v2.flow.test.js` drives it in Chromium and hands the files to the book's toolkit, which
 accepts them and agrees on the total. What it does not do yet: a scenario cannot say a figure is
 unknown for that option (the file format has no way to), so such an option is held back on the
