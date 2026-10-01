@@ -85,6 +85,8 @@ export function findCandidates(text, inputs, { current = "current" } = {}) {
         let score = 2, strong = false;
         if (i.re.test(near)) { score += 3; strong = true; }
         if (i.re.test(wider)) { score += 1; strong = true; }
+        // A data unit written on the number (3PB, 512GiB) is strong evidence for an input in a data unit.
+        if (writtenUnit && dataUnitOf(writtenUnit) && dataUnitOf(i.unit)) { score += 2; strong = true; }
         if (i.context && i.context.test(s.text)) score += 1;
         if (i.scope === current) score += 1;
         return { key: i.key, score, strong };
